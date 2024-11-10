@@ -1,0 +1,4 @@
+<h1>Dashboard</h1>
+<p>Welcome to your dashboard, <%= current_user.username %>!</p>
+
+<%= link_to 'Logout', logout_path, method: :delete, class: 'btn btn-danger' %>
