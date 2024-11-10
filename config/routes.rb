@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root 'welcome#index'
+  root to: redirect('/welcome')
 
   get 'login', to: 'sessions#new', as: 'login'
   post 'login', to: 'sessions#create'
@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   post 'register', to: 'registrations#create'
 
   get 'welcome', to: 'welcome#index', as: 'welcome'
-  
+
   get 'dashboard', to: 'dashboard#index', as: 'dashboard'
 
   resources :users

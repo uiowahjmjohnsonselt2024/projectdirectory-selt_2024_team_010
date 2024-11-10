@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
       flash[:notice] = "Logged in successfully"
       redirect_to dashboard_path
     else
-      flash[:alert] = "Invalid username or password"
+      flash.now[:alert] = "Invalid username or password"
       render :new
     end
   end
