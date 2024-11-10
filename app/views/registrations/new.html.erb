@@ -1,28 +1,28 @@
 <h1>Register</h1>
 
-<%= form_with model: @user, url: register_path, local: true do |form| %>
+<%= form_tag register_path, method: :post do %>
   <div>
-    <%= form.label :username %>
-    <%= form.text_field :username, required: true %>
+    <%= label_tag 'user[username]', 'Username' %>
+    <%= text_field_tag 'user[username]', nil, required: true %>
   </div>
 
   <div>
-    <%= form.label :email %>
-    <%= form.email_field :email, required: true %>
+    <%= label_tag 'user[email]', 'Email' %>
+    <%= email_field_tag 'user[email]', nil, required: true %>
   </div>
 
   <div>
-    <%= form.label :password %>
-    <%= form.password_field :password, required: true %>
+    <%= label_tag 'user[password]', 'Password' %>
+    <%= password_field_tag 'user[password]', nil, required: true %>
   </div>
 
   <div>
-    <%= form.label :password_confirmation, "Confirm Password" %>
-    <%= form.password_field :password_confirmation, required: true %>
+    <%= label_tag 'user[password_confirmation]', 'Confirm Password' %>
+    <%= password_field_tag 'user[password_confirmation]', nil, required: true %>
   </div>
 
   <div>
-    <%= form.submit 'Register', class: 'btn btn-primary' %>
-    <%= link_to 'Back', welcome_path, class: 'btn btn-secondary' %>
+    <%= submit_tag 'Register' %>
+    <%= link_to 'Back', welcome_path %>
   </div>
 <% end %>

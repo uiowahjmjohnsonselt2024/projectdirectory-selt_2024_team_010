@@ -1,18 +1,18 @@
 <h1>Login</h1>
 
-<%= form_with url: login_path, local: true do |form| %>
+<%= form_tag login_path, method: :post do %>
   <div>
-    <%= form.label :username %>
-    <%= form.text_field :username, required: true %>
+    <%= label_tag :username %>
+    <%= text_field_tag :username, nil, required: true %>
   </div>
 
   <div>
-    <%= form.label :password %>
-    <%= form.password_field :password, required: true %>
+    <%= label_tag :password %>
+    <%= password_field_tag :password, nil, required: true %>
   </div>
 
   <div>
-    <%= form.submit 'Login', class: 'btn btn-primary' %>
-    <%= link_to 'Back', welcome_path, class: 'btn btn-secondary' %>
+    <%= submit_tag 'Login' %>
+    <%= link_to 'Back', welcome_path %>
   </div>
 <% end %>
