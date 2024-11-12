@@ -39,3 +39,7 @@ end
 Then(/^I should be on the welcome screen$/) do
   expect(page.current_path).to eq('/welcome')
 end
+
+Then(/^I should be on the login screen$/) do
+  expect(page.current_path).to eq('/login')
+end
