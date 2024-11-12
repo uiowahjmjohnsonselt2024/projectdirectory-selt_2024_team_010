@@ -2,6 +2,10 @@ Given(/^I am on the login screen$/) do
   visit login_path
 end
 
+Given(/^I am on the welcome screen$/) do
+  visit welcome_path
+end
+
 Given(/^I have an account with the username "([^"]*)", email "([^"]*)" and password "([^"]*)"$/) do |username, email, password|
   User.create!(username: username, email: email, password: password, password_confirmation: password)
   expect(User.where(username: username)).not_to eq(nil)
@@ -42,4 +46,11 @@ end
 
 Then(/^I should be on the login screen$/) do
   expect(page.current_path).to eq('/login')
+end
+Then(/^I should be on the register screen$/) do
+  expect(page.current_path).to eq('/register')
+end
+
+And(/^I should see a "([^"]*)" link$/) do |link|
+  expect(page).to have_link(link)
 end
