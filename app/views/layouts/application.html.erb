@@ -13,5 +13,17 @@
 
 <%= yield %>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            const flashMessages = document.querySelectorAll('.flash');
+            flashMessages.forEach(function(flash) {
+                flash.style.transition = 'opacity 0.5s ease';
+                flash.style.opacity = '0';
+                setTimeout(() => flash.remove(), 500); // Remove element after fade out
+            });
+        }, 5000); // 5 seconds
+    });
+</script>
 </body>
 </html>
