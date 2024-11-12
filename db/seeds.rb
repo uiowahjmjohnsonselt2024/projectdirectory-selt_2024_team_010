@@ -8,7 +8,6 @@
 
 User.destroy_all
 
-
 # Create sample users
 User.create!(
   username: 'testuser',
