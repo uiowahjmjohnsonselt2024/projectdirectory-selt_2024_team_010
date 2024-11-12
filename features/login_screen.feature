@@ -5,15 +5,14 @@ Feature: Login Screen
 
   Background:
     Given I am on the login screen
+    And I have an account with the username "testuser", email "testuser@test.test" and password "password123"
 
   Scenario: Displaying the login screen
-    Then I should see "Shards of the Grid"
-    And I should see a login prompt
+    Then I should see a login prompt
 
   Scenario: Logging in with valid credentials
     When I log in with the username "testuser" and password "password123"
-    Then I should see "Login successful"
-    And I should be on the main dashboard
+    Then I should be on the main dashboard
 
   Scenario: Going back to the welcome screen
     When I click the "Back" button

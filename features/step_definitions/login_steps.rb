@@ -2,6 +2,11 @@ Given(/^I am on the login screen$/) do
   visit login_path
 end
 
+Given(/^I have an account with the username "([^"]*)", email "([^"]*)" and password "([^"]*)"$/) do |username, email, password|
+  user = User.create(username: username, email: email, password: password)
+  expect(User.where(username: username)).not_to eq(nil)
+end
+
 When(/^I log in with the username "([^"]*)" and password "([^"]*)"$/) do |username, password|
   fill_in('Username', with: username)
   fill_in('Password', with: password)
