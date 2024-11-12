@@ -17,6 +17,10 @@ When(/^I click the "([^"]*)" button$/) do |button|
   click_button(button)
 end
 
+When(/^I click the "([^"]*)" link$/) do |link|
+  click_link(link)
+end
+
 Then(/^I should see "([^"]*)"$/) do |text|
   expect(page).to have_content text
 end
@@ -25,7 +29,7 @@ Then(/^I should see a login prompt$/) do
   expect(page).to have_field 'Username'
   expect(page).to have_field 'Password'
   expect(page).to have_button 'Login'
-  expect(page).to have_button 'Back'
+  expect(page).to have_link 'Back'
 end
 
 Then(/^I should be on the main dashboard$/) do

@@ -15,5 +15,5 @@ Feature: Login Screen
     Then I should be on the main dashboard
 
   Scenario: Going back to the welcome screen
-    When I click the "Back" button
+    When I click the "Back" link
     Then I should be on the welcome screen
