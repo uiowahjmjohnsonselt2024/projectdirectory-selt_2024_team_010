@@ -3,7 +3,7 @@ Given(/^I am on the login screen$/) do
 end
 
 Given(/^I have an account with the username "([^"]*)", email "([^"]*)" and password "([^"]*)"$/) do |username, email, password|
-  user = User.create(username: username, email: email, password: password)
+  User.create!(username: username, email: email, password: password, password_confirmation: password)
   expect(User.where(username: username)).not_to eq(nil)
 end
 
