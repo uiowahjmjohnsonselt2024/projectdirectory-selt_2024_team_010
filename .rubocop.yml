@@ -1,0 +1,19 @@
+# rubocop config file.
+# see: https://docs.rubocop.org/rubocop/1.68/cops.html
+require:
+  # custom cops here: https://docs.rubocop.org/rubocop/1.68/extensions.html#custom-cops
+  - rubocop-rails
+  - rubocop-rspec
+  - rubocop-rake
+
+# if things get annoying you can ignore files in this object
+AllCops:
+  SuggestExtensions: false
+  TargetRubyVersion: 2.6.10
+
+Layout/LineLength:
+  Max: 100
+
+Layout/IndentationWidth:
+  Width: 4
+

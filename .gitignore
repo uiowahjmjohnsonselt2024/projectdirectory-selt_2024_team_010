@@ -16,5 +16,10 @@
 !/log/.keep
 /tmp
 
+# Ignore temporary rubocop config (if generated).
+/.rubocop_todo.yml
+
+# Ignore logs and IDE-related files
 /log/*
 /.idea/*
+

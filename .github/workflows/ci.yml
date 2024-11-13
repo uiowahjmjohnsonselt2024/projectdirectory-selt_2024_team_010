@@ -1,0 +1,19 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  rubocop:
+    # influenced from rails' prebuilt action;
+    # https://github.com/rails/rails/blob/4a78dcb326e57b5035c4df322e31875bfa74ae23/.github/workflows/rubocop.yml
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby 2.6.10
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.6.10
+    - name: Install gems
+      run: bundle install
+    - name: Run Rubocop
+      run: bundle exec rubocop
+
