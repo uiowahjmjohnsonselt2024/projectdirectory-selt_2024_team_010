@@ -1,7 +1,7 @@
 {
   "GROUP" : "G010",
   "ALL_SPRINTS" : {
-    "SPRINT1_URL" : "",
+    "SPRINT1_URL" : "http://pure-beach-81219-f2a15a5c9185.herokuapp.com/",
     "SPRINT2_URL" : "",
     "SPRINT3_URL" : "",
     "FINAL_URL" : ""
