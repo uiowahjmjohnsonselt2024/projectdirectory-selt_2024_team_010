@@ -1,4 +1,5 @@
 class SessionsController < ApplicationController
+  before_action :current_user, only: [:destroy]
   def new
   end
 
