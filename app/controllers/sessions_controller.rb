@@ -5,17 +5,9 @@ class SessionsController < ApplicationController
 
   def create
     user = User.find_by(username: params[:username])
-<<<<<<< HEAD
-    if user == nil then print("MISSING USER") end
-
-    if user&.authenticate(params[:password])
-      session[:user_id] = user.id
-
-=======
     if user != nil and user.authenticate(params[:password])
       create_session_token user
       flash[:notice] = "Logged in successfully"
->>>>>>> main
       redirect_to dashboard_path
     else
       flash.now[:alert] = "Invalid username or password"

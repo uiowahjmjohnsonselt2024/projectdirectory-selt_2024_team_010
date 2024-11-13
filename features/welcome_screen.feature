@@ -6,14 +6,8 @@ Feature: Welcome Screen
   Scenario: Displaying the welcome screen
     Given I am on the welcome screen
     Then I should see "Shards of the Grid"
-<<<<<<< HEAD
     And I should see a "Login" button
     And I should see a "Register" button
-=======
-    And I should see "Welcome!"
-    And I should see a "Login" link
-    And I should see a "Register" link
->>>>>>> main
 
   Scenario: Navigating to the login screen
     Given I am on the welcome screen
