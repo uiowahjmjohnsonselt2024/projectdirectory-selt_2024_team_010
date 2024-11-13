@@ -7,8 +7,8 @@ class RegistrationsController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      session[:user_id] = @user.id  # Log the user in immediately after registration
       flash[:notice] = "Registration successful"
+      create_session_token @user
       redirect_to dashboard_path
     else
       flash.now[:alert] = "Error creating account"

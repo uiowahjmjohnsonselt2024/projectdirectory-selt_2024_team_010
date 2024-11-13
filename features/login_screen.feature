@@ -13,6 +13,11 @@ Feature: Login Screen
   Scenario: Logging in with valid credentials
     When I log in with the username "testuser" and password "password123"
     Then I should be on the main dashboard
+    
+  Scenario: Logging in with invalid credentials
+    When I log in with the username "fake" and password "fake"
+    Then I should be on the login screen
+    And I should see "Invalid username or password"
 
   Scenario: Going back to the welcome screen
     When I click the "Back" link

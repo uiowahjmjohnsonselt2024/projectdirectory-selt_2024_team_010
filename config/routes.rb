@@ -19,4 +19,5 @@ Rails.application.routes.draw do
   get 'game', to: 'game#index', as: 'game'
 
   resources :users
+  resources :sessions
 end

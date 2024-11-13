@@ -13,6 +13,7 @@
  *= require_tree .
  *= require_self
  */
+<<<<<<< HEAD
 .form-container {
     display: flex;
     flex-direction: column;
@@ -101,4 +102,21 @@
     /*justify-content: center;*/
     padding: 20px 0;
     gap: 10px;
+=======
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #333; /* Dark grey */
+    border: 1px solid #333;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background-color: #555; /* Slightly lighter grey on hover */
+>>>>>>> main
 }

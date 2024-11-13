@@ -1,6 +1,13 @@
+<<<<<<< HEAD
 <div class="button-container">
   <%= link_to 'Logout', logout_path, method: :delete, class: 'nav-button' %>
   <%= link_to 'Servers', servers_path, class: 'nav-button' %>
   <%= link_to 'Shop', shop_path, class: 'nav-button' %>
   <%= link_to 'Game', game_path, class: 'nav-button' %>
 </div>
+=======
+<h1>Dashboard</h1>
+<p>Welcome to your dashboard, <%= current_user.username %>!</p>
+
+<%= link_to 'Logout', logout_path, method: :delete, class: 'btn' %>
+>>>>>>> main
