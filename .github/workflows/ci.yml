@@ -9,9 +9,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby 2.6.10
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@v4
       with:
         ruby-version: 2.6.10
+        rubygems: 3.3.22
     - name: Install gems
       run: bundle install
     - name: Run Rubocop
