@@ -5,8 +5,7 @@ class SessionsController < ApplicationController
   def create
     user = User.find_by(username: params[:username])
     if user != nil and user.authenticate(params[:password])
-      user.create_session!(session_token: Session.create_session_token)
-      session[:session_token] = user.session.session_token
+      create_session_token user
       flash[:notice] = "Logged in successfully"
       redirect_to dashboard_path
     else

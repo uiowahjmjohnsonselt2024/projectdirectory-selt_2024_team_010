@@ -8,7 +8,8 @@ class RegistrationsController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       flash[:notice] = "Registration successful"
-      redirect_to login_path(username:user_params[:username], password:user_params[:password])
+      create_session_token @user
+      redirect_to dashboard_path
     else
       flash.now[:alert] = "Error creating account"
       render :new
