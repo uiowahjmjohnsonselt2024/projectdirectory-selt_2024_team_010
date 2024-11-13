@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 ruby '2.6.10'
-gem 'rubygems-update', '~> 3.3.22'
+gem 'ffi', '1.16.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.10'
