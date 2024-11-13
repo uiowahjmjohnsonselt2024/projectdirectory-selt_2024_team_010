@@ -13,6 +13,95 @@
  *= require_tree .
  *= require_self
  */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    /*justify-content: center;*/
+    align-items: center;
+    min-height: 100vh;
+    padding: 0 20px;
+}
+
+.form-container form {
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-container div {
+    margin-bottom: 15px;
+}
+
+.form-container label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-container input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: row-reverse; /* Arrange buttons from right to left */
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+
+.nav-button {
+    flex: 1; /* Makes all buttons equally wide */
+    padding: 20px 0; /* Adjust padding for button height */
+    text-align: center;
+    text-decoration: none;
+    background-color: #007bff; /* Button background color */
+    color: #fff; /* Button text color */
+    font-size: 18px;
+    border: none;
+    outline: solid;
+    cursor: pointer;
+}
+
+.nav-button + .nav-button {
+    margin-left: 0;
+}
+
+.nav-button:link,
+.nav-button:visited {
+    color: #fff;
+}
+
+
+.nav-button:hover {
+    background-color: #0056b3;
+}
+
+.log-reg-buttons{
+    text-align: center;
+    text-decoration: none;
+    padding: 10px 5px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 12px;
+    border: none;
+    outline: solid;
+    cursor: pointer;
+}
+
+.log-reg-container{
+    display: flex;
+    flex-direction: row;
+    /*justify-content: center;*/
+    padding: 20px 0;
+    gap: 10px;
+}
 .btn {
     display: inline-block;
     padding: 8px 16px;
