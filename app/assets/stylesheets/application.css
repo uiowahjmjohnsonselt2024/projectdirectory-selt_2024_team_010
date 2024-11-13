@@ -55,7 +55,7 @@
     padding: 0;
 }
 
-/* Styles for the navigation buttons */
+
 .nav-button {
     flex: 1; /* Makes all buttons equally wide */
     padding: 20px 0; /* Adjust padding for button height */
@@ -69,18 +69,16 @@
     cursor: pointer;
 }
 
-/* Remove margins between buttons */
 .nav-button + .nav-button {
     margin-left: 0;
 }
 
-/* Remove any default link styling */
 .nav-button:link,
 .nav-button:visited {
     color: #fff;
 }
 
-/* Hover effect (optional) */
+
 .nav-button:hover {
     background-color: #0056b3;
 }
