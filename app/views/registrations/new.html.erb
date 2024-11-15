@@ -1,28 +1,30 @@
-<h1>Register</h1>
 
-<%= form_tag register_path, method: :post do %>
-  <div>
-    <%= label_tag 'user[username]', 'Username' %>
-    <%= text_field_tag 'user[username]', nil, required: true %>
-  </div>
+<div class="form-container">
+  <h1>Register</h1>
+    <%= form_tag register_path, method: :post do %>
+        <div>
+        <%= label_tag 'user[username]', 'Username' %>
+        <%= text_field_tag 'user[username]', nil, required: true %>
+        </div>
 
-  <div>
-    <%= label_tag 'user[email]', 'Email' %>
-    <%= email_field_tag 'user[email]', nil, required: true %>
-  </div>
+        <div>
+            <%= label_tag 'user[email]', 'Email' %>
+            <%= email_field_tag 'user[email]', nil, required: true %>
+        </div>
 
-  <div>
-    <%= label_tag 'user[password]', 'Password' %>
-    <%= password_field_tag 'user[password]', nil, required: true %>
-  </div>
+        <div>
+            <%= label_tag 'user[password]', 'Password' %>
+            <%= password_field_tag 'user[password]', nil, required: true %>
+        </div>
 
-  <div>
-    <%= label_tag 'user[password_confirmation]', 'Confirm Password' %>
-    <%= password_field_tag 'user[password_confirmation]', nil, required: true %>
-  </div>
+        <div>
+            <%= label_tag 'user[password_confirmation]', 'Confirm Password' %>
+            <%= password_field_tag 'user[password_confirmation]', nil, required: true %>
+        </div>
 
-  <div>
-    <%= submit_tag 'Register', class: 'btn' %>
-    <%= link_to 'Back', welcome_path, class: 'btn' %>
-  </div>
-<% end %>
+        <div>
+            <%= submit_tag 'Register' %>
+            <%= link_to 'Back', welcome_path %>
+        </div>
+    <% end %>
+</div>
