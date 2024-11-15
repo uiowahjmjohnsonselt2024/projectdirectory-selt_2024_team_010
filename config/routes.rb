@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   root to: redirect('/welcome')
 
   get 'login', to: 'sessions#new', as: 'login'
-  post 'login', to: 'sessions#create'
+  post 'login', to: 'sessions#create', as: 'login_create'
   delete 'logout', to: 'sessions#destroy', as: 'logout'
 
   get 'register', to: 'registrations#new', as: 'register'
@@ -17,7 +17,4 @@ Rails.application.routes.draw do
   get 'shop', to: 'shop#index', as: 'shop'
 
   get 'game', to: 'game#index', as: 'game'
-
-  resources :users
-  resources :sessions
 end
