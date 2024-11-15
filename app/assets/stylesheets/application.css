@@ -13,95 +13,6 @@
  *= require_tree .
  *= require_self
  */
-.form-container {
-    display: flex;
-    flex-direction: column;
-    /*justify-content: center;*/
-    align-items: center;
-    min-height: 100vh;
-    padding: 0 20px;
-}
-
-.form-container form {
-    width: 100%;
-    max-width: 400px;
-}
-
-.form-container h1 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.form-container div {
-    margin-bottom: 15px;
-}
-
-.form-container label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.form-container input {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-}
-
-.button-container {
-    display: flex;
-    flex-direction: row-reverse; /* Arrange buttons from right to left */
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-
-.nav-button {
-    flex: 1; /* Makes all buttons equally wide */
-    padding: 20px 0; /* Adjust padding for button height */
-    text-align: center;
-    text-decoration: none;
-    background-color: #007bff; /* Button background color */
-    color: #fff; /* Button text color */
-    font-size: 18px;
-    border: none;
-    outline: solid;
-    cursor: pointer;
-}
-
-.nav-button + .nav-button {
-    margin-left: 0;
-}
-
-.nav-button:link,
-.nav-button:visited {
-    color: #fff;
-}
-
-
-.nav-button:hover {
-    background-color: #0056b3;
-}
-
-.log-reg-buttons{
-    text-align: center;
-    text-decoration: none;
-    padding: 10px 5px;
-    background-color: #007bff;
-    color: #fff;
-    font-size: 12px;
-    border: none;
-    outline: solid;
-    cursor: pointer;
-}
-
-.log-reg-container{
-    display: flex;
-    flex-direction: row;
-    /*justify-content: center;*/
-    padding: 20px 0;
-    gap: 10px;
-}
 .btn {
     display: inline-block;
     padding: 8px 16px;
@@ -117,4 +28,165 @@
 
 .btn:hover {
     background-color: #555; /* Slightly lighter grey on hover */
+}
+
+.center-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Aligns content to the top */
+    padding-top: 100px; /* Adds space from the top */
+    height: 100vh; /* Keeps full viewport height */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f7fa;
+    margin: 0;
+    padding: 0;
+}
+header {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: #ffffff;
+    text-align: center;
+    padding: 1.5rem 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+header h1 {
+    font-size: 2rem;
+    margin: 0;
+    font-weight: bold;
+}
+
+footer {
+    background: linear-gradient(135deg, #2a5298, #1e3c72);
+    color: #ffffff;
+    text-align: center;
+    padding: 1rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    font-size: 0.9rem;
+}
+footer p {
+    margin: 0;
+}
+
+/* Flash messages */
+.flash {
+    max-width: 400px;
+    margin: 10px auto;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    text-align: center;
+    box-sizing: border-box;
+    position: relative;
+    animation: fade-in 0.5s ease-in-out;
+}
+
+/* Specific flash types */
+.flash.notice {
+    background-color: #d4edda;      /* Light green for success/notice */
+    color: #155724;                 /* Dark green text */
+    border: 1px solid #c3e6cb;
+}
+
+.flash.alert {
+    background-color: #f8d7da;      /* Light red for error/alert */
+    color: #721c24;                 /* Dark red text */
+    border: 1px solid #f5c6cb;
+}
+
+/* Fade-out animation for flash messages */
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.flash.fade-out {
+    animation: fade-out 0.5s ease-in-out forwards;
+}
+
+.form-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px 40px 20px 20px; /* Adjusted padding: top, right, bottom, left */
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Form title styling */
+.form-container h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+/* Form group styling */
+.form-container div {
+    margin-bottom: 15px;
+    text-align: left;              /* Aligns labels and inputs to the left */
+}
+
+/* Label styling */
+.form-container label {
+    display: block;                /* Makes labels block-level elements */
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+/* Input field styling */
+.form-container input[type="text"],
+.form-container input[type="password"],
+.form-container input[type="email"]{
+    width: 100%;                   /* Makes inputs full width */
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;        /* Subtle border */
+    border-radius: 4px;            /* Rounded corners */
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+/* Input focus styling */
+.form-container input[type="text"]:focus,
+.form-container input[type="password"]:focus {
+    border-color: #007bff;         /* Highlighted border on focus */
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5); /* Subtle glow */
+}
+
+/* Navbar container styling */
+.nav {
+    display: flex;
+    justify-content: center; /* Center the navbar links */
+    background-color: #333;  /* Dark background for navbar */
+    padding: 10px 0;         /* Padding for spacing */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Navbar button styling */
+.nav-button {
+    color: #ffffff;            /* White text color */
+    padding: 10px 15px;        /* Padding for clickable area */
+    text-decoration: none;     /* Removes underline from links */
+    font-size: 16px;           /* Font size */
+    border-radius: 4px;        /* Rounded corners */
+    margin: 0 10px;            /* Spacing between buttons */
+    transition: background-color 0.3s; /* Smooth hover transition */
+}
+
+/* Hover effect for navbar buttons */
+.nav-button:hover {
+    background-color: #555;    /* Slightly lighter color on hover */
+    color: #ffffff;
 }
