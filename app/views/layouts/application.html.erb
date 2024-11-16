@@ -2,28 +2,36 @@
 <html>
 <head>
   <title>Shards of the Grid</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-<% flash.each do |key, message| %>
-  <div class="flash <%= key %>"><%= message %></div>
-<% end %>
+
+<header>
+  <h1>Shards of the Grid</h1>
+  <% flash.each do |key, message| %>
+    <div class="flash <%= key %>"><%= message %></div>
+  <% end %>
+</header>
 
 <%= yield %>
+
+<footer>
+  <p>&copy; <%= Time.now.year %></p>
+</footer>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {
             const flashMessages = document.querySelectorAll('.flash');
             flashMessages.forEach(function(flash) {
-                flash.style.transition = 'opacity 0.5s ease';
-                flash.style.opacity = '0';
+                flash.classList.add('fade-out');
                 setTimeout(() => flash.remove(), 500); // Remove element after fade out
             });
-        }, 5000); // 5 seconds
+        }, 2500); // 5 seconds
     });
 </script>
+
 </body>
 </html>
