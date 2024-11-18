@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
     user = User.find_by(username: params[:username])
     if user != nil and user.authenticate(params[:password])
       create_session_token user
-      flash[:notice] = "Logged in successfully"
+      #flash[:notice] = "Logged in successfully"
       redirect_to dashboard_path
     else
       flash.now[:alert] = "Invalid username or password"
