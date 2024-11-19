@@ -29,6 +29,18 @@
         <label for="cost">Cost:</label>
         <span id="cost">0.00</span> <span id="currency-symbol">USD</span>
       </div>
+
+      <div class="user-balance">
+        <h3>Your Balance</h3>
+        <div class="balance-item">
+          <label for="shard-amount">Shards:</label>
+          <span id="shard-amount">0</span>
+        </div>
+        <div class="balance-item">
+          <label for="usd-amount">USD:</label>
+          <span id="usd-amount">0.00</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -102,6 +114,27 @@
     .cost-display {
         font-size: 18px;
     }
+
+    .user-balance {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+    }
+
+    .user-balance h3 {
+        margin-bottom: 10px;
+    }
+
+    .balance-item {
+        display: flex;
+        justify-content: space-between;
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+
 </style>
 
 <script>
