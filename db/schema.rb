@@ -11,7 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20241113153812) do
+ActiveRecord::Schema.define(version: 20241119160445) do
+
+  create_table "games", force: :cascade do |t|
+    t.string "name"
+  end
+
+  create_table "games_users", id: false, force: :cascade do |t|
+    t.integer "game_id", null: false
+    t.integer "user_id", null: false
+  end
+
+  add_index "games_users", ["game_id", "user_id"], name: "index_games_users_on_game_id_and_user_id"
+  add_index "games_users", ["user_id", "game_id"], name: "index_games_users_on_user_id_and_game_id"
 
   create_table "sessions", force: :cascade do |t|
     t.string   "session_token"
