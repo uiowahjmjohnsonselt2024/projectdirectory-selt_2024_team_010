@@ -30,6 +30,11 @@
         <span id="cost">0.00</span> <span id="currency-symbol">USD</span>
       </div>
 
+      <div class="purchase-button">
+        <button id="purchase" class="shard-button">Buy</button>
+      </div>
+
+
       <div class="user-balance">
         <h3>Your Balance</h3>
         <div class="balance-item">
@@ -138,79 +143,80 @@
 </style>
 
 <script>
-    const SHARD_COST_BASE_USD = 0.75; // base cost per shard in USD
-    const API_URL = 'https://v6.exchangerate-api.com/v6/464f4642b6d4d3ec3744b64d/latest/USD'; // updates daily for free plan
+    document.addEventListener("turbolinks:load", () => {
+        const SHARD_COST_BASE_USD = 0.75; // base cost per shard in USD
+        const API_URL = 'https://v6.exchangerate-api.com/v6/464f4642b6d4d3ec3744b64d/latest/USD'; // updates daily for free plan
 
-    const decrementButton = document.getElementById('decrement');
-    const incrementButton = document.getElementById('increment');
-    const shardQuantityInput = document.getElementById('shard-quantity');
-    const costDisplay = document.getElementById('cost');
-    const currencySelector = document.getElementById('currency');
-    const currencySymbol = document.getElementById('currency-symbol');
+        const decrementButton = document.getElementById('decrement');
+        const incrementButton = document.getElementById('increment');
+        const shardQuantityInput = document.getElementById('shard-quantity');
+        const costDisplay = document.getElementById('cost');
+        const currencySelector = document.getElementById('currency');
+        const currencySymbol = document.getElementById('currency-symbol');
 
-    let exchangeRates = { USD: 1 }; // default rates (USD base)
+        let exchangeRates = { USD: 1 }; // default rates (USD base)
 
-    // fetch exchange rates
-    async function fetchExchangeRates() {
-        try {
-            const response = await fetch(API_URL);
-            if (!response.ok) throw new Error('Failed to fetch exchange rates');
-            const data = await response.json();
-            exchangeRates = data.conversion_rates; // Update exchange rates
-            populateCurrencyDropdown(Object.keys(exchangeRates)); // Populate dropdown
-            updateCost();
-        } catch (error) {
-            console.error('Error fetching exchange rates:', error);
+        // Fetch exchange rates
+        async function fetchExchangeRates() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Failed to fetch exchange rates');
+                const data = await response.json();
+                exchangeRates = data.conversion_rates; // Update exchange rates
+                populateCurrencyDropdown(Object.keys(exchangeRates)); // Populate dropdown
+                updateCost();
+            } catch (error) {
+                console.error('Error fetching exchange rates:', error);
+            }
         }
-    }
 
-    // populate the currency dropdown dynamically
-    function populateCurrencyDropdown(currencies) {
-        currencySelector.innerHTML = ''; // clear existing options
-        currencies.forEach(currency => {
-            const option = document.createElement('option');
-            option.value = currency;
-            option.textContent = currency;
-            currencySelector.appendChild(option);
+        // Populate the currency dropdown dynamically
+        function populateCurrencyDropdown(currencies) {
+            currencySelector.innerHTML = ''; // Clear existing options
+            currencies.forEach(currency => {
+                const option = document.createElement('option');
+                option.value = currency;
+                option.textContent = currency;
+                currencySelector.appendChild(option);
+            });
+        }
+
+        // Update cost function
+        function updateCost() {
+            const quantity = parseInt(shardQuantityInput.value) || 0;
+            const selectedCurrency = currencySelector.value;
+            const rate = exchangeRates[selectedCurrency] || 1; // Default to 1 if currency not found
+            const costInCurrency = quantity * SHARD_COST_BASE_USD * rate;
+            costDisplay.textContent = costInCurrency.toFixed(2);
+            currencySymbol.textContent = selectedCurrency;
+        }
+
+        // Event listeners
+        decrementButton.addEventListener('click', () => {
+            let quantity = parseInt(shardQuantityInput.value) || 0;
+            if (quantity > 0) {
+                shardQuantityInput.value = --quantity;
+                updateCost();
+            }
         });
-    }
 
-    // update cost function
-    function updateCost() {
-        const quantity = parseInt(shardQuantityInput.value) || 0;
-        const selectedCurrency = currencySelector.value;
-        const rate = exchangeRates[selectedCurrency] || 1; // default to 1 if currency not found
-        const costInCurrency = quantity * SHARD_COST_BASE_USD * rate;
-        costDisplay.textContent = costInCurrency.toFixed(2);
-        currencySymbol.textContent = selectedCurrency;
-    }
-
-    // event listeners
-    decrementButton.addEventListener('click', () => {
-        let quantity = parseInt(shardQuantityInput.value) || 0;
-        if (quantity > 0) {
-            shardQuantityInput.value = --quantity;
+        incrementButton.addEventListener('click', () => {
+            let quantity = parseInt(shardQuantityInput.value) || 0;
+            shardQuantityInput.value = ++quantity;
             updateCost();
-        }
-    });
+        });
 
-    incrementButton.addEventListener('click', () => {
-        let quantity = parseInt(shardQuantityInput.value) || 0;
-        shardQuantityInput.value = ++quantity;
-        updateCost();
-    });
+        shardQuantityInput.addEventListener('input', () => {
+            let quantity = parseInt(shardQuantityInput.value) || 0;
+            if (quantity < 0) {
+                shardQuantityInput.value = 0;
+            }
+            updateCost();
+        });
 
-    shardQuantityInput.addEventListener('input', () => {
-        let quantity = parseInt(shardQuantityInput.value) || 0;
-        if (quantity < 0) {
-            shardQuantityInput.value = 0;
-        }
-        updateCost();
-    });
+        currencySelector.addEventListener('change', updateCost);
 
-    currencySelector.addEventListener('change', updateCost);
-
-    document.addEventListener("DOMContentLoaded", () => {
+        // Fetch user balance
         async function fetchUserBalance() {
             try {
                 const response = await fetch('/shop/balance');
@@ -233,13 +239,55 @@
             }
         }
 
-        // Optionally fetch balance for real-time updates
+        // Fetch balance for real-time updates
         fetchUserBalance();
+
+        const purchaseButton = document.getElementById("purchase");
+
+        purchaseButton.addEventListener("click", async () => {
+            const quantity = parseInt(shardQuantityInput.value) || 0;
+            const cost = parseFloat(costDisplay.textContent) || 0;
+            const selectedCurrency = currencySelector.value;
+
+            if (quantity <= 0) {
+                alert("Please enter a valid shard quantity.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/shop/purchase", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({
+                        quantity: quantity,
+                        cost: cost,
+                        currency: selectedCurrency,
+                    }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Purchase failed: ${errorData.error}`);
+                    return;
+                }
+
+                const data = await response.json();
+                alert("Purchase successful!");
+
+                // Update balance on the page
+                document.getElementById("shard-amount").textContent = data.shard_amount || 0;
+                document.getElementById("usd-amount").textContent = (data.money_usd || 0).toFixed(2);
+            } catch (error) {
+                console.error("Error during purchase:", error);
+                alert("An error occurred. Please try again.");
+            }
+        });
+
+        // Initialize
+        fetchExchangeRates(); // Fetch rates on load
+        updateCost();         // Update cost on load
     });
-
-
-
-    // initialize
-    fetchExchangeRates(); // fetch rates on load
-    updateCost(); // update cost on load
 </script>
