@@ -1,1 +1,183 @@
-<h1>Shop</h1>
+<div class="shop-container">
+  <h1>Shop</h1>
+  <div class="shop-sections">
+    <!-- Upgrades Section -->
+    <div class="upgrades-section">
+      <h2>Upgrades</h2>
+      <p>No upgrades available yet!</p>
+    </div>
+
+    <!-- Shards Section -->
+    <div class="shards-section">
+      <h2>Shards</h2>
+      <div class="shard-controls">
+        <button id="decrement" class="shard-button">-</button>
+        <input
+          type="number"
+          id="shard-quantity"
+          value="0"
+          min="0"
+          class="shard-input"
+          />
+        <button id="increment" class="shard-button">+</button>
+      </div>
+      <div class="currency-selector">
+        <label for="currency">Currency:</label>
+        <select id="currency"></select>
+      </div>
+      <div class="cost-display">
+        <label for="cost">Cost:</label>
+        <span id="cost">0.00</span> <span id="currency-symbol">USD</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+    .shop-container {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .shop-sections {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .upgrades-section,
+    .shards-section {
+        width: 45%;
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+
+    .shard-controls {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .shard-button {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        text-align: center;
+        cursor: pointer;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        margin: 0 5px;
+    }
+
+    .shard-button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    .shard-input {
+        width: 80px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .currency-selector,
+    .cost-display {
+        margin-bottom: 10px;
+    }
+
+    .currency-selector label,
+    .cost-display label {
+        margin-right: 10px;
+    }
+
+    .cost-display {
+        font-size: 18px;
+    }
+</style>
+
+<script>
+    const SHARD_COST_BASE_USD = 0.75; // base cost per shard in USD
+    const API_URL = 'https://v6.exchangerate-api.com/v6/464f4642b6d4d3ec3744b64d/latest/USD'; // updates daily for free plan
+
+    const decrementButton = document.getElementById('decrement');
+    const incrementButton = document.getElementById('increment');
+    const shardQuantityInput = document.getElementById('shard-quantity');
+    const costDisplay = document.getElementById('cost');
+    const currencySelector = document.getElementById('currency');
+    const currencySymbol = document.getElementById('currency-symbol');
+
+    let exchangeRates = { USD: 1 }; // default rates (USD base)
+
+    // fetch exchange rates
+    async function fetchExchangeRates() {
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error('Failed to fetch exchange rates');
+            const data = await response.json();
+            exchangeRates = data.conversion_rates; // Update exchange rates
+            populateCurrencyDropdown(Object.keys(exchangeRates)); // Populate dropdown
+            updateCost();
+        } catch (error) {
+            console.error('Error fetching exchange rates:', error);
+        }
+    }
+
+    // populate the currency dropdown dynamically
+    function populateCurrencyDropdown(currencies) {
+        currencySelector.innerHTML = ''; // clear existing options
+        currencies.forEach(currency => {
+            const option = document.createElement('option');
+            option.value = currency;
+            option.textContent = currency;
+            currencySelector.appendChild(option);
+        });
+    }
+
+    // update cost function
+    function updateCost() {
+        const quantity = parseInt(shardQuantityInput.value) || 0;
+        const selectedCurrency = currencySelector.value;
+        const rate = exchangeRates[selectedCurrency] || 1; // default to 1 if currency not found
+        const costInCurrency = quantity * SHARD_COST_BASE_USD * rate;
+        costDisplay.textContent = costInCurrency.toFixed(2);
+        currencySymbol.textContent = selectedCurrency;
+    }
+
+    // event listeners
+    decrementButton.addEventListener('click', () => {
+        let quantity = parseInt(shardQuantityInput.value) || 0;
+        if (quantity > 0) {
+            shardQuantityInput.value = --quantity;
+            updateCost();
+        }
+    });
+
+    incrementButton.addEventListener('click', () => {
+        let quantity = parseInt(shardQuantityInput.value) || 0;
+        shardQuantityInput.value = ++quantity;
+        updateCost();
+    });
+
+    shardQuantityInput.addEventListener('input', () => {
+        let quantity = parseInt(shardQuantityInput.value) || 0;
+        if (quantity < 0) {
+            shardQuantityInput.value = 0;
+        }
+        updateCost();
+    });
+
+    currencySelector.addEventListener('change', updateCost);
+
+    // initialize
+    fetchExchangeRates(); // fetch rates on load
+    updateCost(); // update cost on load
+</script>
