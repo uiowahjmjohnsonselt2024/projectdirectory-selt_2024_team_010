@@ -34,11 +34,11 @@
         <h3>Your Balance</h3>
         <div class="balance-item">
           <label for="shard-amount">Shards:</label>
-          <span id="shard-amount">0</span>
+          <span id="shard-amount"><%= @shard_amount %></span>
         </div>
         <div class="balance-item">
           <label for="usd-amount">USD:</label>
-          <span id="usd-amount">0.00</span>
+          <span id="usd-amount"><%= '%.2f' % @money_usd %></span>
         </div>
       </div>
     </div>
@@ -209,6 +209,35 @@
     });
 
     currencySelector.addEventListener('change', updateCost);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        async function fetchUserBalance() {
+            try {
+                const response = await fetch('/shop/balance');
+                if (!response.ok) throw new Error('Failed to fetch balance data');
+                const data = await response.json();
+
+                // Update the UI only if the fetched values differ from the preloaded ones
+                const shardElement = document.getElementById('shard-amount');
+                const usdElement = document.getElementById('usd-amount');
+
+                if (shardElement.textContent != data.shard_amount) {
+                    shardElement.textContent = data.shard_amount || 0;
+                }
+
+                if (usdElement.textContent != data.money_usd) {
+                    usdElement.textContent = (data.money_usd || 0).toFixed(2);
+                }
+            } catch (error) {
+                console.error('Error fetching user balance:', error);
+            }
+        }
+
+        // Optionally fetch balance for real-time updates
+        fetchUserBalance();
+    });
+
+
 
     // initialize
     fetchExchangeRates(); // fetch rates on load
