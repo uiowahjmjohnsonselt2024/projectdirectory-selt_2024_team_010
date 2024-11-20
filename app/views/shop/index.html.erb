@@ -10,46 +10,48 @@
     <!-- Shards Section -->
     <div class="shards-section">
       <h2>Shards</h2>
-      <div class="shard-controls">
-        <button id="decrement" class="btn">-</button>
-        <input
-          type="number"
-          id="shard-quantity"
-          value="0"
-          min="0"
-          class="shard-input"
-          />
-        <button id="increment" class="btn">+</button>
-      </div>
-      <div class="currency-selector">
-        <label for="currency">Currency:</label>
-        <select id="currency"></select>
-      </div>
-
-
-
-      <div class="cost-display">
-        <label for="cost">Cost:</label>
-        <span id="cost">0.00</span> <span id="currency-symbol">USD</span>
-      </div>
-
-      <div class="purchase-button">
-        <button id="purchase" class="btn">Buy</button>
-      </div>
-
-
-      <div class="user-balance">
-        <h3>Your Balance</h3>
-        <div class="balance-item">
-          <label for="shard-amount">Shards:</label>
-          <span id="shard-amount"><%= @shard_amount %></span>
+      <div class="purchase-div-container">
+        <!-- Purchase Div -->
+        <div class="purchase-div">
+          <div class="shard-controls">
+            <button id="decrement" class="btn">-</button>
+            <input
+                type="number"
+                id="shard-quantity"
+                value="0"
+                min="0"
+                class="shard-input"
+                />
+            <button id="increment" class="btn">+</button>
+          </div>
+          <div class="currency-selector">
+            <label for="currency">Currency:</label>
+            <select id="currency"></select>
+          </div>
+          <div class="cost-display">
+            <label for="cost">Cost:</label>
+            <span id="cost">0.00</span> <span id="currency-symbol">USD</span>
+          </div>
+          <div class="purchase-button">
+            <button id="purchase" class="btn">Buy</button>
+          </div>
         </div>
-        <div class="balance-item">
-          <label for="usd-amount">USD:</label>
-          <span id="usd-amount"><%= '%.2f' % @money_usd %></span>
+
+        <!-- User Balance Div -->
+        <div class="user-balance">
+          <h3>Your Balance</h3>
+          <div class="balance-item">
+            <label for="shard-amount">Shards:</label>
+            <span id="shard-amount"><%= @shard_amount %></span>
+          </div>
+          <div class="balance-item">
+            <label for="usd-amount">USD:</label>
+            <span id="usd-amount"><%= '%.2f' % @money_usd %></span>
+          </div>
         </div>
       </div>
 
+      <!-- Credit Card Div -->
       <div class="form-container">
         <h3>Credit Card Information</h3>
         <form id="credit-card-form">
@@ -76,12 +78,10 @@
           <button type="submit" class="btn">Submit</button>
         </form>
       </div>
-
-
-      
     </div>
   </div>
 </div>
+
 
 <style>
     .shop-container {
@@ -107,6 +107,27 @@
         padding: 20px;
         border-radius: 8px;
         background-color: #f9f9f9;
+    }
+
+    /* Purchase Div and User Balance Side by Side */
+    .purchase-div-container {
+        display: flex;
+        justify-content: space-between; /* Creates space between items */
+        align-items: stretch; /* Ensures both child divs have the same height */
+        gap: 20px; /* Adds spacing between the divs */
+        width: 100%; /* Ensures the container spans full width */
+    }
+
+    .purchase-div,
+    .user-balance {
+        flex: 1; /* Distribute equal width to both divs */
+        max-width: 50%; /* Ensure they don't exceed 50% of the container's width */
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+        display: flex; /* Added to make inner content align properly */
+        flex-direction: column; /* Ensures inner content stacks vertically */
     }
 
     .shard-controls {
@@ -153,14 +174,6 @@
         font-size: 18px;
     }
 
-    .user-balance {
-        margin-top: 20px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #fff;
-    }
-
     .user-balance h3 {
         margin-bottom: 10px;
     }
@@ -171,8 +184,6 @@
         font-size: 16px;
         margin-bottom: 5px;
     }
-
-
 </style>
 
 <script>
