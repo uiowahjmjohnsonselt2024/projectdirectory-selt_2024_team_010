@@ -1,0 +1,222 @@
+{
+  "RSpec": {
+    "coverage": {
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/models/session.rb": {
+        "lines": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          null,
+          null
+        ]
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/models/user.rb": {
+        "lines": [
+          1,
+          1,
+          1,
+          null,
+          1,
+          1,
+          null,
+          1,
+          null
+        ]
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/application_controller.rb": {
+        "lines": [
+          0,
+          null,
+          null,
+          0,
+          null,
+          0,
+          null,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          null,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "branches": {
+        }
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/dashboard_controller.rb": {
+        "lines": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "branches": {
+        }
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/game_controller.rb": {
+        "lines": [
+          null,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "branches": {
+        }
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/registrations_controller.rb": {
+        "lines": [
+          0,
+          null,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0
+        ],
+        "branches": {
+        }
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/servers_controller.rb": {
+        "lines": [
+          null,
+          0,
+          0,
+          0,
+          0
+        ],
+        "branches": {
+        }
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/sessions_controller.rb": {
+        "lines": [
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          null,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "branches": {
+        }
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/shop_controller.rb": {
+        "lines": [
+          null,
+          0,
+          0,
+          0,
+          0
+        ],
+        "branches": {
+        }
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/users_controller.rb": {
+        "lines": [
+          0,
+          0,
+          null,
+          0,
+          null,
+          0,
+          null,
+          0,
+          null,
+          0,
+          null,
+          0,
+          0,
+          null,
+          0,
+          0,
+          null,
+          0,
+          0,
+          null,
+          0,
+          0,
+          null,
+          0,
+          0
+        ],
+        "branches": {
+        }
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/welcome_controller.rb": {
+        "lines": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "branches": {
+        }
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/helpers/application_helper.rb": {
+        "lines": [
+          0,
+          0
+        ],
+        "branches": {
+        }
+      }
+    },
+    "timestamp": 1732063191
+  }
+}
