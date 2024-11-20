@@ -18,14 +18,6 @@ ActiveRecord::Schema.define(version: 20241120150522) do
     t.integer "user_id"
   end
 
-  create_table "games_users", id: false, force: :cascade do |t|
-    t.integer "game_id", null: false
-    t.integer "user_id", null: false
-  end
-
-  add_index "games_users", ["game_id", "user_id"], name: "index_games_users_on_game_id_and_user_id"
-  add_index "games_users", ["user_id", "game_id"], name: "index_games_users_on_user_id_and_game_id"
-
   create_table "sessions", force: :cascade do |t|
     t.string   "session_token"
     t.integer  "user_id"
