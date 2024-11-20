@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
   has_secure_password
   has_one :session, dependent: :destroy
-  has_many :game, dependent: :destroy
+  has_many :games, dependent: :destroy
 
   validates :username, presence: true, uniqueness: true, length: { maximum: 25 }
   validates :email, presence: true, uniqueness: true,
