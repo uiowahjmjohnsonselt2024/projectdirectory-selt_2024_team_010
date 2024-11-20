@@ -11,9 +11,12 @@ AllCops:
   SuggestExtensions: false
   TargetRubyVersion: 2.6.10
 
-Layout/LineLength:
-  Max: 100
+#Layout/LineLength:
+#  Max: 100
 
 Layout/IndentationWidth:
   Width: 4
 
+# temporary change... hopefully. should document our classes.
+Style/Documentation:
+  Severity: convention
