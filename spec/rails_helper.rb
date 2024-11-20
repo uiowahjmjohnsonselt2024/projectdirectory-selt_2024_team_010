@@ -16,6 +16,7 @@ SimpleCov.start 'rails' do
   add_filter '/db/'         # Exclude database-related files
   add_filter '/log/'        # Exclude logs
   add_filter '/tmp/'        # Exclude temporary files
+  add_filter '/app/helpers' # Exclude helper file
 end
 
 SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
