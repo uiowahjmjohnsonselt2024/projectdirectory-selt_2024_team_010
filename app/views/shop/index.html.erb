@@ -293,6 +293,22 @@
             const cost = parseFloat(costDisplay.textContent) || 0;
             const selectedCurrency = currencySelector.value;
 
+            let usdAmount = 0;
+
+            if (selectedCurrency !== "USD") {
+                // Check if the exchange rate for the selected currency exists
+                if (exchangeRates[selectedCurrency]) {
+                    // Convert the cost to USD
+                    usdAmount = cost / exchangeRates[selectedCurrency];
+                } else {
+                    console.error(`Exchange rate for ${selectedCurrency} not found.`);
+                }
+            } else {
+                // If the selected currency is already USD, use the cost directly
+                usdAmount = cost;
+            }
+            
+
             if (quantity <= 0) {
                 alert("Please enter a valid shard quantity.");
                 return;
@@ -307,7 +323,7 @@
                     },
                     body: JSON.stringify({
                         quantity: quantity,
-                        cost: cost,
+                        cost: usdAmount,
                         currency: selectedCurrency,
                     }),
                 });
