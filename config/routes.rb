@@ -17,7 +17,4 @@ Rails.application.routes.draw do
   get 'shop', to: 'shop#index', as: 'shop'
 
   get 'game', to: 'game#index', as: 'game'
-
-  resources :users
-  resources :sessions
 end
