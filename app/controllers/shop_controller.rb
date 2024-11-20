@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 class ShopController< ApplicationController
+
+  before_action :require_login
   def index
     @shard_amount = current_user.shard_amount || 0
     @money_usd = current_user.money_usd || 0
@@ -44,12 +46,27 @@ class ShopController< ApplicationController
 
   end
 
-  private
+  def payment
+    currency = params[:currency]
+    amount = params[:amount].to_f
 
-  def get_conversion_rate(currency)
-    # need to implement properly
-    rates = { "USD" => 1.0}
-    rates[currency] || 1.0 # Default to 1.0 if currency is unknown
+    if amount <= 0
+      render json: { error: "Invalid amount." }, status: 400
+      return
+    end
+
+    # Get the current user
+    user = current_user
+    
+    # Add the amount to the user's USD balance
+    user.money_usd += amount
+
+    if user.save
+      render json: { money_usd: user.money_usd }, status: 200
+    else
+      Rails.logger.error("Failed to update user data: #{user.errors.full_messages.join(', ')}")
+      render json: { error: "Failed to update user data: #{user.errors.full_messages.join(', ')}" }, status: 500
+    end
   end
 
 end

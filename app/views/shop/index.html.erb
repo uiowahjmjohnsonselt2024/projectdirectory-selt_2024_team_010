@@ -24,14 +24,12 @@
                 />
             <button id="increment" class="btn">+</button>
           </div>
-          <div class="currency-selector">
-            <label for="currency">Currency:</label>
-            <select id="currency"></select>
+
+          <!-- Cost Display -->
+          <div class="shard-cost">
+            <p>Total Cost: <span id="total-cost">0.00</span> USD</p>
           </div>
-          <div class="cost-display">
-            <label for="cost">Cost:</label>
-            <span id="cost">0.00</span> <span id="currency-symbol">USD</span>
-          </div>
+
           <div class="purchase-button">
             <button id="purchase" class="btn">Buy</button>
           </div>
@@ -75,7 +73,24 @@
             <label for="expiration-date">Expiration Date:</label>
             <input type="text" id="expiration-date" name="expiration-date" placeholder="MM/YY" required />
           </div>
-          <button type="submit" class="btn">Submit</button>
+          <div class="currency-selector">
+            <label for="currency">Currency:</label>
+            <select id="currency"></select>
+          </div>
+          <div class="form-group cost-display">
+            <label for="cost">Cost:</label>
+            <input
+                type="number"
+                id="cost"
+                name="cost"
+                min="0"
+                step="1"
+                placeholder="0"
+                required
+                />
+            <span id="currency-symbol">USD</span>
+          </div>
+          <button type="submit" class="btn" id="submitButton">Submit</button>
         </form>
       </div>
     </div>
@@ -194,9 +209,12 @@
         const decrementButton = document.getElementById('decrement');
         const incrementButton = document.getElementById('increment');
         const shardQuantityInput = document.getElementById('shard-quantity');
-        const costDisplay = document.getElementById('cost');
+        const costDisplay = document.getElementById('total-cost');
         const currencySelector = document.getElementById('currency');
         const currencySymbol = document.getElementById('currency-symbol');
+        const submitButton = document.getElementById('submitButton');
+        const costInput = document.getElementById('cost');
+
 
         let exchangeRates = { USD: 1 }; // default rates (USD base)
 
@@ -293,21 +311,7 @@
             const cost = parseFloat(costDisplay.textContent) || 0;
             const selectedCurrency = currencySelector.value;
 
-            let usdAmount = 0;
 
-            if (selectedCurrency !== "USD") {
-                // Check if the exchange rate for the selected currency exists
-                if (exchangeRates[selectedCurrency]) {
-                    // Convert the cost to USD
-                    usdAmount = cost / exchangeRates[selectedCurrency];
-                } else {
-                    console.error(`Exchange rate for ${selectedCurrency} not found.`);
-                }
-            } else {
-                // If the selected currency is already USD, use the cost directly
-                usdAmount = cost;
-            }
-            
 
             if (quantity <= 0) {
                 alert("Please enter a valid shard quantity.");
@@ -323,7 +327,7 @@
                     },
                     body: JSON.stringify({
                         quantity: quantity,
-                        cost: usdAmount,
+                        cost: cost,
                         currency: selectedCurrency,
                     }),
                 });
@@ -342,6 +346,62 @@
                 document.getElementById("usd-amount").textContent = (data.money_usd || 0).toFixed(2);
             } catch (error) {
                 console.error("Error during purchase:", error);
+                alert("An error occurred. Please try again.");
+            }
+        });
+
+        submitButton.addEventListener("click", async (event) => {
+            event.preventDefault(); // Prevent form submission
+
+            const currency = currencySelector.value; // Get the selected currency
+            const amount = parseFloat(costInput.value) || 0; // Get the entered amount
+
+            if (amount <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+
+            let usdAmount = 0;
+
+            if (currency !== "USD") {
+                // Check if the exchange rate for the selected currency exists
+                if (exchangeRates[currency]) {
+                    // Convert the cost to USD
+                    usdAmount = amount / exchangeRates[currency];
+                } else {
+                    console.error(`Exchange rate for ${currency} not found.`);
+                }
+            } else {
+                // If the selected currency is already USD, use the cost directly
+                usdAmount = amount;
+            }
+
+            try {
+                const response = await fetch("/shop/payment", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({
+                        currency: currency,
+                        amount: usdAmount,
+                    }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Payment failed: ${errorData.error}`);
+                    return;
+                }
+
+                const data = await response.json();
+                alert("Payment successful!");
+
+                // Update balance on the page
+                document.getElementById("usd-amount").textContent = (data.money_usd || 0).toFixed(2);
+            } catch (error) {
+                console.error("Error during payment:", error);
                 alert("An error occurred. Please try again.");
             }
         });
