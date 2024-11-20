@@ -11,7 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20241113153812) do
+ActiveRecord::Schema.define(version: 20241120150522) do
+
+  create_table "games", force: :cascade do |t|
+    t.string  "name"
+    t.integer "user_id"
+  end
 
   create_table "sessions", force: :cascade do |t|
     t.string   "session_token"
