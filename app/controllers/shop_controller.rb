@@ -55,9 +55,19 @@ class ShopController< ApplicationController
       return
     end
 
+    def payment_history
+      @payments = current_user.payments.order(created_at: :desc)
+
+      respond_to do |format|
+        format.json {render json: @payments}
+      end
+    end
+
     # Get the current user
     user = current_user
-    
+
+    Payment.create(money_usd: amount, currency: currency, user_id: user.id)
+
     # Add the amount to the user's USD balance
     user.money_usd += amount
 

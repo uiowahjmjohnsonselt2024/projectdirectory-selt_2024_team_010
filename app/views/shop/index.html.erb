@@ -3,8 +3,10 @@
   <div class="shop-sections">
     <!-- Upgrades Section -->
     <div class="upgrades-section">
-      <h2>Upgrades</h2>
-      <p>No upgrades available yet!</p>
+      <h2>Payment History</h2>
+      <div id="payment-history">
+        <p>Loading your payment history...</p>
+      </div>
     </div>
 
     <!-- Shards Section -->
@@ -405,6 +407,55 @@
                 alert("An error occurred. Please try again.");
             }
         });
+
+        // payment history loading
+        fetch("<%= shop_payment_history_path%>")
+          .then((response) => {
+              if (!response.ok) throw new Error("Failed to load payment history");
+              return response.json();
+          })
+          .then((payments) => {
+              const paymentHistoryContainer = document.getElementById("payment-history");
+              if (!paymentHistoryContainer) return; // Exit if the element is not on the page
+
+              if (payments.length === 0) {
+                  paymentHistoryContainer.innerHTML = "<p>You have no payment history.</p>";
+                  return;
+              }
+
+              // Build the table
+              let tableHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Amount (USD)</th>
+              <th>Currency</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+              payments.forEach((payment) => {
+                  tableHTML += `
+          <tr>
+            <td>$${payment.money_usd.toFixed(2)}</td>
+            <td>${payment.currency}</td>
+            <td>${new Date(payment.created_at).toLocaleString()}</td>
+          </tr>
+        `;
+              });
+
+              tableHTML += `
+          </tbody>
+        </table>
+      `;
+
+              paymentHistoryContainer.innerHTML = tableHTML;
+          })
+          .catch((error) => {
+              console.error("Error loading payment history:", error);
+          });
 
         // Initialize
         fetchExchangeRates(); // Fetch rates on load
