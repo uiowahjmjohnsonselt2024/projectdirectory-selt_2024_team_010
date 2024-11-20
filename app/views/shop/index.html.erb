@@ -25,6 +25,9 @@
         <label for="currency">Currency:</label>
         <select id="currency"></select>
       </div>
+
+
+
       <div class="cost-display">
         <label for="cost">Cost:</label>
         <span id="cost">0.00</span> <span id="currency-symbol">USD</span>
@@ -46,6 +49,36 @@
           <span id="usd-amount"><%= '%.2f' % @money_usd %></span>
         </div>
       </div>
+
+      <div class="form-container">
+        <h3>Credit Card Information</h3>
+        <form id="credit-card-form">
+          <div class="form-group">
+            <label for="first-name">First Name:</label>
+            <input type="text" id="first-name" name="first-name" required />
+          </div>
+          <div class="form-group">
+            <label for="last-name">Last Name:</label>
+            <input type="text" id="last-name" name="last-name" required />
+          </div>
+          <div class="form-group">
+            <label for="card-number">Credit Card Number:</label>
+            <input type="text" id="card-number" name="card-number" maxlength="16" required />
+          </div>
+          <div class="form-group">
+            <label for="cvv">CVV:</label>
+            <input type="text" id="cvv" name="cvv" maxlength="3" required />
+          </div>
+          <div class="form-group">
+            <label for="expiration-date">Expiration Date:</label>
+            <input type="text" id="expiration-date" name="expiration-date" placeholder="MM/YY" required />
+          </div>
+          <button type="submit" class="btn">Submit</button>
+        </form>
+      </div>
+
+
+      
     </div>
   </div>
 </div>
