@@ -55,14 +55,6 @@ class ShopController< ApplicationController
       return
     end
 
-    def payment_history
-      @payments = current_user.payments.order(created_at: :desc)
-
-      respond_to do |format|
-        format.json {render json: @payments}
-      end
-    end
-
     # Get the current user
     user = current_user
 
@@ -76,6 +68,14 @@ class ShopController< ApplicationController
     else
       Rails.logger.error("Failed to update user data: #{user.errors.full_messages.join(', ')}")
       render json: { error: "Failed to update user data: #{user.errors.full_messages.join(', ')}" }, status: 500
+    end
+  end
+
+  def payment_history
+    @payments = current_user.payments.order(created_at: :desc)
+
+    respond_to do |format|
+      format.json {render json: @payments}
     end
   end
 
