@@ -16,5 +16,5 @@ Rails.application.routes.draw do
 
   get 'shop', to: 'shop#index', as: 'shop'
 
-  get 'game', to: 'game#index', as: 'game'
+  get 'games', to: 'games#index', as: 'games'
 end

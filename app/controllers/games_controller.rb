@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-class GameController < ApplicationController
+class GamesController < ApplicationController
   before_action :require_login
   def index
   end
