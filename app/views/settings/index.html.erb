@@ -1,0 +1,47 @@
+<div class="form-container">
+  <h1>User Profile</h1>
+
+  <!-- Display User Information -->
+  <div class="user-info">
+    <p><strong>Username:</strong> <%= @current_user.username %></p>
+    <p><strong>Email:</strong> <%= @current_user.email %></p>
+    <p><strong>Money in Account:</strong> $<%= '%.2f' % @current_user.money_usd %></p>
+    <p><strong>Shards:</strong> <%= '%.2f' % @current_user.shard_amount %></p>
+  </div>
+
+  <hr />
+
+  <!-- Reset Username Form -->
+  <div class="reset-username">
+    <h2>Reset Username</h2>
+    <form id="reset-username-form" action="/users/reset_username" method="post">
+      <div class="form-group">
+        <label for="new-username">New Username:</label>
+        <input type="text" id="new-username" name="new_username" required />
+      </div>
+      <button type="submit" class="btn">Update Username</button>
+    </form>
+  </div>
+
+  <hr />
+
+  <!-- Reset Password Form -->
+  <div class="reset-password">
+    <h2>Reset Password</h2>
+    <form id="reset-password-form" action="/users/reset_password" method="post">
+      <div class="form-group">
+        <label for="current-password">Current Password:</label>
+        <input type="password" id="current-password" name="current_password" required />
+      </div>
+      <div class="form-group">
+        <label for="new-password">New Password:</label>
+        <input type="password" id="new-password" name="new_password" required />
+      </div>
+      <div class="form-group">
+        <label for="confirm-password">Confirm New Password:</label>
+        <input type="password" id="confirm-password" name="confirm_password" required />
+      </div>
+      <button type="submit" class="btn">Update Password</button>
+    </form>
+  </div>
+</div>
