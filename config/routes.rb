@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   delete 'logout', to: 'sessions#destroy', as: 'logout'
 
   get 'settings', to: 'settings#index', as: 'settings'
+  post 'users/reset_username', to: 'settings#update_username', as: 'update_username'
+  post 'users/reset_password', to: 'settings#update_password', as: 'update_password'
 
   get 'register', to: 'registrations#new', as: 'register'
   post 'register', to: 'registrations#create'

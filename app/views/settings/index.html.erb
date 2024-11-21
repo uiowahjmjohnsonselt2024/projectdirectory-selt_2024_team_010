@@ -14,13 +14,15 @@
   <!-- Reset Username Form -->
   <div class="reset-username">
     <h2>Reset Username</h2>
-    <form id="reset-username-form" action="/users/reset_username" method="post">
+    <%= form_tag update_username_path, method: :post do %>
       <div class="form-group">
-        <label for="new-username">New Username:</label>
-        <input type="text" id="new-username" name="new_username" required />
+        <%= label_tag 'new_username', 'New Username:' %>
+        <%= text_field_tag 'new_username', nil, required: true %>
       </div>
-      <button type="submit" class="btn">Update Username</button>
-    </form>
+      <div>
+        <%= submit_tag 'Update Username', class: 'btn' %>
+      </div>
+    <% end %>
   </div>
 
   <hr />
@@ -28,20 +30,22 @@
   <!-- Reset Password Form -->
   <div class="reset-password">
     <h2>Reset Password</h2>
-    <form id="reset-password-form" action="/users/reset_password" method="post">
+    <%= form_tag update_password_path, method: :post do %>
       <div class="form-group">
-        <label for="current-password">Current Password:</label>
-        <input type="password" id="current-password" name="current_password" required />
+        <%= label_tag 'current_password', 'Current Password:' %>
+        <%= password_field_tag 'current_password', nil, required: true %>
       </div>
       <div class="form-group">
-        <label for="new-password">New Password:</label>
-        <input type="password" id="new-password" name="new_password" required />
+        <%= label_tag 'new_password', 'New Password:' %>
+        <%= password_field_tag 'new_password', nil, required: true %>
       </div>
       <div class="form-group">
-        <label for="confirm-password">Confirm New Password:</label>
-        <input type="password" id="confirm-password" name="confirm_password" required />
+        <%= label_tag 'confirm_password', 'Confirm New Password:' %>
+        <%= password_field_tag 'confirm_password', nil, required: true %>
       </div>
-      <button type="submit" class="btn">Update Password</button>
-    </form>
+      <div>
+        <%= submit_tag 'Update Password', class: 'btn' %>
+      </div>
+    <% end %>
   </div>
 </div>
