@@ -11,7 +11,7 @@ class RegistrationsController < ApplicationController
       create_session_token @user
       redirect_to dashboard_path
     else
-      flash.now[:alert] = "Error creating account"
+      flash.now[:alert] = "Error creating account: " + @user.errors.full_messages.join(", ")
       render :new
     end
   end
