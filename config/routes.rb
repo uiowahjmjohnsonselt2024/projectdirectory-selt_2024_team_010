@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   get 'shop/balance', to: 'shop#balance', as: 'shop_balance'
   post 'shop/purchase', to: 'shop#purchase', as: 'shop_purchase'
   post 'shop/payment', to: 'shop#payment', as: 'shop_payment'
+  get 'shop/payment_history', to: 'shop#payment_history', as: 'shop_payment_history'
 
   get 'game', to: 'game#index', as: 'game'
 end

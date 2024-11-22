@@ -16,17 +16,10 @@ class ShopController< ApplicationController
     user = current_user
     quantity = params[:quantity].to_i
     cost = params[:cost].to_f
-    currency = params[:currency]
 
     if quantity <= 0 || cost <= 0
       render json: { error: "Invalid quantity or cost." }, status: 400
       return
-    end
-
-    # handle currency conversion if necessary
-    if currency != "USD"
-      conversion_rate = get_conversion_rate(currency)
-      cost /= conversion_rate
     end
 
     if user.money_usd < cost
@@ -43,8 +36,8 @@ class ShopController< ApplicationController
       Rails.logger.error("Failed to update user data: #{user.errors.full_messages.join(', ')}")
       render json: { error: "Failed to update user data: #{user.errors.full_messages.join(', ')}" }, status: 500
     end
-
   end
+
 
   def payment
     currency = params[:currency]
@@ -57,7 +50,9 @@ class ShopController< ApplicationController
 
     # Get the current user
     user = current_user
-    
+
+    Payment.create(money_usd: amount, currency: currency, user_id: user.id)
+
     # Add the amount to the user's USD balance
     user.money_usd += amount
 
@@ -66,6 +61,14 @@ class ShopController< ApplicationController
     else
       Rails.logger.error("Failed to update user data: #{user.errors.full_messages.join(', ')}")
       render json: { error: "Failed to update user data: #{user.errors.full_messages.join(', ')}" }, status: 500
+    end
+  end
+
+  def payment_history
+    @payments = current_user.payments.order(created_at: :desc)
+
+    respond_to do |format|
+      format.json {render json: @payments}
     end
   end
 
