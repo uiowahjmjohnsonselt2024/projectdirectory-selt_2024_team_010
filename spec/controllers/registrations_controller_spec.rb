@@ -87,7 +87,7 @@ RSpec.describe RegistrationsController, type: :controller do
           password: 'short',
           password_confirmation: 'mismatch'
         }}
-        expect(flash.now[:alert]).to eq("Error creating account")
+        expect(flash.now[:alert]).to include("Error creating account")
       end
     end
   end

@@ -6,6 +6,7 @@ RSpec.describe ShopController, type: :controller do
 
   before do
     user.create_session!(session_token: session_token)
+    session[:session_token] = session_token # Simulate a logged-in user
   end
 
   describe 'GET #index' do
