@@ -1,1 +1,413 @@
-<h1>Shop</h1>
+<div class="shop-container">
+  <h1>Shop</h1>
+  <div class="shop-sections">
+    <!-- Upgrades Section -->
+    <div class="upgrades-section">
+      <h2>Upgrades</h2>
+      <p>No upgrades available yet!</p>
+    </div>
+
+    <!-- Shards Section -->
+    <div class="shards-section">
+      <h2>Shards</h2>
+      <div class="purchase-div-container">
+        <!-- Purchase Div -->
+        <div class="purchase-div">
+          <div class="shard-controls">
+            <button id="decrement" class="btn">-</button>
+            <input
+                type="number"
+                id="shard-quantity"
+                value="0"
+                min="0"
+                class="shard-input"
+                />
+            <button id="increment" class="btn">+</button>
+          </div>
+
+          <!-- Cost Display -->
+          <div class="shard-cost">
+            <p>Total Cost: <span id="total-cost">0.00</span> USD</p>
+          </div>
+
+          <div class="purchase-button">
+            <button id="purchase" class="btn">Buy</button>
+          </div>
+        </div>
+
+        <!-- User Balance Div -->
+        <div class="user-balance">
+          <h3>Your Balance</h3>
+          <div class="balance-item">
+            <label for="shard-amount">Shards:</label>
+            <span id="shard-amount"><%= @shard_amount %></span>
+          </div>
+          <div class="balance-item">
+            <label for="usd-amount">USD:</label>
+            <span id="usd-amount"><%= '%.2f' % @money_usd %></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Credit Card Div -->
+      <div class="form-container">
+        <h3>Credit Card Information</h3>
+        <form id="credit-card-form">
+          <div class="form-group">
+            <label for="first-name">First Name:</label>
+            <input type="text" id="first-name" name="first-name" required />
+          </div>
+          <div class="form-group">
+            <label for="last-name">Last Name:</label>
+            <input type="text" id="last-name" name="last-name" required />
+          </div>
+          <div class="form-group">
+            <label for="card-number">Credit Card Number:</label>
+            <input type="text" id="card-number" name="card-number" maxlength="16" required />
+          </div>
+          <div class="form-group">
+            <label for="cvv">CVV:</label>
+            <input type="text" id="cvv" name="cvv" maxlength="3" required />
+          </div>
+          <div class="form-group">
+            <label for="expiration-date">Expiration Date:</label>
+            <input type="text" id="expiration-date" name="expiration-date" placeholder="MM/YY" required />
+          </div>
+          <div class="currency-selector">
+            <label for="currency">Currency:</label>
+            <select id="currency"></select>
+          </div>
+          <div class="form-group cost-display">
+            <label for="cost">Cost:</label>
+            <input
+                type="number"
+                id="cost"
+                name="cost"
+                min="0"
+                step="1"
+                placeholder="0"
+                required
+                />
+            <span id="currency-symbol">USD</span>
+          </div>
+          <button type="submit" class="btn" id="submitButton">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<style>
+    .shop-container {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .shop-sections {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .upgrades-section,
+    .shards-section {
+        width: 45%;
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+
+    /* Purchase Div and User Balance Side by Side */
+    .purchase-div-container {
+        display: flex;
+        justify-content: space-between; /* Creates space between items */
+        align-items: stretch; /* Ensures both child divs have the same height */
+        gap: 20px; /* Adds spacing between the divs */
+        width: 100%; /* Ensures the container spans full width */
+    }
+
+    .purchase-div,
+    .user-balance {
+        flex: 1; /* Distribute equal width to both divs */
+        max-width: 50%; /* Ensure they don't exceed 50% of the container's width */
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+        display: flex; /* Added to make inner content align properly */
+        flex-direction: column; /* Ensures inner content stacks vertically */
+    }
+
+    .shard-controls {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .shard-button {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        text-align: center;
+        cursor: pointer;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        margin: 0 5px;
+    }
+
+    .shard-button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    .shard-input {
+        width: 80px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .currency-selector,
+    .cost-display {
+        margin-bottom: 10px;
+    }
+
+    .currency-selector label,
+    .cost-display label {
+        margin-right: 10px;
+    }
+
+    .cost-display {
+        font-size: 18px;
+    }
+
+    .user-balance h3 {
+        margin-bottom: 10px;
+    }
+
+    .balance-item {
+        display: flex;
+        justify-content: space-between;
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+</style>
+
+<script>
+    document.addEventListener("turbolinks:load", () => {
+        const SHARD_COST_BASE_USD = 0.75; // base cost per shard in USD
+        const API_URL = 'https://v6.exchangerate-api.com/v6/464f4642b6d4d3ec3744b64d/latest/USD'; // updates daily for free plan
+
+        const decrementButton = document.getElementById('decrement');
+        const incrementButton = document.getElementById('increment');
+        const shardQuantityInput = document.getElementById('shard-quantity');
+        const costDisplay = document.getElementById('total-cost');
+        const currencySelector = document.getElementById('currency');
+        const currencySymbol = document.getElementById('currency-symbol');
+        const submitButton = document.getElementById('submitButton');
+        const costInput = document.getElementById('cost');
+
+
+        let exchangeRates = { USD: 1 }; // default rates (USD base)
+
+        // Fetch exchange rates
+        async function fetchExchangeRates() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Failed to fetch exchange rates');
+                const data = await response.json();
+                exchangeRates = data.conversion_rates; // Update exchange rates
+                populateCurrencyDropdown(Object.keys(exchangeRates)); // Populate dropdown
+                updateCost();
+            } catch (error) {
+                console.error('Error fetching exchange rates:', error);
+            }
+        }
+
+        // Populate the currency dropdown dynamically
+        function populateCurrencyDropdown(currencies) {
+            currencySelector.innerHTML = ''; // Clear existing options
+            currencies.forEach(currency => {
+                const option = document.createElement('option');
+                option.value = currency;
+                option.textContent = currency;
+                currencySelector.appendChild(option);
+            });
+        }
+
+        // Update cost function
+        function updateCost() {
+            const quantity = parseInt(shardQuantityInput.value) || 0;
+            const selectedCurrency = currencySelector.value;
+            const rate = exchangeRates[selectedCurrency] || 1; // Default to 1 if currency not found
+            const costInCurrency = quantity * SHARD_COST_BASE_USD * rate;
+            costDisplay.textContent = costInCurrency.toFixed(2);
+            currencySymbol.textContent = selectedCurrency;
+        }
+
+        // Event listeners
+        decrementButton.addEventListener('click', () => {
+            let quantity = parseInt(shardQuantityInput.value) || 0;
+            if (quantity > 0) {
+                shardQuantityInput.value = --quantity;
+                updateCost();
+            }
+        });
+
+        incrementButton.addEventListener('click', () => {
+            let quantity = parseInt(shardQuantityInput.value) || 0;
+            shardQuantityInput.value = ++quantity;
+            updateCost();
+        });
+
+        shardQuantityInput.addEventListener('input', () => {
+            let quantity = parseInt(shardQuantityInput.value) || 0;
+            if (quantity < 0) {
+                shardQuantityInput.value = 0;
+            }
+            updateCost();
+        });
+
+        currencySelector.addEventListener('change', updateCost);
+
+        // Fetch user balance
+        async function fetchUserBalance() {
+            try {
+                const response = await fetch('/shop/balance');
+                if (!response.ok) throw new Error('Failed to fetch balance data');
+                const data = await response.json();
+
+                // Update the UI only if the fetched values differ from the preloaded ones
+                const shardElement = document.getElementById('shard-amount');
+                const usdElement = document.getElementById('usd-amount');
+
+                if (shardElement.textContent != data.shard_amount) {
+                    shardElement.textContent = data.shard_amount || 0;
+                }
+
+                if (usdElement.textContent != data.money_usd) {
+                    usdElement.textContent = (data.money_usd || 0).toFixed(2);
+                }
+            } catch (error) {
+                console.error('Error fetching user balance:', error);
+            }
+        }
+
+        // Fetch balance for real-time updates
+        fetchUserBalance();
+
+        const purchaseButton = document.getElementById("purchase");
+
+        purchaseButton.addEventListener("click", async () => {
+            const quantity = parseInt(shardQuantityInput.value) || 0;
+            const cost = parseFloat(costDisplay.textContent) || 0;
+            const selectedCurrency = currencySelector.value;
+
+
+
+            if (quantity <= 0) {
+                alert("Please enter a valid shard quantity.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/shop/purchase", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({
+                        quantity: quantity,
+                        cost: cost,
+                        currency: selectedCurrency,
+                    }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Purchase failed: ${errorData.error}`);
+                    return;
+                }
+
+                const data = await response.json();
+                alert("Purchase successful!");
+
+                // Update balance on the page
+                document.getElementById("shard-amount").textContent = data.shard_amount || 0;
+                document.getElementById("usd-amount").textContent = (data.money_usd || 0).toFixed(2);
+            } catch (error) {
+                console.error("Error during purchase:", error);
+                alert("An error occurred. Please try again.");
+            }
+        });
+
+        submitButton.addEventListener("click", async (event) => {
+            event.preventDefault(); // Prevent form submission
+
+            const currency = currencySelector.value; // Get the selected currency
+            const amount = parseFloat(costInput.value) || 0; // Get the entered amount
+
+            if (amount <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+
+            let usdAmount = 0;
+
+            if (currency !== "USD") {
+                // Check if the exchange rate for the selected currency exists
+                if (exchangeRates[currency]) {
+                    // Convert the cost to USD
+                    usdAmount = amount / exchangeRates[currency];
+                } else {
+                    console.error(`Exchange rate for ${currency} not found.`);
+                }
+            } else {
+                // If the selected currency is already USD, use the cost directly
+                usdAmount = amount;
+            }
+
+            try {
+                const response = await fetch("/shop/payment", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({
+                        currency: currency,
+                        amount: usdAmount,
+                    }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Payment failed: ${errorData.error}`);
+                    return;
+                }
+
+                const data = await response.json();
+                alert("Payment successful!");
+
+                // Update balance on the page
+                document.getElementById("usd-amount").textContent = (data.money_usd || 0).toFixed(2);
+            } catch (error) {
+                console.error("Error during payment:", error);
+                alert("An error occurred. Please try again.");
+            }
+        });
+
+        // Initialize
+        fetchExchangeRates(); // Fetch rates on load
+        updateCost();         // Update cost on load
+    });
+</script>
