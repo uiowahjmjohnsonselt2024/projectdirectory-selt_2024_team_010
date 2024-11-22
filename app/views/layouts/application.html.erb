@@ -9,13 +9,20 @@
 <body>
 
 <header>
+  <div class="header-logo">
+    <img src="<%= asset_path('logo.png') %>" alt="Shards of the Grid Logo">
+  </div>
   <h1>Shards of the Grid</h1>
-  <% flash.each do |key, message| %>
-    <div class="flash <%= key %>"><%= message %></div>
-  <% end %>
+  <div class="flash-container">
+    <% flash.each do |key, message| %>
+      <div class="flash <%= key %>"><%= message %></div>
+    <% end %>
+  </div>
 </header>
 
-<%= yield %>
+<main>
+  <%= yield %>
+</main>
 
 <footer>
   <p>&copy; <%= Time.now.year %></p>
