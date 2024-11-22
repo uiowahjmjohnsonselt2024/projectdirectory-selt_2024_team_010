@@ -248,11 +248,9 @@
         // Update cost function
         function updateCost() {
             const quantity = parseInt(shardQuantityInput.value) || 0;
-            const selectedCurrency = currencySelector.value;
-            const rate = exchangeRates[selectedCurrency] || 1; // Default to 1 if currency not found
-            const costInCurrency = quantity * SHARD_COST_BASE_USD * rate;
-            costDisplay.textContent = costInCurrency.toFixed(2);
-            currencySymbol.textContent = selectedCurrency;
+            const costInUSD = quantity * SHARD_COST_BASE_USD;
+            costDisplay.textContent = costInUSD.toFixed(2);
+            // Since the shard cost is always in USD, we don't need to update the currency symbol here
         }
 
         // Event listeners
@@ -278,7 +276,11 @@
             updateCost();
         });
 
-        currencySelector.addEventListener('change', updateCost);
+        currencySelector.addEventListener('change', () => {
+            const selectedCurrency = currencySelector.value;
+            currencySymbol.textContent = selectedCurrency;
+        });
+
 
         // Fetch user balance
         async function fetchUserBalance() {
@@ -311,7 +313,7 @@
         purchaseButton.addEventListener("click", async () => {
             const quantity = parseInt(shardQuantityInput.value) || 0;
             const cost = parseFloat(costDisplay.textContent) || 0;
-            const selectedCurrency = currencySelector.value;
+            const selectedCurrency = 'USD'; // Shard purchases are always in USD
 
 
 
@@ -398,67 +400,75 @@
                 }
 
                 const data = await response.json();
-                alert("Payment successful!");
 
                 // Update balance on the page
                 document.getElementById("usd-amount").textContent = (data.money_usd || 0).toFixed(2);
+
+                // Refresh payment history
+                fetchAndUpdatePaymentHistory();
+
+                alert("Payment successful!");
             } catch (error) {
                 console.error("Error during payment:", error);
                 alert("An error occurred. Please try again.");
             }
         });
 
+
         // payment history loading
-        fetch("<%= shop_payment_history_path%>")
-          .then((response) => {
-              if (!response.ok) throw new Error("Failed to load payment history");
-              return response.json();
-          })
-          .then((payments) => {
-              const paymentHistoryContainer = document.getElementById("payment-history");
-              if (!paymentHistoryContainer) return; // Exit if the element is not on the page
+        function fetchAndUpdatePaymentHistory() {
+            fetch("<%= shop_payment_history_path%>")
+              .then((response) => {
+                  if (!response.ok) throw new Error("Failed to load payment history");
+                  return response.json();
+              })
+              .then((payments) => {
+                  const paymentHistoryContainer = document.getElementById("payment-history");
+                  if (!paymentHistoryContainer) return; // Exit if the element is not on the page
 
-              if (payments.length === 0) {
-                  paymentHistoryContainer.innerHTML = "<p>You have no payment history.</p>";
-                  return;
-              }
+                  if (payments.length === 0) {
+                      paymentHistoryContainer.innerHTML = "<p>You have no payment history.</p>";
+                      return;
+                  }
 
-              // Build the table
-              let tableHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>Amount (USD)</th>
-              <th>Currency</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
+                  // Build the table
+                  let tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Amount (USD)</th>
+                            <th>Currency</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
 
-              payments.forEach((payment) => {
+                  payments.forEach((payment) => {
+                      tableHTML += `
+                    <tr>
+                        <td>$${payment.money_usd.toFixed(2)}</td>
+                        <td>${payment.currency}</td>
+                        <td>${new Date(payment.created_at).toLocaleString()}</td>
+                    </tr>
+                `;
+                  });
+
                   tableHTML += `
-          <tr>
-            <td>$${payment.money_usd.toFixed(2)}</td>
-            <td>${payment.currency}</td>
-            <td>${new Date(payment.created_at).toLocaleString()}</td>
-          </tr>
-        `;
+                    </tbody>
+                </table>
+            `;
+
+                  paymentHistoryContainer.innerHTML = tableHTML;
+              })
+              .catch((error) => {
+                  console.error("Error loading payment history:", error);
               });
-
-              tableHTML += `
-          </tbody>
-        </table>
-      `;
-
-              paymentHistoryContainer.innerHTML = tableHTML;
-          })
-          .catch((error) => {
-              console.error("Error loading payment history:", error);
-          });
+        }
 
         // Initialize
         fetchExchangeRates(); // Fetch rates on load
         updateCost();         // Update cost on load
+        fetchAndUpdatePaymentHistory();
     });
 </script>
