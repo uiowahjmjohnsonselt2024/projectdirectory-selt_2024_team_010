@@ -6,6 +6,8 @@ class RegistrationsController < ApplicationController
 
   def create
     @user = User.new(user_params)
+    @user.update(money_usd: 0, shard_amount: 0)
+
     if @user.save
       flash[:notice] = "Registration successful"
       create_session_token @user
