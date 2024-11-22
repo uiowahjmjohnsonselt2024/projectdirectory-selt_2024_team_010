@@ -111,6 +111,7 @@ footer {
 /* Buttons */
 .btn {
     display: inline-block;
+    font-family: "Arial", sans-serif;
     padding: 10px 20px;
     font-size: 16px;
     color: #ffffff;
