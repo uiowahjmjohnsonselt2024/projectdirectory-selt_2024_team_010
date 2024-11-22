@@ -14,7 +14,16 @@
     <div class="flash <%= key %>"><%= message %></div>
   <% end %>
 </header>
-
+<% if @current_user %>
+  <div class="nav">
+    <%= link_to 'Home', dashboard_path, class: 'nav-button' %>
+    <%= link_to 'Servers', servers_path, class: 'nav-button' %>
+    <%= link_to 'Shop', shop_path, class: 'nav-button' %>
+    <%= link_to 'Game', game_path, class: 'nav-button' %>
+    <%= link_to 'Settings', settings_path, class: 'nav-button' %>
+    <%= link_to 'Logout', logout_path, method: :delete, class: 'nav-button' %>
+  </div>
+<% end %>
 <%= yield %>
 
 <footer>

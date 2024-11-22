@@ -1,0 +1,167 @@
+{
+  "RSpec": {
+    "coverage": {
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/application_controller.rb": {
+        "lines": [
+          1,
+          null,
+          null,
+          1,
+          null,
+          1,
+          null,
+          1,
+          14,
+          null,
+          null,
+          1,
+          8,
+          null,
+          null,
+          1,
+          null,
+          1,
+          6,
+          3,
+          3,
+          null,
+          null,
+          null,
+          1,
+          8,
+          8,
+          null,
+          null
+        ]
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/dashboard_controller.rb": {
+        "lines": [
+          1,
+          1,
+          1,
+          null,
+          null
+        ]
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/game_controller.rb": {
+        "lines": [
+          null,
+          1,
+          1,
+          1,
+          null,
+          null
+        ]
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/registrations_controller.rb": {
+        "lines": [
+          1,
+          null,
+          1,
+          2,
+          null,
+          null,
+          1,
+          7,
+          7,
+          4,
+          4,
+          4,
+          null,
+          3,
+          3,
+          null,
+          null,
+          null,
+          1,
+          null,
+          1,
+          7,
+          null,
+          null
+        ]
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/servers_controller.rb": {
+        "lines": [
+          null,
+          1,
+          1,
+          null,
+          null
+        ]
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/sessions_controller.rb": {
+        "lines": [
+          1,
+          1,
+          1,
+          null,
+          null,
+          1,
+          6,
+          6,
+          3,
+          3,
+          3,
+          null,
+          3,
+          3,
+          null,
+          null,
+          null,
+          1,
+          4,
+          4,
+          4,
+          4,
+          4,
+          null,
+          null
+        ]
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/shop_controller.rb": {
+        "lines": [
+          null,
+          1,
+          1,
+          null,
+          null
+        ]
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/controllers/welcome_controller.rb": {
+        "lines": [
+          1,
+          1,
+          null,
+          null
+        ]
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/models/session.rb": {
+        "lines": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          9,
+          null,
+          null
+        ]
+      },
+      "/mnt/c/Users/samst/SELT2024/projectdirectory-selt_2024_team_010/app/models/user.rb": {
+        "lines": [
+          1,
+          1,
+          1,
+          null,
+          1,
+          1,
+          null,
+          1,
+          null
+        ]
+      }
+    },
+    "timestamp": 1732065531
+  }
+}
