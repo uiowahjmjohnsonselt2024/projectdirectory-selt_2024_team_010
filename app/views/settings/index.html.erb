@@ -1,0 +1,51 @@
+<div class="form-container">
+  <h1>User Profile</h1>
+
+  <!-- Display User Information -->
+  <div class="user-info">
+    <p><strong>Username:</strong> <%= @current_user.username %></p>
+    <p><strong>Email:</strong> <%= @current_user.email %></p>
+    <p><strong>Money in Account:</strong> $<%= '%.2f' % @current_user.money_usd %></p>
+    <p><strong>Shards:</strong> <%= '%.2f' % @current_user.shard_amount %></p>
+  </div>
+
+  <hr />
+
+  <!-- Reset Username Form -->
+  <div class="reset-username">
+    <h2>Reset Username</h2>
+    <%= form_tag update_username_path, method: :post do %>
+      <div class="form-group">
+        <%= label_tag 'new_username', 'New Username:' %>
+        <%= text_field_tag 'new_username', nil, required: true %>
+      </div>
+      <div>
+        <%= submit_tag 'Update Username', class: 'btn' %>
+      </div>
+    <% end %>
+  </div>
+
+  <hr />
+
+  <!-- Reset Password Form -->
+  <div class="reset-password">
+    <h2>Reset Password</h2>
+    <%= form_tag update_password_path, method: :post do %>
+      <div class="form-group">
+        <%= label_tag 'current_password', 'Current Password:' %>
+        <%= password_field_tag 'current_password', nil, required: true %>
+      </div>
+      <div class="form-group">
+        <%= label_tag 'new_password', 'New Password:' %>
+        <%= password_field_tag 'new_password', nil, required: true %>
+      </div>
+      <div class="form-group">
+        <%= label_tag 'confirm_password', 'Confirm New Password:' %>
+        <%= password_field_tag 'confirm_password', nil, required: true %>
+      </div>
+      <div>
+        <%= submit_tag 'Update Password', class: 'btn' %>
+      </div>
+    <% end %>
+  </div>
+</div>
