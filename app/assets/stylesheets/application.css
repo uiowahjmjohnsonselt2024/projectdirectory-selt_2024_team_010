@@ -36,7 +36,6 @@
     align-items: center;
     justify-content: flex-start; /* Aligns content to the top */
     padding-top: 100px; /* Adds space from the top */
-    height: 100vh; /* Keeps full viewport height */
 }
 
 body {

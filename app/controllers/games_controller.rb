@@ -14,6 +14,7 @@ class GamesController < ApplicationController
     if @current_user.games.create(name: params[:title])
       flash[:message] = 'Game successfully created'
       render :index
+      redirect_to servers_path
     else
       flash[:alert] = 'Invalid parameters'
       render :new

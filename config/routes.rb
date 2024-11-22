@@ -12,10 +12,10 @@ Rails.application.routes.draw do
 
   get 'dashboard', to: 'dashboard#index', as: 'dashboard'
 
-  get 'servers', to: 'servers#index', as: 'servers'
+  get 'servers', to: 'games#index', as: 'servers'
 
   get 'shop', to: 'shop#index', as: 'shop'
 
-  #get 'games', to: 'games#index', as: 'games'
+  post 'create', to: 'games#addnew', as: 'create'
   resources :games
 end
