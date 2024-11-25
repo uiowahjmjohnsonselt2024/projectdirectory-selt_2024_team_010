@@ -16,7 +16,7 @@ Rails.application.routes.draw do
 
   get 'shop', to: 'shop#index', as: 'shop'
 
-  get 'new', to: 'games#addnew', as: 'new'
+  #get 'new', to: 'games#addnew', as: 'new'
   post 'create', to: 'games#create', as: 'create'
 
   resources :games

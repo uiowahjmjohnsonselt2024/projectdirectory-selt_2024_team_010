@@ -16,8 +16,12 @@ class GamesController < ApplicationController
       flash[:message] = 'Game successfully created'
       redirect_to servers_path #Return with a redirect so that the URL doesn't read 'create'.
     else
-      flash[:alert] = 'Invalid parameters'
-      render :new
+      if new_game.errors.include?(:name)
+        flash[:alert] = 'Name already used!'
+      else
+        flash[:alert] = 'Invalid parameters'
+      end
+      redirect_to new_game_path
       # This will be conditional based on why a game couldn't be created, could be because the title was already used,
       # or could be because they hit a limit on how many games they can have at once, etc.
     end
