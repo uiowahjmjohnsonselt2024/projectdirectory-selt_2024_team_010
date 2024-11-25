@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 class GamesController < ApplicationController
-  before_action :require_login
+  before_action :require_login, :get_games_list
   def index
-    @games = @current_user.characters
-    @games << @current_user.games
+    @games = @current_user.games
   end
 
   def new
@@ -12,10 +11,10 @@ class GamesController < ApplicationController
 
   def create
     puts @current_user.inspect
-    if @current_user.games.create(name: params[:title])
+    new_game = @current_user.games.create(name: params[:server_name], owner_id: @current_user.id)
+    if new_game.save
       flash[:message] = 'Game successfully created'
-      render :index
-      redirect_to servers_path
+      redirect_to servers_path #Return with a redirect so that the URL doesn't read 'create'.
     else
       flash[:alert] = 'Invalid parameters'
       render :new

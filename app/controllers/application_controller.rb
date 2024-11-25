@@ -26,4 +26,8 @@ class ApplicationController < ActionController::Base
     user.create_session!(session_token: Session.create_session_token)
     session[:session_token] = user.session.session_token
   end
+
+  def get_games_list
+    @games = @current_user.games
+  end
 end
