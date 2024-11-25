@@ -10,7 +10,7 @@
 body {
     font-family: "Poor Richard", sans-serif;
     background: linear-gradient(135deg, #16222A, #3A6073); /* Dark gradient */
-    color: #ffffff;
+    color: #333;
     margin: 0;
     padding: 0;
     background-attachment: fixed;
@@ -22,12 +22,12 @@ body {
 
 /* Header */
 header {
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    background: linear-gradient(135deg, #2c003e, #4b0082);
     color: #ffffff;
     text-align: center;
     padding: 1.5rem 0;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-bottom: 2px solid #ffffff;
+    border-bottom: 2px solid gold;
     display: flex;
     flex-direction: column; /* Stack content vertically */
     align-items: center; /* Center text/logo horizontally */
@@ -37,16 +37,27 @@ header {
 
 .header-logo {
     position: absolute;
-    left: 1rem; /* Adjust the spacing from the left edge */
+    left: 1rem; /* Keeps the logo aligned to the left edge */
     top: 50%;
-    transform: translateY(-50%); /* Vertically center the logo */
+    transform: translateY(-50%); /* Vertically centers the logo and text as a group */
+    display: flex;
+    flex-direction: column; /* Stack the logo and text vertically */
+    align-items: center; /* Center-align the text below the logo */
 }
 
 .header-logo img {
-    width: 60px; /* Square size for the logo */
+    width: 60px; /* Keeps the square size for the logo */
     height: 60px;
     object-fit: cover; /* Ensures the image remains square and fits within bounds */
     border-radius: 4px; /* Optional: Adds slight rounding to the corners */
+}
+
+.header-text {
+    font-size: 0.8rem; /* Smaller text size */
+    color: #ffffff; /* White text for contrast */
+    text-align: center; /* Center-align the text */
+    margin-top: 5px; /* Add a small gap between the logo and the text */
+    font-weight: bold; /* Optional: Bold text for emphasis */
 }
 
 header h1 {
@@ -55,26 +66,25 @@ header h1 {
     font-weight: bold;
 }
 
+h1 {
+    color: #fff
+}
+
 /* Footer */
 main {
     flex: 1; /* This makes the main content take up remaining space */
 }
 
-main {
-    flex: 1; /* Pushes the footer to the bottom */
-    padding: 20px; /* Optional padding for spacing */
-}
-
 footer {
     font-family: "Arial", sans-serif;
-    background: linear-gradient(135deg, #1e3c72, #2a5298); /* Footer color or gradient */
+    background: linear-gradient(135deg, #2c003e, #4b0082); /* Footer color or gradient */
     color: #ffffff;
     text-align: center;
     padding: 1rem;
     font-size: 0.9rem;
     box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.4); /* Shadow at the top of the footer */
     width: 100%; /* Ensure full-width */
-    border-top: 2px solid #ffffff;
+    border-top: 2px solid gold;
 }
 
 /* Navbar */
@@ -87,7 +97,7 @@ footer {
     position: sticky;
     top: 0;
     z-index: 10;
-    border: 2px solid #ffffff; /* White border */
+    border: 2px solid gold; /* White border */
     border-radius: 8px; /* Optional: rounded corners */
 }
 
@@ -115,14 +125,14 @@ footer {
     padding: 10px 20px;
     font-size: 16px;
     color: #ffffff;
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    background: linear-gradient(135deg, #2c003e, #4b0082);
     border: none;
     border-radius: 25px;
     text-align: center;
     cursor: pointer;
     text-decoration: none;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 0 8px rgba(0, 123, 255, 0.5);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 0 8px rgba(47, 0, 255, 0.5);
 }
 
 .btn:hover {
