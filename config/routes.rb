@@ -14,5 +14,8 @@ Rails.application.routes.draw do
 
   get 'shop', to: 'shop#index', as: 'shop'
 
-  resources :games
+  resources :games do
+    get 'list', on: :collection
+    post 'add', on: :member
+  end
 end

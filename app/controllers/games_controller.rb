@@ -26,4 +26,17 @@ class GamesController < ApplicationController
       # or could be because they hit a limit on how many games they can have at once, etc.
     end
   end
+
+  def list
+    if params[:server_name]
+      @search = params[:server_name]
+      @found_games = Game.where(name: params[:server_name])
+    end
+  end
+
+  def add
+    @current_user.characters << Character.create(game_id: params[:id])
+    # TODO: Create custom validation on characters so that 1 user cannot join a game twice with different characters!
+    redirect_to games_path
+  end
 end
