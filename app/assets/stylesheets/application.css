@@ -84,7 +84,6 @@ footer {
     padding: 1rem;
     font-size: 0.9rem;
     box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.4); /* Shadow at the top of the footer */
-    width: 100%; /* Ensure full-width */
     border-top: 2px solid gold;
 }
 
