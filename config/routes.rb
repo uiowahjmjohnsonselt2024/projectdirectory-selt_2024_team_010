@@ -12,12 +12,7 @@ Rails.application.routes.draw do
 
   get 'dashboard', to: 'dashboard#index', as: 'dashboard'
 
-  get 'servers', to: 'games#index', as: 'servers'
-
   get 'shop', to: 'shop#index', as: 'shop'
-
-  #get 'new', to: 'games#addnew', as: 'new'
-  post 'create', to: 'games#create', as: 'create'
 
   resources :games
 end

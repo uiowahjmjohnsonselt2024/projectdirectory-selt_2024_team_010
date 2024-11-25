@@ -14,12 +14,12 @@ class GamesController < ApplicationController
     new_game = @current_user.games.create(name: params[:server_name], owner_id: @current_user.id)
     if new_game.save
       flash[:message] = 'Game successfully created'
-      redirect_to servers_path #Return with a redirect so that the URL doesn't read 'create'.
+      redirect_to games_path
     else
       if new_game.errors.include?(:name)
-        flash[:alert] = 'Name already used!'
+        flash[:alert] = 'Name already used'
       else
-        flash[:alert] = 'Invalid parameters'
+        flash[:alert] = 'Server creation failed'
       end
       redirect_to new_game_path
       # This will be conditional based on why a game couldn't be created, could be because the title was already used,
