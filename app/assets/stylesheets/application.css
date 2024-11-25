@@ -9,12 +9,13 @@
 /* General Styling */
 body {
     font-family: "Poor Richard", sans-serif;
-    background: linear-gradient(135deg, #16222A, #3A6073); /* Dark gradient */
-    color: #333;
     margin: 0;
     padding: 0;
-    background-attachment: fixed;
-    background-size: cover;
+    color: #333;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("background.png") no-repeat center center fixed;
+    background-size: cover; /* Ensure the image covers the entire page */
+    background-attachment: fixed; /* Keeps the background fixed during scroll */
     display: flex;
     flex-direction: column; /* Flex column for header, main, footer */
     min-height: 100vh; /* Full viewport height */
@@ -91,7 +92,7 @@ footer {
 .nav {
     display: flex;
     justify-content: center;
-    background: linear-gradient(135deg, #2a5298, #1e3c72);
+    background: linear-gradient(135deg, #1f3e73, #14254d);
     padding: 10px 0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     position: sticky;
