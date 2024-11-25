@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20241113153812) do
+ActiveRecord::Schema.define(version: 20241120204708) do
+
+  create_table "payments", force: :cascade do |t|
+    t.float    "money_usd"
+    t.string   "currency"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id",    null: false
+  end
 
   create_table "sessions", force: :cascade do |t|
     t.string   "session_token"
