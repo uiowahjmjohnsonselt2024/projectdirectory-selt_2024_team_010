@@ -14,6 +14,7 @@ class GamesController < ApplicationController
     new_game = @current_user.games.create(name: params[:server_name], owner_id: @current_user.id)
     if new_game.save
       flash[:message] = 'Game successfully created'
+      @current_user.characters.create(game_id: params[:id])
       redirect_to games_path
     else
       if new_game.errors.include?(:name)
@@ -35,8 +36,10 @@ class GamesController < ApplicationController
   end
 
   def add
-    @current_user.characters << Character.create(game_id: params[:id])
-    # TODO: Create custom validation on characters so that 1 user cannot join a game twice with different characters!
+    new_character = @current_user.characters.create(game_id: params[:id])
+    if new_character.errors.include?(:user_id)
+      flash[:message] = 'Already added game'
+    end
     redirect_to games_path
   end
 end
