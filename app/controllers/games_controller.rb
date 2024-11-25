@@ -2,7 +2,8 @@
 class GamesController < ApplicationController
   before_action :require_login
   def index
-    @games = @current_user.games
+    @games = @current_user.characters
+    @games << @current_user.games
   end
 
   def new
