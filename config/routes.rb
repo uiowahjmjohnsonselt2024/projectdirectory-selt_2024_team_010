@@ -5,6 +5,10 @@ Rails.application.routes.draw do
   post 'login', to: 'sessions#create'
   delete 'logout', to: 'sessions#destroy', as: 'logout'
 
+  get 'settings', to: 'settings#index', as: 'settings'
+  post 'users/reset_username', to: 'settings#update_username', as: 'update_username'
+  post 'users/reset_password', to: 'settings#update_password', as: 'update_password'
+
   get 'register', to: 'registrations#new', as: 'register'
   post 'register', to: 'registrations#create'
 
@@ -13,6 +17,10 @@ Rails.application.routes.draw do
   get 'dashboard', to: 'dashboard#index', as: 'dashboard'
 
   get 'shop', to: 'shop#index', as: 'shop'
+  get 'shop/balance', to: 'shop#balance', as: 'shop_balance'
+  post 'shop/purchase', to: 'shop#purchase', as: 'shop_purchase'
+  post 'shop/payment', to: 'shop#payment', as: 'shop_payment'
+  get 'shop/payment_history', to: 'shop#payment_history', as: 'shop_payment_history'
 
   resources :games do
     get 'list', on: :collection
