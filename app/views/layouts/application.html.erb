@@ -5,26 +5,46 @@
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
+  <%= favicon_link_tag 'favicon.ico' %>
 </head>
 <body>
 
 <header>
-  <h1>Shards of the Grid</h1>
-  <% flash.each do |key, message| %>
-    <div class="flash <%= key %>"><%= message %></div>
+  <% if @current_user %>
+    <!-- Header for logged-in users -->
+    <div class="header-logo">
+      <img src="<%= asset_path('logo.png') %>" alt="Shards of the Grid Logo">
+      <span class="header-text">Shards of the Grid</span>
+    </div>
+    <div class="nav">
+      <%= link_to 'Home', dashboard_path, class: 'nav-button' %>
+      <%= link_to 'Servers', servers_path, class: 'nav-button' %>
+      <%= link_to 'Shop', shop_path, class: 'nav-button' %>
+      <%= link_to 'Game', game_path, class: 'nav-button' %>
+      <%= link_to 'Settings', settings_path, class: 'nav-button' %>
+      <%= link_to 'Logout', logout_path, method: :delete, class: 'nav-button' %>
+    </div>
+    <div class="flash-container">
+      <% flash.each do |key, message| %>
+        <div class="flash <%= key %>"><%= message %></div>
+      <% end %>
+    </div>
+  <% else %>
+    <!-- Header for visitors -->
+    <div class="header-logo">
+      <img src="<%= asset_path('logo.png') %>" alt="Shards of the Grid Logo">
+    </div>
+    <h1>Shards of the Grid</h1>
+    <div class="flash-container">
+      <% flash.each do |key, message| %>
+        <div class="flash <%= key %>"><%= message %></div>
+      <% end %>
+    </div>
   <% end %>
 </header>
-<% if @current_user %>
-  <div class="nav">
-    <%= link_to 'Home', dashboard_path, class: 'nav-button' %>
-    <%= link_to 'Servers', servers_path, class: 'nav-button' %>
-    <%= link_to 'Shop', shop_path, class: 'nav-button' %>
-    <%= link_to 'Game', game_path, class: 'nav-button' %>
-    <%= link_to 'Settings', settings_path, class: 'nav-button' %>
-    <%= link_to 'Logout', logout_path, method: :delete, class: 'nav-button' %>
-  </div>
-<% end %>
-<%= yield %>
+<main>
+  <%= yield %>
+</main>
 
 <footer>
   <p>&copy; <%= Time.now.year %></p>

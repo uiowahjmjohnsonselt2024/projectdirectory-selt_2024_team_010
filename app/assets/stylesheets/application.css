@@ -2,191 +2,259 @@
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.
  *
- * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
- * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any styles
- * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
- * file per style scope.
- *
  *= require_tree .
  *= require_self
  */
-.btn {
-    display: inline-block;
-    padding: 8px 16px;
-    font-size: 14px;
-    color: #ffffff;
-    background-color: #333; /* Dark grey */
-    border: 1px solid #333;
-    border-radius: 4px;
-    text-align: center;
-    cursor: pointer;
-    text-decoration: none;
-}
 
-.btn:hover {
-    background-color: #555; /* Slightly lighter grey on hover */
-}
-
-.center-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start; /* Aligns content to the top */
-    padding-top: 100px; /* Adds space from the top */
-    height: 100vh; /* Keeps full viewport height */
-}
-
+/* General Styling */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f7fa;
+    font-family: "Poor Richard", sans-serif;
     margin: 0;
     padding: 0;
+    color: #333;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("background.png") no-repeat center center fixed;
+    background-size: cover; /* Ensure the image covers the entire page */
+    background-attachment: fixed; /* Keeps the background fixed during scroll */
+    display: flex;
+    flex-direction: column; /* Flex column for header, main, footer */
+    min-height: 100vh; /* Full viewport height */
 }
+
+/* Header */
 header {
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    background: linear-gradient(135deg, #2c003e, #4b0082);
     color: #ffffff;
     text-align: center;
     padding: 1.5rem 0;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-bottom: 2px solid gold;
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    align-items: center; /* Center text/logo horizontally */
+    position: relative;
+    width: 100%;
 }
+
+.header-logo {
+    position: absolute;
+    left: 1rem; /* Keeps the logo aligned to the left edge */
+    top: 50%;
+    transform: translateY(-50%); /* Vertically centers the logo and text as a group */
+    display: flex;
+    flex-direction: column; /* Stack the logo and text vertically */
+    align-items: center; /* Center-align the text below the logo */
+}
+
+.header-logo img {
+    width: 60px; /* Keeps the square size for the logo */
+    height: 60px;
+    object-fit: cover; /* Ensures the image remains square and fits within bounds */
+    border-radius: 4px; /* Optional: Adds slight rounding to the corners */
+}
+
+.header-text {
+    font-size: 0.8rem; /* Smaller text size */
+    color: #ffffff; /* White text for contrast */
+    text-align: center; /* Center-align the text */
+    margin-top: 5px; /* Add a small gap between the logo and the text */
+    font-weight: bold; /* Optional: Bold text for emphasis */
+}
+
 header h1 {
     font-size: 2rem;
     margin: 0;
     font-weight: bold;
 }
 
+h1 {
+    color: #fff
+}
+
+/* Footer */
+main {
+    flex: 1; /* This makes the main content take up remaining space */
+}
+
 footer {
-    background: linear-gradient(135deg, #2a5298, #1e3c72);
+    font-family: "Arial", sans-serif;
+    background: linear-gradient(135deg, #2c003e, #4b0082); /* Footer color or gradient */
     color: #ffffff;
     text-align: center;
     padding: 1rem;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
     font-size: 0.9rem;
-}
-footer p {
-    margin: 0;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.4); /* Shadow at the top of the footer */
+    border-top: 2px solid gold;
 }
 
-/* Flash messages */
-.flash {
-    max-width: 400px;
-    margin: 10px auto;
+/* Navbar */
+.nav {
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(135deg, #1f3e73, #14254d);
+    padding: 10px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border: 2px solid gold; /* White border */
+    border-radius: 8px; /* Optional: rounded corners */
+}
+
+.nav-button {
+    color: #ffffff;
     padding: 10px 20px;
-    border-radius: 4px;
+    font-size: 20px;
+    font-weight: bold;
+    border: 1px solid transparent;
+    border-radius: 25px;
+    margin: 0 15px;
+    transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #ffffff;
+    transform: scale(1.1);
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    font-family: "Arial", sans-serif;
+    padding: 10px 20px;
     font-size: 16px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2c003e, #4b0082);
+    border: none;
+    border-radius: 25px;
     text-align: center;
-    box-sizing: border-box;
-    position: relative;
-    animation: fade-in 0.5s ease-in-out;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 0 8px rgba(47, 0, 255, 0.5);
 }
 
-/* Specific flash types */
-.flash.notice {
-    background-color: #d4edda;      /* Light green for success/notice */
-    color: #155724;                 /* Dark green text */
-    border: 1px solid #c3e6cb;
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4), 0 0 12px rgba(0, 123, 255, 0.8);
 }
 
-.flash.alert {
-    background-color: #f8d7da;      /* Light red for error/alert */
-    color: #721c24;                 /* Dark red text */
-    border: 1px solid #f5c6cb;
+/* Welcome Text */
+.center-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 100px;
 }
 
-/* Fade-out animation for flash messages */
-@keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+.center-container h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 0 8px #007bff, 0 0 16px rgba(0, 123, 255, 0.6);
+    animation: pulse 1.5s infinite ease-in-out;
 }
 
-@keyframes fade-out {
-    from { opacity: 1; }
-    to { opacity: 0; }
+@keyframes pulse {
+    0%, 100% {
+        text-shadow: 0 0 8px #007bff, 0 0 16px rgba(0, 123, 255, 0.6);
+    }
+    50% {
+        text-shadow: 0 0 12px #007bff, 0 0 24px rgba(0, 123, 255, 0.8);
+    }
 }
 
-.flash.fade-out {
-    animation: fade-out 0.5s ease-in-out forwards;
-}
-
+/* Form Containers */
 .form-container {
     max-width: 400px;
     margin: 50px auto;
-    padding: 20px 40px 20px 20px; /* Adjusted padding: top, right, bottom, left */
-    background-color: #f9f9f9;
+    padding: 20px 40px 20px 20px;
+    background-color: #e0e0e0;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
+    color: #333;
 }
 
-/* Form title styling */
 .form-container h1 {
     margin-bottom: 20px;
     font-size: 24px;
     color: #333;
 }
 
-/* Form group styling */
 .form-container div {
     margin-bottom: 15px;
-    text-align: left;              /* Aligns labels and inputs to the left */
+    text-align: left;
 }
 
-/* Label styling */
 .form-container label {
-    display: block;                /* Makes labels block-level elements */
+    display: block;
     margin-bottom: 5px;
     font-weight: bold;
     color: #555;
 }
 
-/* Input field styling */
 .form-container input[type="text"],
 .form-container input[type="password"],
-.form-container input[type="email"]{
-    width: 100%;                   /* Makes inputs full width */
+.form-container input[type="email"] {
+    width: 100%;
     padding: 10px;
     font-size: 16px;
-    border: 1px solid #ccc;        /* Subtle border */
-    border-radius: 4px;            /* Rounded corners */
+    border: 1px solid #ccc;
+    border-radius: 4px;
     outline: none;
     transition: border-color 0.2s;
 }
 
-/* Input focus styling */
 .form-container input[type="text"]:focus,
 .form-container input[type="password"]:focus {
-    border-color: #007bff;         /* Highlighted border on focus */
-    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5); /* Subtle glow */
+    border-color: #007bff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
 }
 
-/* Navbar container styling */
-.nav {
-    display: flex;
-    justify-content: center; /* Center the navbar links */
-    background-color: #333;  /* Dark background for navbar */
-    padding: 10px 0;         /* Padding for spacing */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+/* Flash Messages */
+.flash-container {
+    width: 100%; /* Ensure it spans the full width of the header */
+    margin-top: 1rem; /* Adds space between header content and flash messages */
+    font-family: "Arial", sans-serif;
 }
 
-/* Navbar button styling */
-.nav-button {
-    color: #ffffff;            /* White text color */
-    padding: 10px 15px;        /* Padding for clickable area */
-    text-decoration: none;     /* Removes underline from links */
-    font-size: 16px;           /* Font size */
-    border-radius: 4px;        /* Rounded corners */
-    margin: 0 10px;            /* Spacing between buttons */
-    transition: background-color 0.3s; /* Smooth hover transition */
+.flash {
+    max-width: 500px; /* Adjust as needed for a consistent look */
+    margin: 0 auto; /* Center flash messages */
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
-/* Hover effect for navbar buttons */
-.nav-button:hover {
-    background-color: #555;    /* Slightly lighter color on hover */
+.flash.notice {
+    background-color: #28a745;
     color: #ffffff;
+    border: 1px solid #218838;
+}
+
+.flash.alert {
+    background-color: #dc3545;
+    color: #ffffff;
+    border: 1px solid #c82333;
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes pulse-bg {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.9;
+    }
 }
