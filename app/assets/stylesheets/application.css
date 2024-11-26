@@ -12,8 +12,6 @@ body {
     margin: 0;
     padding: 0;
     color: #333;
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url("background.png") no-repeat center center fixed;
     background-size: cover; /* Ensure the image covers the entire page */
     background-attachment: fixed; /* Keeps the background fixed during scroll */
     display: flex;
