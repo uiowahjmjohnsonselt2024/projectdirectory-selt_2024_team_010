@@ -22,7 +22,7 @@
           <td><%= game.name %></td>
           <td><%= game.user.username %></td>
           <td>
-            <%= button_to 'Add', add_game_path(game), method: :post %>
+            <%= button_to 'Add', add_game_path(game), method: :post, class: 'btn' %>
           </td>
         </tr>
       <% end %>

@@ -18,7 +18,7 @@
         <td><%= "4/6" %></td>
         <td>
           <% if 4 < 6 %>
-            <%= link_to 'Join', game_path(game), class: 'button' %>
+            <%= link_to 'Join', game_path(game), class: 'btn' %>
           <% else %>
             <span>Full</span>
           <% end %>
@@ -28,6 +28,6 @@
     </tbody>
   </table>
 
-  <%= link_to 'Add Existing', list_games_path, class: 'button' %>
-  <%= link_to 'Create New', new_game_path, class: 'button' %>
+  <%= link_to 'Add Existing', list_games_path, class: 'btn' %>
+  <%= link_to 'Create New', new_game_path, class: 'btn' %>
 </div>
