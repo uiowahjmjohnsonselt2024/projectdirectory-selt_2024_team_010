@@ -256,3 +256,25 @@ footer {
         opacity: 0.9;
     }
 }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+
+}
+tr{
+    text-decoration-color: #ffffff;
+    background-color: #dddddd;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+th {
+    background-color: #1e3c72;
+    color: #DADADA;
+}

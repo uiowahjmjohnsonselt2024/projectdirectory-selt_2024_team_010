@@ -1,4 +1,10 @@
 <div>
+  <div class="nav">
+    <%= link_to 'Servers', games_path, class: 'nav-button' %>
+    <%= link_to 'Shop', shop_path, class: 'nav-button' %>
+    <%= link_to 'Game', games_path, class: 'nav-button' %>
+    <%= link_to 'Logout', logout_path, method: :delete, class: 'nav-button' %>
+  </div>
   <h1 class="center-container">
     Welcome, <%= @current_user.username %>!
   </h1>

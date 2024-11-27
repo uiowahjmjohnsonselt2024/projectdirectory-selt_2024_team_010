@@ -1,0 +1,33 @@
+<div class="container">
+  <h1>Game Servers</h1>
+
+  <table>
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Host</th>
+      <th>Capacity</th>
+      <th>Join</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @games.each do |game| %>
+      <tr>
+        <td><%=game.name%></td>
+        <td><%=game.user.username%></td>
+        <td><%= "4/6" %></td>
+        <td>
+          <% if 4 < 6 %>
+            <%= link_to 'Join', game_path(game), class: 'btn' %>
+          <% else %>
+            <span>Full</span>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+  <%= link_to 'Add Existing', list_games_path, class: 'btn' %>
+  <%= link_to 'Create New', new_game_path, class: 'btn' %>
+</div>

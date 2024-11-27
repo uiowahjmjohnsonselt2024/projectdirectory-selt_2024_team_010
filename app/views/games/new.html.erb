@@ -1,0 +1,24 @@
+
+<div class=".container">
+  <h1>Create New Server</h1>
+  <%= form_tag games_path, method: :post do %>
+    <div>
+      <%= label_tag 'user[username]', @current_user.username %>
+
+    </div>
+
+    <div>
+      <%= label_tag 'server_name', 'Server Name' %>
+      <%= text_field_tag 'server_name', nil, required: true %>
+    </div>
+
+
+
+
+    <div>
+      <%= submit_tag 'Create', class: 'btn' %>
+      <%= link_to 'Back', games_path, class: 'btn' %>
+    </div>
+  <% end %>
+</div>
+
