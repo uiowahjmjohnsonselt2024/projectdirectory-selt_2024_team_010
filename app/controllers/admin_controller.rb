@@ -21,6 +21,14 @@ class AdminController < ApplicationController
     redirect_to admin_path
   end
 
+  def add_user
+    @user = User.new
+  end
+
+  def add_user_form
+    redirect_to admin_path
+  end
+
   private
 
   def user_params
