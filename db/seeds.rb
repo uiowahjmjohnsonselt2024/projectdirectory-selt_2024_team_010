@@ -15,7 +15,8 @@ User.create!(
   password: 'password123',
   password_confirmation: 'password123',
   shard_amount: 100.5,
-  money_usd: 2500.75
+  money_usd: 2500.75,
+  isAdmin: true
 )
 
 User.create!(
