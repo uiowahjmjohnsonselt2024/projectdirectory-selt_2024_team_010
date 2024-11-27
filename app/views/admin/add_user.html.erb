@@ -1,0 +1,46 @@
+<div class="form-container">
+  <h1>Add User</h1>
+  <%= form_tag add_user_form_path, method: :post do %>
+    <!-- Username -->
+    <div class="form-group">
+      <%= label_tag 'user[username]', 'Username' %>
+      <%= text_field_tag 'user[username]', '', required: true %>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <%= label_tag 'user[email]', 'Email' %>
+      <%= email_field_tag 'user[email]', '', required: true %>
+    </div>
+
+    <!-- Password -->
+    <div class="form-group">
+      <%= label_tag 'user[password]', 'Password' %>
+      <%= password_field_tag 'user[password]', '', required: true %>
+    </div>
+
+    <!-- Shard Amount -->
+    <div class="form-group">
+      <%= label_tag 'user[shard_amount]', 'Shard Amount' %>
+      <%= number_field_tag 'user[shard_amount]', 0.0, step: 0.01 %>
+    </div>
+
+    <!-- Money USD -->
+    <div class="form-group">
+      <%= label_tag 'user[money_usd]', 'Money (USD)' %>
+      <%= number_field_tag 'user[money_usd]', 0.0, step: 0.01 %>
+    </div>
+
+    <!-- Admin Status -->
+    <div class="form-group">
+      <%= label_tag 'user[isAdmin]', 'Admin Status' %>
+      <%= check_box_tag 'user[isAdmin]', '1', false %>
+    </div>
+
+    <!-- Submit and Cancel Buttons -->
+    <div class="form-group">
+      <%= submit_tag 'Create User', class: 'btn' %>
+      <%= link_to 'Cancel', admin_path, class: 'btn' %>
+    </div>
+  <% end %>
+</div>
