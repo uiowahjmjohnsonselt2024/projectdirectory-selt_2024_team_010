@@ -3,6 +3,7 @@ class AdminController < ApplicationController
 
   def index
     @users = User.all
+    @games = Game.all
   end
 
   def edit_user

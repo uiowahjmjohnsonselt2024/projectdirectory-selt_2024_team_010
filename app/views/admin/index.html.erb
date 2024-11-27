@@ -1,6 +1,7 @@
 <div class="admin-container">
   <h1 style="text-align: center">Admin Dashboard</h1>
 
+  <!-- Users Section -->
   <div style="display: flex; justify-content: center; align-items: center; position: relative; margin-bottom: 20px;">
     <%= link_to 'Add User', add_user_path, class: 'btn', style: 'position: absolute; left: 0;' %>
     <h2 style="margin: 0;">All Users</h2>
@@ -29,6 +30,29 @@
         <td>
           <%= link_to 'Edit', edit_user_path(user.id), class: 'btn' %>
         </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+  <!-- Games Section -->
+  <div style="margin-top: 40px;">
+    <h2 style="text-align: center;">All Games</h2>
+  </div>
+  <table>
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Host</th>
+      <th>Capacity</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @games.each do |game| %>
+      <tr>
+        <td><%= game.name %></td>
+        <td><%= game.user.username %></td>
+        <td><%= "4/6" %></td>
       </tr>
     <% end %>
     </tbody>
