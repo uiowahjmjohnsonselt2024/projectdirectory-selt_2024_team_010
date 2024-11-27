@@ -1,0 +1,87 @@
+<div class="admin-container">
+  <h1 style="text-align: center">Admin Dashboard</h1>
+
+  <div style="display: flex; justify-content: center; align-items: center; position: relative; margin-bottom: 20px;">
+    <%= link_to 'Add User', dashboard_path, class: 'btn', style: 'position: absolute; left: 0;' %>
+    <h2 style="margin: 0;">All Users</h2>
+  </div>
+  <table>
+    <thead>
+    <tr>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Shard Amount</th>
+      <th>Money (USD)</th>
+      <th>Admin</th>
+      <th>Online</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.username %></td>
+        <td><%= user.email %></td>
+        <td><%= '%.2f' % user.shard_amount %></td>
+        <td><%= '%.2f' % user.money_usd %></td>
+        <td><%= user.isAdmin ? 'Yes' : 'No' %></td>
+        <td><%= user.session.present? ? 'Yes' : 'No' %></td>
+        <td>
+          <%= link_to 'Edit', edit_user_path(user.id), class: 'btn' %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
+
+<style>
+    /* General container styling */
+    .admin-container {
+        font-family: "Arial", sans-serif;
+        background: #d9d9d9; /* Darker gray background */
+        padding: 20px;
+        border-radius: 10px;
+        width: 80%; /* Adjust width as needed */
+        margin: 40px auto; /* Center the container */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    }
+
+    /* Table styling */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px 15px;
+        text-align: center;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: #4b0082; /* Purple header */
+        color: #fff;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background-color: #eeeeee; /* Slightly darker gray for even rows */
+    }
+
+    tr:hover {
+        background-color: #cccccc; /* Highlight row on hover with a darker gray */
+    }
+
+    /* Heading styles */
+    h1 {
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        color: #555;
+        margin-top: 30px;
+    }
+</style>

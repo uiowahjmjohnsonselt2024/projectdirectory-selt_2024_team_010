@@ -1,0 +1,40 @@
+<div class="form-container">
+  <h1>Edit User</h1>
+  <%= form_tag edit_user_form_path, method: :post do %>
+    <!-- Username -->
+    <div class="form-group">
+      <%= label_tag 'user[username]', 'Username' %>
+      <%= text_field_tag 'user[username]', @user.username, required: true %>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <%= label_tag 'user[email]', 'Email' %>
+      <%= email_field_tag 'user[email]', @user.email, required: true %>
+    </div>
+
+    <!-- Shard Amount -->
+    <div class="form-group">
+      <%= label_tag 'user[shard_amount]', 'Shard Amount' %>
+      <%= number_field_tag 'user[shard_amount]', @user.shard_amount, step: 0.01 %>
+    </div>
+
+    <!-- Money USD -->
+    <div class="form-group">
+      <%= label_tag 'user[money_usd]', 'Money (USD)' %>
+      <%= number_field_tag 'user[money_usd]', @user.money_usd, step: 0.01 %>
+    </div>
+
+    <!-- Admin Status -->
+    <div class="form-group">
+      <%= label_tag 'user[isAdmin]', 'Admin Status' %>
+      <%= check_box_tag 'user[isAdmin]', '1', @user.isAdmin %>
+    </div>
+
+    <!-- Submit and Cancel Buttons -->
+    <div class="form-group">
+      <%= submit_tag 'Update User', class: 'btn btn-primary' %>
+      <%= link_to 'Cancel', admin_path, class: 'btn btn-secondary' %>
+    </div>
+  <% end %>
+</div>

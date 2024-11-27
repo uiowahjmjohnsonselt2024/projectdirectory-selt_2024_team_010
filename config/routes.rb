@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   post 'users/reset_password', to: 'settings#update_password', as: 'update_password'
 
   get 'admin', to: 'admin#index', as: 'admin'
+  get 'admin/edit_user/:id', to: 'admin#edit_user', as: 'edit_user'
+  post 'admin/edit_user/:id', to: 'admin#edit_user_form', as: 'edit_user_form'
 
   get 'register', to: 'registrations#new', as: 'register'
   post 'register', to: 'registrations#create'
