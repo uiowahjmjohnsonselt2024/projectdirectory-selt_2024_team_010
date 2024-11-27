@@ -16,21 +16,10 @@ Given(/^I have an account with the username "([^"]*)", email "([^"]*)" and passw
 end
 
 When(/^I log in with the username "([^"]*)" and password "([^"]*)"$/) do |username, password|
-  fill_in('Username', with: username)
-  fill_in('Password', with: password)
+  visit login_path
+  fill_in('username', with: username)
+  fill_in('password', with: password)
   click_button('Login')
-end
-
-When(/^I click the "([^"]*)" button$/) do |button|
-  click_button(button)
-end
-
-When(/^I click the "([^"]*)" link$/) do |link|
-  click_link(link)
-end
-
-Then(/^I should see "([^"]*)"$/) do |text|
-  expect(page).to have_content text
 end
 
 Then(/^I should see a login prompt$/) do
@@ -38,10 +27,6 @@ Then(/^I should see a login prompt$/) do
   expect(page).to have_field 'Password'
   expect(page).to have_button 'Login'
   expect(page).to have_link 'Back'
-end
-
-Then(/^I should be on the main dashboard$/) do
-  expect(page.current_path).to eq('/dashboard')
 end
 
 Then(/^I should be on the welcome screen$/) do
