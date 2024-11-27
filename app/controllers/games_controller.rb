@@ -10,7 +10,6 @@ class GamesController < ApplicationController
   end
 
   def create
-    puts @current_user.inspect
     new_game = @current_user.games.create(name: params[:server_name], owner_id: @current_user.id)
     if new_game.save
       flash[:message] = 'Game successfully created'
