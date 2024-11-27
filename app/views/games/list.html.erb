@@ -1,0 +1,36 @@
+<div class=".container">
+  <h1>Join an existing server</h1>
+  <%= form_tag list_games_path, method: :get do %>
+    <div>
+      <%= label_tag 'server_name', 'Server Name' %>
+      <%= text_field_tag 'server_name', @search, required: true %>
+      <%= submit_tag 'Search', class: 'btn' %>
+    </div>
+  <% end %>
+  <table>
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Host</th>
+      <th>Add to server list</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% if @found_games %>
+      <% @found_games.each do |game| %>
+        <tr>
+          <td><%= game.name %></td>
+          <td><%= game.user.username %></td>
+          <td>
+            <%= button_to 'Add', add_game_path(game), method: :post, class: 'btn' %>
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+    </tbody>
+  </table>
+
+  <div>
+    <%= link_to 'Back', games_path, class: 'btn' %>
+  </div>
+</div>

@@ -13,6 +13,16 @@
 
 ActiveRecord::Schema.define(version: 20241127000206) do
 
+  create_table "characters", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "game_id"
+  end
+
+  create_table "games", force: :cascade do |t|
+    t.string  "name"
+    t.integer "owner_id"
+  end
+
   create_table "payments", force: :cascade do |t|
     t.float    "money_usd"
     t.string   "currency"
@@ -32,11 +42,11 @@ ActiveRecord::Schema.define(version: 20241127000206) do
     t.string   "username"
     t.string   "email"
     t.string   "password_digest"
-    t.float    "shard_amount",    default: 0.0
-    t.float    "money_usd",       default: 0.0
+    t.float    "shard_amount"
+    t.float    "money_usd"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "isAdmin",         default: false
+    t.string   "session"
   end
 
 end
