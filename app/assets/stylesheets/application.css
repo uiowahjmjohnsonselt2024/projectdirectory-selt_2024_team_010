@@ -156,6 +156,14 @@ footer {
     animation: pulse 1.5s infinite ease-in-out;
 }
 
+.text-shadow {
+    text-shadow:
+            -1px -1px 0 #000, /* Top left */
+            1px -1px 0 #000,  /* Top right */
+            -1px 1px 0 #000,  /* Bottom left */
+            1px 1px 0 #000;   /* Bottom right */
+}
+
 @keyframes pulse {
     0%, 100% {
         text-shadow: 0 0 8px #007bff, 0 0 16px rgba(0, 123, 255, 0.6);
