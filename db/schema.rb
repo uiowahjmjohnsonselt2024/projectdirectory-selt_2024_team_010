@@ -23,6 +23,14 @@ ActiveRecord::Schema.define(version: 20241129191645) do
     t.integer "owner_id"
   end
 
+  create_table "payments", force: :cascade do |t|
+    t.float    "money_usd"
+    t.string   "currency"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id",    null: false
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.string   "session_token"
     t.integer  "user_id"
@@ -46,7 +54,7 @@ ActiveRecord::Schema.define(version: 20241129191645) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "session"
-    t.integer  "recent_character_id_id"
+    t.string   "recent_character"
   end
 
 end
