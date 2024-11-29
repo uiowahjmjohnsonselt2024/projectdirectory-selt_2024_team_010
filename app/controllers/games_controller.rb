@@ -12,7 +12,7 @@ class GamesController < ApplicationController
   def create
     new_game = @current_user.games.create(name: params[:server_name], owner_id: @current_user.id)
     if new_game.save
-      flash[:message] = 'Game successfully created'
+      flash[:notice] = 'Game successfully created'
       @current_user.characters.create(game_id: params[:id])
       redirect_to games_path
     else
@@ -30,14 +30,14 @@ class GamesController < ApplicationController
   def list
     if params[:server_name]
       @search = params[:server_name]
-      @found_games = Game.where(name: params[:server_name])
+      @found_games = Game.where("LOWER(name) LIKE ?", "%#{@search.downcase}%")
     end
   end
 
   def add
     new_character = @current_user.characters.create(game_id: params[:id])
     if new_character.errors.include?(:user_id)
-      flash[:message] = 'Already added game'
+      flash[:notice] = 'Already added game'
     end
     redirect_to games_path
   end
