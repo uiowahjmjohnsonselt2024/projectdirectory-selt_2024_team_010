@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20241127000206) do
+ActiveRecord::Schema.define(version: 20241129171529) do
 
   create_table "characters", force: :cascade do |t|
     t.integer "user_id"
@@ -23,19 +23,18 @@ ActiveRecord::Schema.define(version: 20241127000206) do
     t.integer "owner_id"
   end
 
-  create_table "payments", force: :cascade do |t|
-    t.float    "money_usd"
-    t.string   "currency"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "user_id",    null: false
-  end
-
   create_table "sessions", force: :cascade do |t|
     t.string   "session_token"
     t.integer  "user_id"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+  end
+
+  create_table "tiles", force: :cascade do |t|
+    t.integer "game_id"
+    t.integer "x_position"
+    t.integer "y_position"
+    t.string  "biome"
   end
 
   create_table "users", force: :cascade do |t|
