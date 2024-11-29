@@ -177,6 +177,12 @@ footer {
     color: #333;
 }
 
+.wide-form-container {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 30px;
+}
+
 .form-container h1 {
     margin-bottom: 20px;
     font-size: 24px;
