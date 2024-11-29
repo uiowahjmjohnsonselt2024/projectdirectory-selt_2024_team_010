@@ -30,7 +30,8 @@ class GamesController < ApplicationController
   def list
     if params[:server_name]
       @search = params[:server_name]
-      @found_games = Game.where("LOWER(name) LIKE ?", "%#{@search.downcase}%")
+      games = Game.arel_table
+      @found_games = Game.where(games[:name].matches("%#{@search}%"))
     end
   end
 
