@@ -76,7 +76,7 @@ main {
 
 footer {
     font-family: "Arial", sans-serif;
-    background: linear-gradient(135deg, #2c003e, #4b0082); /* Footer color or gradient */
+    background: linear-gradient(135deg, #4b0082, #2c003e); /* Footer color or gradient */
     color: #ffffff;
     text-align: center;
     padding: 1rem;
