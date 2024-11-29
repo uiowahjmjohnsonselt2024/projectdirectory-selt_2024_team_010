@@ -1,0 +1,74 @@
+<!-- Shop Partial -->
+<div class="game-shop">
+  <div class="shop-container">
+    <h2>In-Game Shop</h2>
+    <div class="tab">
+      <button class="tablinks" data-category="Weapons">Weapons</button>
+      <button class="tablinks" data-category="Armor">Armor</button>
+      <button class="tablinks" data-category="Potions">Potions</button>
+    </div>
+
+    <!-- Weapons Tab Content -->
+    <div id="Weapons" class="tabcontent" style="display: block;">
+      <ul class="shop-items">
+        <% weapons = [
+          { name: 'Sword of Destiny', price: 100, description: 'A legendary sword with immense power.', image: 'sword.png' },
+          { name: 'Magic Staff', price: 150, description: 'A staff imbued with magical energy.', image: 'staff.png' }
+        ] %>
+        <% weapons.each do |item| %>
+          <li class="shop-item">
+            <img src="<%= image_path(item[:image]) %>" alt="<%= item[:name] %>" class="item-image">
+            <div class="item-details">
+              <h3><%= item[:name] %></h3>
+              <p><%= item[:description] %></p>
+              <p>Price: <%= item[:price] %> Shards</p>
+              <button class="buy-button">Buy</button>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <!-- Armor Tab Content -->
+    <div id="Armor" class="tabcontent">
+      <ul class="shop-items">
+        <% armors = [
+          { name: 'Shield of Valor', price: 75, description: 'An unbreakable shield that protects its bearer.', image: 'shield.png' },
+          { name: 'Armor of Invincibility', price: 200, description: 'Grants temporary invincibility.', image: 'armor.png' }
+        ] %>
+        <% armors.each do |item| %>
+          <li class="shop-item">
+            <img src="<%= image_path(item[:image]) %>" alt="<%= item[:name] %>" class="item-image">
+            <div class="item-details">
+              <h3><%= item[:name] %></h3>
+              <p><%= item[:description] %></p>
+              <p>Price: <%= item[:price] %> coins</p>
+              <button class="buy-button">Buy</button>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <!-- Potions Tab Content -->
+    <div id="Potions" class="tabcontent">
+      <ul class="shop-items">
+        <% potions = [
+          { name: 'Potion of Healing', price: 25, description: 'Restores health over time.', image: 'potion.png' },
+          { name: 'Potion of Strength', price: 30, description: 'Increases strength temporarily.', image: 'potion_strength.png' }
+        ] %>
+        <% potions.each do |item| %>
+          <li class="shop-item">
+            <img src="<%= image_path(item[:image]) %>" alt="<%= item[:name] %>" class="item-image">
+            <div class="item-details">
+              <h3><%= item[:name] %></h3>
+              <p><%= item[:description] %></p>
+              <p>Price: <%= item[:price] %> coins</p>
+              <button class="buy-button">Buy</button>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>
