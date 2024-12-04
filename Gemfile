@@ -26,6 +26,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 
+# Use OpenAI for ChatGPT calls
+gem 'ruby-openai', '~> 7.3.1'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 
@@ -41,6 +44,7 @@ group :development, :test do
   gem 'cucumber-rails', require: false
   gem 'rspec-rails'
   gem 'simplecov'
+  gem 'dotenv-rails'
 end
 
 group :development do
