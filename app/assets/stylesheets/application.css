@@ -296,7 +296,7 @@ th {
 
 /* Left Partial - Shop Section */
 .game-shop {
-    width: 25%;
+    width: 35%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -347,6 +347,7 @@ th {
     display: none;
     padding: 10px 0;
     border-top: none;
+
 }
 
 .tabcontent:first-of-type {
@@ -397,7 +398,7 @@ th {
 
 /* Main Content */
 .game-main {
-    width: 50%;
+    width: 40%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
