@@ -23,4 +23,15 @@ class TilesController < ApplicationController
   def show
     # TODO: prompt the AI for the details about the tile if details are not found here.
   end
+
+  def get_tile
+    x = params[:x]
+    y = params[:y]
+
+    tile = Tile.where(x_position: x, y_position: y).first
+
+    # check if tile has picture if not load one
+
+    render json: { tile => tile.to_json }
+    end
 end
