@@ -17,4 +17,8 @@ class TilesController < ApplicationController
       @tiles.assoc([tile.x_position, tile.y_position] => [tile.biome])
     end
   end
+
+  def show
+    # TODO: prompt the AI for the details about the tile if details are not found here.
+  end
 end
