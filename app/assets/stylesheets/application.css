@@ -76,7 +76,7 @@ main {
 
 footer {
     font-family: "Arial", sans-serif;
-    background: linear-gradient(135deg, #2c003e, #4b0082); /* Footer color or gradient */
+    background: linear-gradient(135deg, #4b0082, #2c003e); /* Footer color or gradient */
     color: #ffffff;
     text-align: center;
     padding: 1rem;
@@ -108,6 +108,7 @@ footer {
     border-radius: 25px;
     margin: 0 15px;
     transition: all 0.3s ease;
+    text-decoration: none;
 }
 
 .nav-button:hover {
@@ -155,6 +156,14 @@ footer {
     animation: pulse 1.5s infinite ease-in-out;
 }
 
+.text-shadow {
+    text-shadow:
+            -1px -1px 0 #000, /* Top left */
+            1px -1px 0 #000,  /* Top right */
+            -1px 1px 0 #000,  /* Bottom left */
+            1px 1px 0 #000;   /* Bottom right */
+}
+
 @keyframes pulse {
     0%, 100% {
         text-shadow: 0 0 8px #007bff, 0 0 16px rgba(0, 123, 255, 0.6);
@@ -175,6 +184,12 @@ footer {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
     color: #333;
+}
+
+.wide-form-container {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 30px;
 }
 
 .form-container h1 {
