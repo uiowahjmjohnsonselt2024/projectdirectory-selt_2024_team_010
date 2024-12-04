@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class GamesController < ApplicationController
-  before_action :require_login, :get_games_list
+  before_action :require_login, :get_games_list, :get_current_game
   def index
     @games = @current_user.games
   end
