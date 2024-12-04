@@ -1,5 +1,8 @@
 require_relative 'app/services/openAIService'
 
+
+# USE THESE FOR KEY CHECKING
+# ##############################################################
 # Load the API key from the .env file
 require 'dotenv'
 Dotenv.load
@@ -9,8 +12,12 @@ if api_key.nil? || api_key.empty?
   puts "Error: OPENAI_API_KEY is not set in the .env file."
   exit
 end
+##############################################################
 
 # Test the GameContentGenerator class
+
+# EXAMPLE TESTING METHOD
+##############################################################
 def test_game_content_generator(api_key)
   # Define the system prompt
   system_prompt = <<~PROMPT
