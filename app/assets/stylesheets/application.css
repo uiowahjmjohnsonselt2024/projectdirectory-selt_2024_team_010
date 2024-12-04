@@ -280,6 +280,7 @@ th {
 }
 
 
+/* Global Reset */
 * {
     margin: 0;
     padding: 0;
@@ -293,7 +294,7 @@ th {
     height: 100vh;
 }
 
-/* Shop Section */
+/* Left Partial - Shop Section */
 .game-shop {
     width: 25%;
     display: flex;
@@ -394,7 +395,7 @@ th {
     background-color: #218838;
 }
 
-
+/* Main Content */
 .game-main {
     width: 50%;
     display: flex;
@@ -403,14 +404,14 @@ th {
     background-color: #f0f0f0;
 }
 
-
 .main-content {
     flex: 1;
     overflow-y: auto;
     padding: 15px;
 }
 
-.game-chat {
+/* Right Partial */
+.game-right {
     width: 25%;
     display: flex;
     flex-direction: column;
@@ -418,8 +419,30 @@ th {
     background-color: rgba(241, 241, 241, 0.9);
 }
 
+/* Character Info Section */
+.character-info {
+    flex: 1 1 33%;
+    padding: 15px;
+    background-color: rgba(125, 60, 181, 0.9);
+    color: white;
+    overflow-y: auto;
+}
+
+.character-info h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.character-info p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+/* Chat Section */
 .chat-container {
-    flex: 1;
+    flex: 2 1 67%;
     overflow-y: auto;
     padding: 15px;
 }
@@ -448,6 +471,7 @@ th {
     color: #007bff;
 }
 
+/* Chat Form */
 #chat-form {
     display: flex;
     margin-top: 10px;
@@ -475,6 +499,7 @@ th {
     background-color: #0056b3;
 }
 
+/* Scrollbar Styling */
 .shop-container::-webkit-scrollbar,
 .chat-container::-webkit-scrollbar {
     width: 8px;
@@ -493,7 +518,7 @@ th {
 
 .game-shop,
 .game-main,
-.game-chat {
+.game-right {
     margin: 0;
     padding: 0;
 }
@@ -512,7 +537,6 @@ th {
     color: #333;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .game-container {
         flex-direction: column;
@@ -520,13 +544,83 @@ th {
 
     .game-shop,
     .game-main,
-    .game-chat {
+    .game-right {
         width: 100%;
         height: auto;
     }
 
+    .shop-container,
     .chat-container,
-    .shop-container {
+    .character-info {
         height: auto;
     }
+}
+
+/* Main Tabs Styling within the game-shop */
+.game-shop .main-tabs {
+    overflow: hidden;
+    background-color: #5a2d82;
+}
+
+.game-shop .main-tablinks {
+    background-color: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 16px;
+    font-size: 16px;
+    color: white;
+    transition: 0.3s;
+}
+
+.game-shop .main-tablinks:hover {
+    background-color: #71409c;
+}
+
+.game-shop .main-tablinks.active {
+    background-color: #71409c;
+}
+
+.game-shop .main-tabcontent {
+    display: none;
+    padding: 10px 0;
+    border-top: none;
+}
+
+.game-shop .main-tabcontent:first-of-type {
+    display: block;
+}
+
+.game-shop .tab {
+    overflow: hidden;
+    background-color: #71409c;
+}
+
+.game-shop .tablinks {
+    background-color: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: white;
+    transition: 0.3s;
+}
+
+.game-shop .tablinks:hover {
+    background-color: #8557b5;
+}
+
+.game-shop .tablinks.active {
+    background-color: #8557b5;
+}
+
+.game-shop .tabcontent {
+    display: none;
+    padding: 8px 0;
+    border-top: none;
+}
+
+.game-shop .tabcontent:first-of-type {
+    display: block;
 }

@@ -1,74 +1,134 @@
-<!-- Shop Partial -->
 <div class="game-shop">
-  <div class="shop-container">
-    <h2>In-Game Shop</h2>
-    <div class="tab">
-      <button class="tablinks" data-category="Weapons">Weapons</button>
-      <button class="tablinks" data-category="Armor">Armor</button>
-      <button class="tablinks" data-category="Potions">Potions</button>
-    </div>
+  <!-- Main Tabs -->
+  <div class="main-tabs">
+    <button class="main-tablinks active" data-section="ShopSection">Shop</button>
+    <button class="main-tablinks" data-section="ItemsSection">Items</button>
+    <button class="main-tablinks" data-section="GameSection">Tile</button>
+  </div>
 
-    <!-- Weapons Tab Content -->
-    <div id="Weapons" class="tabcontent" style="display: block;">
-      <ul class="shop-items">
-        <% weapons = [
-          { name: 'Sword of Destiny', price: 100, description: 'A legendary sword with immense power.', image: 'sword.png' },
-          { name: 'Magic Staff', price: 150, description: 'A staff imbued with magical energy.', image: 'staff.png' }
-        ] %>
-        <% weapons.each do |item| %>
-          <li class="shop-item">
-            <img src="<%= image_path(item[:image]) %>" alt="<%= item[:name] %>" class="item-image">
-            <div class="item-details">
-              <h3><%= item[:name] %></h3>
-              <p><%= item[:description] %></p>
-              <p>Price: <%= item[:price] %> Shards</p>
-              <button class="buy-button">Buy</button>
-            </div>
-          </li>
-        <% end %>
-      </ul>
-    </div>
+  <!-- Shop Section -->
+  <div id="ShopSection" class="main-tabcontent" style="display: block;">
+    <div class="shop-container">
+      <h2>In-Game Shop</h2>
+      <div class="tab">
+        <button class="tablinks active" data-category="Weapons">Weapons</button>
+        <button class="tablinks" data-category="Armor">Armor</button>
+        <button class="tablinks" data-category="Abilities">Abilities</button>
+      </div>
 
-    <!-- Armor Tab Content -->
-    <div id="Armor" class="tabcontent">
-      <ul class="shop-items">
-        <% armors = [
-          { name: 'Shield of Valor', price: 75, description: 'An unbreakable shield that protects its bearer.', image: 'shield.png' },
-          { name: 'Armor of Invincibility', price: 200, description: 'Grants temporary invincibility.', image: 'armor.png' }
-        ] %>
-        <% armors.each do |item| %>
-          <li class="shop-item">
-            <img src="<%= image_path(item[:image]) %>" alt="<%= item[:name] %>" class="item-image">
-            <div class="item-details">
-              <h3><%= item[:name] %></h3>
-              <p><%= item[:description] %></p>
-              <p>Price: <%= item[:price] %> coins</p>
-              <button class="buy-button">Buy</button>
-            </div>
-          </li>
-        <% end %>
-      </ul>
-    </div>
+      <!-- Weapons Tab Content -->
+      <div id="Weapons" class="main-tabcontent" style="display: block;">
+        <!-- Weapons Items List -->
+      </div>
 
-    <!-- Potions Tab Content -->
-    <div id="Potions" class="tabcontent">
-      <ul class="shop-items">
-        <% potions = [
-          { name: 'Potion of Healing', price: 25, description: 'Restores health over time.', image: 'potion.png' },
-          { name: 'Potion of Strength', price: 30, description: 'Increases strength temporarily.', image: 'potion_strength.png' }
-        ] %>
-        <% potions.each do |item| %>
-          <li class="shop-item">
-            <img src="<%= image_path(item[:image]) %>" alt="<%= item[:name] %>" class="item-image">
-            <div class="item-details">
-              <h3><%= item[:name] %></h3>
-              <p><%= item[:description] %></p>
-              <p>Price: <%= item[:price] %> coins</p>
-              <button class="buy-button">Buy</button>
-            </div>
-          </li>
-        <% end %>
-      </ul>
+      <!-- Armor Tab Content -->
+      <div id="Armor" class="main-tabcontent">
+        <!-- Armor Items List -->
+
+      </div>
+
+      <!-- Abilities Tab Content -->
+      <div id="Abilities" class="main-tabcontent">
+        <!-- Abilities Items List -->
+      </div>
     </div>
   </div>
+
+  <!-- Items Section -->
+  <div id="ItemsSection" class="main-tabcontent">
+    <!-- Items Content -->
+    <h2>Your Items</h2>
+    <p>Display your items here.</p>
+  </div>
+
+  <!-- Game Section -->
+  <div id="GameSection" class="main-tabcontent">
+    <!-- Game Content -->
+    <h2> Tile </h2>
+    <p>Display game-related content here.</p>
+  </div>
 </div>
+
+<script>
+    function initializeTabs() {
+        // Main Tabs Logic
+        const mainTabs = document.querySelectorAll(".main-tablinks");
+        const mainTabContents = document.querySelectorAll(".main-tabcontent");
+
+        mainTabs.forEach((tab) => {
+            tab.addEventListener("click", (event) => {
+                // Hide all main tab contents
+                mainTabContents.forEach((content) => (content.style.display = "none"));
+
+                // Remove active class from all main tabs
+                mainTabs.forEach((t) => t.classList.remove("active"));
+
+                // Show selected main tab content
+                const sectionId = event.target.dataset.section;
+                document.getElementById(sectionId).style.display = "block";
+
+                // Set active class on clicked main tab
+                event.target.classList.add("active");
+            });
+        });
+
+        // Shop Tabs Logic
+        const shopSection = document.getElementById("ShopSection");
+        if (shopSection) {
+            const shopTabs = shopSection.querySelectorAll(".tablinks");
+            const shopTabContents = shopSection.querySelectorAll(".tabcontent");
+
+            shopTabs.forEach((tab) => {
+                tab.addEventListener("click", (event) => {
+                    // Hide all shop tab contents
+                    shopTabContents.forEach((content) => (content.style.display = "none"));
+
+                    // Remove active class from all shop tabs
+                    shopTabs.forEach((t) => t.classList.remove("active"));
+
+                    // Show selected shop tab content
+                    const categoryId = event.target.dataset.category;
+                    shopSection.querySelector(`#${categoryId}`).style.display = "block";
+
+                    // Set active class on clicked shop tab
+                    event.target.classList.add("active");
+                });
+            });
+
+            // Default shop tab selection
+            const defaultShopTab = shopSection.querySelector(".tablinks.active");
+            if (defaultShopTab) {
+                defaultShopTab.click();
+            } else if (shopTabs.length > 0) {
+                shopTabs[0].click();
+            }
+        }
+
+        // Default main tab selection
+        const defaultMainTab = document.querySelector(".main-tablinks.active");
+        if (defaultMainTab) {
+            defaultMainTab.click();
+        } else if (mainTabs.length > 0) {
+            mainTabs[0].click();
+        }
+
+        // Buy Button Click Handler
+        const buyButtons = document.querySelectorAll(".buy-button");
+        buyButtons.forEach((button) => {
+            button.addEventListener("click", (event) => {
+                const itemDetails = event.target.closest(".item-details");
+                const itemName = itemDetails.querySelector("h3").textContent;
+                const itemPrice = itemDetails.querySelector("p:nth-child(3)").textContent;
+
+                alert(`You have purchased ${itemName} for ${itemPrice}`);
+                // Additional logic for purchase can be added here
+            });
+        });
+    }
+
+    // Initialize tabs on page load and on Turbolinks/Turbo load
+    document.addEventListener("DOMContentLoaded", initializeTabs);
+    document.addEventListener("turbolinks:load", initializeTabs);
+    document.addEventListener("turbo:load", initializeTabs);
+
+</script>
