@@ -11,13 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20241204204213) do
+ActiveRecord::Schema.define(version: 20241204205952) do
 
   create_table "characters", force: :cascade do |t|
     t.integer "user_id"
     t.integer "game_id"
-    t.integer "level",   default: 1
-    t.integer "health",  default: 5
+    t.integer "level",      default: 1
+    t.integer "health",     default: 5
+    t.integer "x_position"
+    t.integer "y_position"
   end
 
   create_table "games", force: :cascade do |t|
@@ -64,11 +66,11 @@ ActiveRecord::Schema.define(version: 20241204204213) do
     t.string   "username"
     t.string   "email"
     t.string   "password_digest"
-    t.float    "shard_amount"
-    t.float    "money_usd"
+    t.float    "shard_amount",     default: 0.0
+    t.float    "money_usd",        default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "session"
+    t.boolean  "isAdmin",          default: false
     t.string   "recent_character"
   end
 
