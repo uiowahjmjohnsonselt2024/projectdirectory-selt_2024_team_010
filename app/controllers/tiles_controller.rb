@@ -10,4 +10,11 @@ class TilesController < ApplicationController
     # Replace biome selector with something fancier if we have the time.
     @current_game.tiles.create!(x_position: x, y_position: y, biome: BIOMES.sample)
   end
+
+  def index
+    @tiles = {}
+    @current_game.tiles.each do |tile|
+      @tiles.assoc([tile.x_position, tile.y_position] => [tile.biome])
+    end
+  end
 end
