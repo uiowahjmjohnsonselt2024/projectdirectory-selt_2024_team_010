@@ -26,5 +26,7 @@ Rails.application.routes.draw do
     get 'list', on: :collection
     post 'add', on: :member
     resources :tiles
+    # We can also add the resources :characters here if we decide we need a controller for it. It will allow us to
+    # ensure that the game session the character or tile is attached to is always knowable.
   end
 end
