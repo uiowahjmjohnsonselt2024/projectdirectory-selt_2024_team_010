@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 class TilesController < ApplicationController
   before_action :require_login, :get_current_game
-  BIOMES = [:plains, :forest, :desert, :mountains, :ocean]
+  BIOMES = [:white, :green, :yellow, :gray, :blue]
   def create
     x = params[:x]
     y = params[:y]
@@ -16,6 +16,8 @@ class TilesController < ApplicationController
     @current_game.tiles.each do |tile|
       @tiles.assoc([tile.x_position, tile.y_position] => [tile.biome])
     end
+
+
   end
 
   def show
