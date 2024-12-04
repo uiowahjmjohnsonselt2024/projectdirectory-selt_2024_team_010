@@ -1,6 +1,8 @@
 <div class="game-main">
 <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
   <!-- The Table Grid -->
+
+  <% @tiles.inspect %>
   <table>
     <% (-3..3).each do |y| %>
       <tr>
@@ -39,6 +41,8 @@
     };
 
     const cellColors = <%= raw @tiles.to_json %>;
+
+    console.log(cellColors)
 
     let current_position = [0, 0];
     let previous_position = null;

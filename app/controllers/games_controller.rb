@@ -58,7 +58,7 @@ class GamesController < ApplicationController
 
     @tiles = {}
     @current_game.tiles.each do |tile|
-      @tiles.assoc([tile.x_position, tile.y_position] => [tile.biome])
+      @tiles[[tile.x_position, tile.y_position]] = tile.biome
     end
   end
 end
