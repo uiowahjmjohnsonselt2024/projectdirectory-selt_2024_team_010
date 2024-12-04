@@ -45,5 +45,79 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
+
+    base_biome = 'yellow'
+    @cell_colors = {}
+
+    # Step 1: Base Layer
+    (-3..3).each do |x|
+      (-3..3).each do |y|
+        @cell_colors[[x, y]] = base_biome
+      end
+    end
+
+    # Step 2: Seed Biomes
+    seed_biomes(['blue', 'gray', 'green'], @cell_colors)
+
+    # Step 3: Spread Biomes
+    spread_biomes(@cell_colors)
+
+    # Step 4: Post-Processing
+    smooth_grid(@cell_colors)
   end
+
+  private
+
+  def seed_biomes(biomes, cell_colors)
+    biomes.each do |biome|
+      3.times do
+        x, y = rand(-3..3), rand(-3..3)
+        cell_colors[[x, y]] = biome
+      end
+    end
+  end
+
+  def spread_biomes(cell_colors)
+    (1..3).each do |_|
+      new_colors = cell_colors.dup
+      (-3..3).each do |x|
+        (-3..3).each do |y|
+          adjacent_colors = [
+            cell_colors[[x - 1, y]],
+            cell_colors[[x + 1, y]],
+            cell_colors[[x, y - 1]],
+            cell_colors[[x, y + 1]]
+          ].compact
+
+          case cell_colors[[x, y]]
+          when 'yellow'
+            new_colors[[x, y]] = 'blue' if adjacent_colors.include?('blue') && rand < 0.3
+            new_colors[[x, y]] = 'green' if adjacent_colors.include?('green') && rand < 0.5
+          when 'green'
+            new_colors[[x, y]] = 'gray' if adjacent_colors.include?('gray') && rand < 0.4
+          end
+        end
+      end
+      cell_colors.merge!(new_colors)
+    end
+  end
+
+  def smooth_grid(cell_colors)
+    (-3..3).each do |x|
+      (-3..3).each do |y|
+        adjacent_colors = [
+          cell_colors[[x - 1, y]],
+          cell_colors[[x + 1, y]],
+          cell_colors[[x, y - 1]],
+          cell_colors[[x, y + 1]]
+        ].compact
+
+        # Remove isolated tiles
+        if adjacent_colors.count(cell_colors[[x, y]]) < 2
+          cell_colors[[x, y]] = adjacent_colors.group_by(&:itself).max_by { |_k, v| v.size }&.first || 'yellow'
+        end
+      end
+    end
+  end
+
 end
