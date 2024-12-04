@@ -25,5 +25,6 @@ Rails.application.routes.draw do
   resources :games do
     get 'list', on: :collection
     post 'add', on: :member
+    resources :tiles
   end
 end
