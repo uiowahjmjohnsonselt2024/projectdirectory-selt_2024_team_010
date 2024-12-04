@@ -22,6 +22,8 @@ Rails.application.routes.draw do
   post 'shop/payment', to: 'shop#payment', as: 'shop_payment'
   get 'shop/payment_history', to: 'shop#payment_history', as: 'shop_payment_history'
 
+  get 'tiles', to: 'tiles#get_tile', as: 'get_tile'
+
   resources :games do
     get 'list', on: :collection
     post 'add', on: :member
