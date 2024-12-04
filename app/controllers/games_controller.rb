@@ -48,24 +48,10 @@ class GamesController < ApplicationController
     @current_user.update!(recent_character: @current_user.characters.find_by(game_id: game.id).id)
     get_current_game
 
-    base_biome = 'yellow'
-    @cell_colors = {}
-
-    # Step 1: Base Layer
-    (-3..3).each do |x|
-      (-3..3).each do |y|
-        @cell_colors[[x, y]] = base_biome
-      end
+    @tiles = {}
+    @current_game.tiles.each do |tile|
+      @tiles.assoc([tile.x_position, tile.y_position] => [tile.biome])
     end
-
-    # Step 2: Seed Biomes
-    seed_biomes(['blue', 'gray', 'green'], @cell_colors)
-
-    # Step 3: Spread Biomes
-    spread_biomes(@cell_colors)
-
-    # Step 4: Post-Processing
-    smooth_grid(@cell_colors)
   end
 
   private

@@ -5,12 +5,12 @@
     <% (-3..3).each do |y| %>
       <tr>
         <% (-3..3).each do |x| %>
-          <td style="background-color: <%= @cell_colors[[x, y]] %>;">
+          <td style="background-color: <%= @tiles[[x, y]] %>;">
             <div class="content">
               <button
                 id="tile-<%= x %>-<%= y %>"
                 class="cell-button"
-                onclick="clickCell(<%= x %>, <%= y %>, '<%= @cell_colors[[x, y]] %>')">
+                onclick="clickCell(<%= x %>, <%= y %>, '<%= @tiles[[x, y]] %>')">
               </button>
             </div>
           </td>
@@ -38,7 +38,7 @@
         blue: 'ocean'
     };
 
-    const cellColors = <%= raw @cell_colors.to_json %>;
+    const cellColors = <%= raw @tiles.to_json %>;
 
     let current_position = [0, 0];
     let previous_position = null;
