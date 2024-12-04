@@ -18,7 +18,7 @@ def test_game_content_generator(api_key)
     {
       "monster": {
         "description": "[Monster description placeholder]",
-        "level": 0
+        "level": [integer]
       },
       "landscape": {
         "description": "[Landscape description placeholder]"
@@ -26,13 +26,13 @@ def test_game_content_generator(api_key)
       "loot": {
         "name": "[Loot name placeholder]",
         "rarity": "[Loot rarity placeholder]",
-        "level": 0
+        "level": [integer]
       }
     }
   PROMPT
 
   # Define the instruction prompt
-  instruction_prompt = "Give me a description for a monster and a treasure."
+  instruction_prompt = "Give me a description for a monster and a treasure. Give the monster a level between 5 and 10 and the treasure a level of 6."
 
   # Initialize the generator
   generator = GameContentGenerator.new(api_key)
