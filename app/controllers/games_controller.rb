@@ -44,7 +44,9 @@ class GamesController < ApplicationController
   end
 
   def show
-    @game = Game.find(params[:id])
+    game = Game.find(params[:id])
+    @current_user.update!(recent_character: @current_user.characters.find_by(game_id: game.id).id)
+    get_current_game
 
     base_biome = 'yellow'
     @cell_colors = {}
