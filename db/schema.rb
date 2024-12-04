@@ -27,6 +27,14 @@ ActiveRecord::Schema.define(version: 20241204205952) do
     t.integer "owner_id"
   end
 
+  create_table "items", force: :cascade do |t|
+    t.string  "type"
+    t.string  "name"
+    t.string  "description"
+    t.integer "level"
+    t.integer "character_id"
+  end
+
   create_table "payments", force: :cascade do |t|
     t.float    "money_usd"
     t.string   "currency"

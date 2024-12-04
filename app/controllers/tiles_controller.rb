@@ -11,10 +11,6 @@ class TilesController < ApplicationController
     @current_game.tiles.create!(x_position: x, y_position: y, biome: BIOMES.sample)
   end
 
-  def show
-    # TODO: prompt the AI for the details about the tile if details are not found here.
-  end
-
   def get_tile
     x = params[:x]
     y = params[:y]
