@@ -56,13 +56,9 @@ class GamesController < ApplicationController
     @current_user.update!(recent_character: @current_user.characters.find_by(game_id: game.id).id)
     get_current_game
 
-    @cell_colors = {}
-
-    game.tiles.each do |tile|
-      x = tile.x_position
-      y = tile.y_position
-      @cell_colors[[x, y]] = tile.biome
+    @tiles = {}
+    @current_game.tiles.each do |tile|
+      @tiles.assoc([tile.x_position, tile.y_position] => [tile.biome])
     end
-
-    end
+  end
 end

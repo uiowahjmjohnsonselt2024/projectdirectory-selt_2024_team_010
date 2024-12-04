@@ -11,15 +11,6 @@ class TilesController < ApplicationController
     @current_game.tiles.create!(x_position: x, y_position: y, biome: BIOMES.sample)
   end
 
-  def index
-    @tiles = {}
-    @current_game.tiles.each do |tile|
-      @tiles.assoc([tile.x_position, tile.y_position] => [tile.biome])
-    end
-
-
-  end
-
   def show
     # TODO: prompt the AI for the details about the tile if details are not found here.
   end
