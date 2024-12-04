@@ -7,6 +7,7 @@
           <td style="background-color: <%= @cell_colors[[x, y]] %>;">
             <div class="content">
               <button
+                id="tile-<%= x %>-<%= y %>"
                 class="cell-button"
                 onclick="clickCell(<%= x %>, <%= y %>, '<%= @cell_colors[[x, y]] %>')">
               </button>
@@ -38,10 +39,11 @@
     const cellColors = <%= raw @cell_colors.to_json %>;
 
     let current_position = [0, 0];
-
+    let previous_position = null;
     let current_biome = biome_map[cellColors[formatKey(current_position)]];
 
     displayCurrentBiome();
+    renderOnCurrentTile();
 
     function displayCurrentBiome() {
         console.log("Current Biome: ", current_biome);
@@ -54,6 +56,42 @@
     function clickCell(x, y, color) {
         console.log("Point: ", x, y);
         console.log("Biome: ", biome_map[color]);
+    }
+
+    function renderOnCurrentTile() {
+        const content = '🏠';
+
+        // Clear previous content if applicable
+        if (previous_position) {
+            const prevTileId = `tile-${previous_position[0]}-${previous_position[1]}`;
+            const prevTile = document.getElementById(prevTileId);
+            if (prevTile) {
+                // Remove only the rendered content, keep the button
+                const renderedContent = prevTile.querySelector('.rendered-content');
+                if (renderedContent) {
+                    prevTile.removeChild(renderedContent);
+                }
+            }
+        }
+
+        // Get the tile id corresponding to current_position
+        const tileId = `tile-${current_position[0]}-${current_position[1]}`;
+        const tile = document.getElementById(tileId);
+
+        // Check if the rendered content already exists, remove if necessary
+        const existingContent = tile.querySelector('.rendered-content');
+        if (existingContent) {
+            tile.removeChild(existingContent);
+        }
+
+        // Add new content to the tile without removing the button
+        const newContent = document.createElement('div');
+        newContent.className = 'rendered-content';
+        newContent.innerHTML = content; // Render the new content
+        tile.appendChild(newContent);
+
+        // Update the previous position
+        previous_position = [...current_position];
     }
 
     function move(direction) {
@@ -91,8 +129,11 @@
         current_biome = biome_map[cellColors[formatKey(current_position)]];
 
         displayCurrentBiome();
+
         console.log(`Moved ${direction} to position: (${newX}, ${newY})`);
 
+        // Render content on the new tile
+        renderOnCurrentTile(); // Example content (a house emoji)
     }
 </script>
 
@@ -180,5 +221,16 @@
 
     .move-button:hover {
         background-color: #fff; /* Slightly darker gray */
+    }
+
+    .rendered-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        color: black;
+        pointer-events: none; /* Make it non-interactive */
     }
 </style>
