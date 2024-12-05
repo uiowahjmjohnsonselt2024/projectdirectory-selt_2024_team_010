@@ -46,28 +46,24 @@ class GameContentGenerator
 
   # Method to generate content based on the model, system prompt, and instruction
   def generate_content(model, system_prompt, instruction_prompt)
+
     # Messages array with system prompt and instruction prompt
     messages = [
       { role: "system", content: system_prompt },
       { role: "user", content: instruction_prompt }
     ]
 
-    begin
-      # Call the OpenAI API
-      response = @client.chat(
-        parameters: {
-          model: model,
-          messages: messages,
-          temperature: 0.7
-        }
-      )
+    # Call the OpenAI API
+    response = @client.chat(
+      parameters: {
+        model: model,
+        messages: messages,
+        temperature: 0.7
+      }
+    )
 
-      # Parse and return the assistant's response
-      response.dig("choices", 0, "message", "content")
-    rescue StandardError => e
-      puts "Error: #{e.message}"
-      nil
-    end
+    # Parse and return the assistant's response
+    response.dig("choices", 0, "message", "content")
   end
 end
 

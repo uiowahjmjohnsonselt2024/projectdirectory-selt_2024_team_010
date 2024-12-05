@@ -23,6 +23,8 @@ Rails.application.routes.draw do
   get 'shop/payment_history', to: 'shop#payment_history', as: 'shop_payment_history'
 
   get 'tiles', to: 'tiles#get_tile', as: 'get_tile'
+  get 'tiles/get_tile', to: 'tiles#get_tile'
+
 
   resources :games do
     get 'list', on: :collection

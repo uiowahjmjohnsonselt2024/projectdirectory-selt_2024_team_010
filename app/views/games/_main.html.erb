@@ -62,6 +62,37 @@
     function clickCell(x, y, color) {
         console.log("Point: ", x, y);
         console.log("Biome: ", biome_map[color]);
+
+        // Fetch tile information from the backend
+        fetch(`/tiles/get_tile?x=${x}&y=${y}`)
+          .then((response) => {
+              if (!response.ok) {
+                  throw new Error("Tile not found.");
+              }
+              return response.json();
+          })
+          .then((data) => {
+              if (data.error) {
+                  console.error(data.error);
+                  updateGameSection(`<p>${data.error}</p>`);
+              } else {
+                  // Display tile information in the Game Section
+                  const tileInfo = `
+                    <h3>Tile Information</h3>
+                    <p><strong>Position:</strong> (${data.x}, ${data.y})</p>
+                    <p><strong>Biome:</strong> ${data.biome}</p>
+                    <p><strong>Picture:</strong> ${data.picture || 'None'}</p>
+                    <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
+                    <p><strong>Treasure Description:</strong> ${data.treasure_description || 'N/A'}</p>
+                    <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
+                `;
+                  updateGameSection(tileInfo);
+              }
+          })
+          .catch((error) => {
+              console.error("Error fetching tile:", error);
+              updateGameSection(`<p>Error fetching tile information.</p>`);
+          });
     }
 
     function renderOnCurrentTile() {
@@ -140,6 +171,16 @@
 
         // Render content on the new tile
         renderOnCurrentTile(); // Example content (a house emoji)
+    }
+
+    function updateGameSection(content) {
+        const gameSection = document.getElementById("GameSection");
+        if (gameSection) {
+            gameSection.innerHTML = `
+            <h2>Tile</h2>
+            ${content}
+        `;
+        }
     }
 </script>
 

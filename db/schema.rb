@@ -66,11 +66,11 @@ ActiveRecord::Schema.define(version: 20241204205952) do
     t.string   "username"
     t.string   "email"
     t.string   "password_digest"
-    t.float    "shard_amount",     default: 0.0
-    t.float    "money_usd",        default: 0.0
+    t.float    "shard_amount"
+    t.float    "money_usd"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "isAdmin",          default: false
+    t.string   "session"
     t.string   "recent_character"
   end
 
