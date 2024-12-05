@@ -99,6 +99,34 @@ class TilesController < ApplicationController
     }
   end
 
+  def loot_tile
+    x = params[:x].to_i
+    y = params[:y].to_i
+
+    tile = Tile.find_by(x_position: x, y_position: y)
+    if tile && tile.treasure_description.present?
+      puts "Treasure taken"
+      tile.update!(treasure_description: nil)
+      render json: { success: true, tile: tile }
+    else
+      render json: { error: "No treasure to take." }, status: 404
+    end
+  end
+
+  def fight_monster
+    x = params[:x].to_i
+    y = params[:y].to_i
+
+    tile = Tile.find_by(x_position: x, y_position: y)
+    if tile && tile.monster_description.present?
+      puts "Monster slain"
+      tile.update!(monster_description: nil)
+      render json: { success: true, tile: tile }
+    else
+      render json: { error: "No monster to fight." }, status: 404
+    end
+  end
+
   private
 
   def initialize_generator

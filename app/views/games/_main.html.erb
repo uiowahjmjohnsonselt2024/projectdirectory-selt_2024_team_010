@@ -1,35 +1,35 @@
 <div class="game-main">
-<div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
-  <!-- The Table Grid -->
+  <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+    <!-- The Table Grid -->
 
-  <% @tiles.inspect %>
-  <table>
-    <% (-3..3).each do |y| %>
-      <tr>
-        <% (-3..3).each do |x| %>
-          <td style="background-color: <%= @tiles[[x, y]] %>;">
-            <div class="content">
-              <button
-                id="tile-<%= x %>-<%= y %>"
-                class="cell-button"
-                onclick="clickCell(<%= x %>, <%= y %>, '<%= @tiles[[x, y]] %>')">
-              </button>
-            </div>
-          </td>
-        <% end %>
-      </tr>
-    <% end %>
-  </table>
+    <% @tiles.inspect %>
+    <table>
+      <% (-3..3).each do |y| %>
+        <tr>
+          <% (-3..3).each do |x| %>
+            <td style="background-color: <%= @tiles[[x, y]] %>;">
+              <div class="content">
+                <button
+                    id="tile-<%= x %>-<%= y %>"
+                    class="cell-button"
+                    onclick="clickCell(<%= x %>, <%= y %>, '<%= @tiles[[x, y]] %>')">
+                </button>
+              </div>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </table>
 
-  <!-- Navigation Buttons -->
-  <div class="navigation plus-layout">
-    <button class="move-button move-up" onclick="move('up')">▲</button>
-    <button class="move-button move-left" onclick="move('left')">◀</button>
-    <button class="move-button move-center"></button>
-    <button class="move-button move-right" onclick="move('right')">▶</button>
-    <button class="move-button move-down" onclick="move('down')">▼</button>
+    <!-- Navigation Buttons -->
+    <div class="navigation plus-layout">
+      <button class="move-button move-up" onclick="move('up')">▲</button>
+      <button class="move-button move-left" onclick="move('left')">◀</button>
+      <button class="move-button move-center"></button>
+      <button class="move-button move-right" onclick="move('right')">▶</button>
+      <button class="move-button move-down" onclick="move('down')">▼</button>
+    </div>
   </div>
-</div>
 </div>
 
 <script>
@@ -41,6 +41,9 @@
     };
 
     const cellColors = <%= raw @tiles.to_json %>;
+
+    // Get the CSRF token from the meta tags
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     console.log(cellColors)
 
@@ -64,9 +67,9 @@
         console.log("Biome: ", biome_map[color]);
 
         const tileInfo = `
-                    <h3>Tile Information</h3>
-                    <p>Loading...</p>
-                `;
+      <h3>Tile Information</h3>
+      <p>Loading...</p>
+    `;
         updateGameSection(tileInfo);
 
         // Fetch tile information from the backend
@@ -82,16 +85,35 @@
                   console.error(data.error);
                   updateGameSection(`<p>${data.error}</p>`);
               } else {
-                  // Display tile information in the Game Section
-                  const tileInfo = `
-                    <h3>Tile Information</h3>
-                    <p><strong>Position:</strong> (${data.x}, ${data.y})</p>
-                    <p><strong>Biome:</strong> ${data.biome}</p>
-                    <p><strong>Picture:</strong> ${data.picture || 'None'}</p>
-                    <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
-                    <p><strong>Treasure Description:</strong> ${data.treasure_description || 'N/A'}</p>
-                    <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
-                `;
+                  // Construct the tile information display
+                  let tileInfo = `
+            <h3>Tile Information</h3>
+            <p><strong>Position:</strong> (${data.x}, ${data.y})</p>
+            <p><strong>Biome:</strong> ${data.biome}</p>
+            <p><strong>Picture:</strong> ${data.picture || 'None'}</p>
+            <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
+            <p><strong>Treasure Description:</strong> ${data.treasure_description || 'N/A'}</p>
+            <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
+          `;
+
+                  // Add the Loot button if treasure_description exists
+                  if (data.treasure_description && data.treasure_description.trim() !== '') {
+                      tileInfo += `
+              <button id="loot-button" onclick="takeTreasure(${data.x}, ${data.y})">
+                Loot
+              </button>
+            `;
+                  }
+
+                  // Add the Fight button if monster_description exists
+                  if (data.monster_description && data.monster_description.trim() !== '') {
+                      tileInfo += `
+              <button id="fight-button" onclick="fightMonster(${data.x}, ${data.y})">
+                Fight
+              </button>
+            `;
+                  }
+
                   updateGameSection(tileInfo);
               }
           })
@@ -99,6 +121,87 @@
               console.error("Error fetching tile:", error);
               updateGameSection(`<p>Error fetching tile information.</p>`);
           });
+    }
+
+    // Function to handle taking the treasure
+    function takeTreasure(x, y) {
+        fetch(`/tiles/loot_tile`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({ x: x, y: y })
+        })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  // Re-fetch the tile to update the displayed info
+                  refreshTileInfo(x, y);
+              } else {
+                  console.error(data.error);
+              }
+          })
+          .catch(error => {
+              console.error("Error looting treasure:", error);
+          });
+    }
+
+    // Function to handle fighting the monster
+    function fightMonster(x, y) {
+        fetch(`/tiles/fight_monster`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({ x: x, y: y })
+        })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  // Re-fetch the tile to update the displayed info
+                  refreshTileInfo(x, y);
+              } else {
+                  console.error(data.error);
+              }
+          })
+          .catch(error => {
+              console.error("Error fighting monster:", error);
+          });
+    }
+
+    // A helper function to re-fetch tile info after updates
+    function refreshTileInfo(x, y) {
+        fetch(`/tiles/get_tile?x=${x}&y=${y}`)
+          .then(response => response.json())
+          .then(data => {
+              if (data.error) {
+                  updateGameSection(`<p>${data.error}</p>`);
+              } else {
+                  let tileInfo = `
+            <h3>Tile Information</h3>
+            <p><strong>Position:</strong> (${data.x}, ${data.y})</p>
+            <p><strong>Biome:</strong> ${data.biome}</p>
+            <p><strong>Picture:</strong> ${data.picture || 'None'}</p>
+            <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
+            <p><strong>Treasure Description:</strong> ${data.treasure_description || 'N/A'}</p>
+            <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
+          `;
+
+                  // Re-add the buttons if still applicable
+                  if (data.treasure_description && data.treasure_description.trim() !== '') {
+                      tileInfo += `<button id="loot-button" onclick="takeTreasure(${data.x}, ${data.y})">Loot</button>`;
+                  }
+
+                  if (data.monster_description && data.monster_description.trim() !== '') {
+                      tileInfo += `<button id="fight-button" onclick="fightMonster(${data.x}, ${data.y})">Fight</button>`;
+                  }
+
+                  updateGameSection(tileInfo);
+              }
+          })
+          .catch(error => console.error("Error refreshing tile info:", error));
     }
 
     function renderOnCurrentTile() {
@@ -287,4 +390,3 @@
         pointer-events: none; /* Make it non-interactive */
     }
 </style>
-
