@@ -54,10 +54,6 @@ class TilesController < ApplicationController
 
 
   def generate_tile_content(tile)
-
-    puts("---------===================")
-    puts(tile.inspect)
-    puts("---------===================")
     generator = @generator
 
     # Prepare prompts for the AI
@@ -94,17 +90,7 @@ class TilesController < ApplicationController
     # Call the GameContentGenerator service
     response = generator.generate_content("gpt-4o-mini", system_prompt, instruction_prompt)
 
-    # Log the raw AI response to the Rails console
-    puts("####################################################")
-    puts("####################################################")
-    puts("####################################################")
-    puts(response)
-
     parsed_response = JSON.parse(response, symbolize_names: true)
-
-    # Log the parsed response for additional clarity
-
-
     {
       picture: parsed_response.dig(:landscape, :description) || "Default picture",
       scene_description: parsed_response.dig(:landscape, :description) || "Default scene description",

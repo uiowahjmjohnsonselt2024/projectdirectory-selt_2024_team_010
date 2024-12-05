@@ -63,6 +63,12 @@
         console.log("Point: ", x, y);
         console.log("Biome: ", biome_map[color]);
 
+        const tileInfo = `
+                    <h3>Tile Information</h3>
+                    <p>Loading...</p>
+                `;
+        updateGameSection(tileInfo);
+
         // Fetch tile information from the backend
         fetch(`/tiles/get_tile?x=${x}&y=${y}`)
           .then((response) => {
