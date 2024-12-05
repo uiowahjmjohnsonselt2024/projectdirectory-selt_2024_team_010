@@ -99,8 +99,8 @@
                   // Add the Loot button if treasure_description exists
                   if (data.treasure_description && data.treasure_description.trim() !== '') {
                       tileInfo += `
-              <button id="loot-button" onclick="takeTreasure(${data.x}, ${data.y})">
-                Loot
+              <button id="loot-button" class="btn" onclick="takeTreasure(${data.x}, ${data.y})">
+                  Loot
               </button>
             `;
                   }
@@ -108,7 +108,7 @@
                   // Add the Fight button if monster_description exists
                   if (data.monster_description && data.monster_description.trim() !== '') {
                       tileInfo += `
-              <button id="fight-button" onclick="fightMonster(${data.x}, ${data.y})">
+              <button id="fight-button" class="btn" onclick="fightMonster(${data.x}, ${data.y})">
                 Fight
               </button>
             `;
