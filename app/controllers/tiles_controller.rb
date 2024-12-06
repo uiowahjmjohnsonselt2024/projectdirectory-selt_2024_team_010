@@ -22,7 +22,7 @@ class TilesController < ApplicationController
     x = params[:x].to_i
     y = params[:y].to_i
 
-    tile = Tile.find_by(x_position: x, y_position: y)
+    tile = @current_game.tiles.find_by(x_position: x, y_position: y)
     if tile
       # If tile has no generated content, generate it
       if tile.picture.blank? && tile.scene_description.blank? && tile.treasure_description.blank? && tile.monster_description.blank?
@@ -52,50 +52,49 @@ class TilesController < ApplicationController
   def generate_tile_content(tile)
     generator = @generator
 
-    # We will no longer ask the AI for loot. We'll only ask for monster and landscape.
+    # No loot generation from AI. Only monster and landscape.
     system_prompt = <<~PROMPT
-      You are a creative generator for a video game project. I will give you
-      specifications on what to generate (a text description of a monster and the landscape).
-      Return your responses in JSON format with only "monster" and "landscape" keys.
-      No loot generation is requested. Example JSON:
-      {
-        "monster": {
-          "description": "[Monster description placeholder]",
-          "level": 0
-        },
-        "landscape": {
-          "description": "[Landscape description placeholder]"
-        }
+    You are a creative generator for a video game project. I will give you
+    specifications on what to generate (a text description of a monster and the landscape).
+    Return your responses in JSON format with only "monster" and "landscape" keys.
+    No loot generation is requested. Example JSON:
+    {
+      "monster": {
+        "description": "[Monster description placeholder]",
+        "level": 0
+      },
+      "landscape": {
+        "description": "[Landscape description placeholder]"
       }
-    PROMPT
+    }
+  PROMPT
 
     instruction_prompt = <<~INSTRUCTION
-      Generate content for a tile in the #{tile.biome} biome.
-      Include:
-      - A landscape description
-      - A monster description
-      Do not include any loot. Do not mention loot.
-    INSTRUCTION
+    Generate content for a tile in the #{tile.biome} biome.
+    Include:
+    - A landscape description
+    - A monster description
+    Do not include any loot. Do not mention loot.
+  INSTRUCTION
 
     response = generator.generate_content("gpt-4o-mini", system_prompt, instruction_prompt)
     parsed_response = JSON.parse(response, symbolize_names: true)
 
-    # Now we handle loot ourselves:
-    # 5%: an item (e.g. "A mysterious artifact")
-    # 25%: no loot (nil)
-    # 70%: shards (random between 10 and 100)
+    # Custom loot logic
     roll = rand(100)
     treasure_description =
       if roll < 5
-        # 5% item
-        "A mysterious artifact"
+        # 5% item (call another GPT API to get a random artifact)
+        generate_item(generator)
       elsif roll < 30
         # 25% none
         nil
       else
         # 70% shards
-        shards = rand(10..100)
-        "Shards:#{shards}"
+        #shards = rand(10..100)
+        #"Shards:#{shards}"
+        generate_item(generator)
+
       end
 
     {
@@ -110,7 +109,7 @@ class TilesController < ApplicationController
     x = params[:x].to_i
     y = params[:y].to_i
 
-    tile = Tile.find_by(x_position: x, y_position: y)
+    tile = @current_game.tiles.find_by(x_position: x, y_position: y)
     if tile && tile.treasure_description.present?
       treasure = tile.treasure_description
       if treasure.start_with?("Shards:")
@@ -134,7 +133,7 @@ class TilesController < ApplicationController
     x = params[:x].to_i
     y = params[:y].to_i
 
-    tile = Tile.find_by(x_position: x, y_position: y)
+    tile = @current_game.tiles.find_by(x_position: x, y_position: y)
     if tile && tile.monster_description.present?
       puts "Monster slain"
       tile.update!(monster_description: nil)
@@ -149,6 +148,34 @@ class TilesController < ApplicationController
   def initialize_generator
     api_key = ENV['OPENAI_API_KEY']
     @generator = GameContentGenerator.new(api_key)
+  end
+
+  def generate_item(generator)
+    # Here we craft a prompt to generate a single artifact description.
+    # The result should be a short name and a brief description.
+    # We can return a simple string or even JSON. We'll keep it simple.
+
+    item_system_prompt = <<~PROMPT
+    You are a creative item generator for a fantasy game.
+    You will return one item in JSON format with "name" and "description" keys only.
+    Example:
+    {
+      "name": "Ancient Crystal Skull",
+      "description": "A skull carved from crystal that emits a faint eerie glow."
+    }
+  PROMPT
+
+    item_instruction_prompt = <<~INSTRUCTION
+    Generate a single mysterious artifact item with a unique name and a short description.
+  INSTRUCTION
+
+    item_response = generator.generate_content("gpt-4o-mini", item_system_prompt, item_instruction_prompt)
+    item_data = JSON.parse(item_response, symbolize_names: true)
+
+    # Construct a string to store in treasure_description
+    # For example: "Item:Ancient Crystal Skull - A skull carved from crystal..."
+    # Adjust format as desired.
+    "#{item_data[:name]}: #{item_data[:description]}"
   end
 
 end
