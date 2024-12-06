@@ -126,7 +126,7 @@ class TilesController < ApplicationController
         # Create a new item record in the items table with item_type instead of type
         Item.create!(
           name: item_info[:name],
-          item_type: item_info[:type],  # renamed to item_type
+          item_type: item_info[:item_type],  # renamed to item_type
           description: item_info[:description],
           level: item_info[:level],
           character_id: character.id
@@ -181,7 +181,7 @@ class TilesController < ApplicationController
       Generate a single mysterious artifact item with a unique name and a short description.
       The name must not match any of the previously generated names given. It can be a
       weapon (sword, bow, staff, axe, hammer) or a shield (diamond, tower, round) or a
-      piece of armor (cloak, greaves, gauntlets, chestplate) or just a random artifact.
+      piece of armor (cloak, greaves, gauntlets, chestplate) or just a random artifact. 
       Be creative!
     INSTRUCTION
 
@@ -205,42 +205,53 @@ class TilesController < ApplicationController
 
   def generate_item_details(item_string)
     # item_string format: "Name: Description"
-    # Split only into two parts at most, to avoid issues if the description contains ':'
+    # Split only into two parts at most
     name, description = item_string.split(":", 2).map(&:strip)
 
     system_prompt = <<~PROMPT
-      You are a creative item detail generator for a fantasy game.
-      I have an item with the following attributes:
-      Name: #{name}
-      Description: #{description}
+    You are a creative item detail generator for a fantasy game.
+    I have an item with the following attributes:
+    Name: #{name}
+    Description: #{description}
 
-      I need a JSON response with the keys: "name", "type", "description", and "level".
-      The "type" should be one of ["weapon", "shield", "armor", "artifact"].
-      The "description" can be the same or slightly enhanced.
-      The "level" should be an integer between 1 and 10.
-      Return only the JSON. Example:
-      {
-        "name": "#{name}",
-        "type": "weapon",
-        "description": "#{description}",
-        "level": 5
-      }
-    PROMPT
+    I need a JSON response with the keys: "name", "item_type", and "description".
+    The "item_type" should be one of ["weapon", "shield", "armor", "artifact"].
+    The "description" can be the same or slightly enhanced.
+    Return only the JSON. Example:
+    {
+      "name": "#{name}",
+      "item_type": "weapon",
+      "description": "#{description}"
+    }
+  PROMPT
 
     response = @generator.generate_content("gpt-4o-mini", system_prompt, "")
     clean_response = response.gsub(/^```json\s*/, '').gsub(/```$/, '')
 
     begin
-      JSON.parse(clean_response, symbolize_names: true)
+      item_info = JSON.parse(clean_response, symbolize_names: true)
+      # Validate that item_info has item_type. If not, fallback.
+      if item_info[:item_type].nil? || !%w[weapon shield armor artifact].include?(item_info[:item_type])
+        item_info = {
+          name: name,
+          item_type: "artifact",
+          description: description
+        }
+      end
+
+      # Add a randomly generated level between 1 and 20
+      item_info[:level] = rand(1..20)
+      item_info
     rescue JSON::ParserError => e
       puts "Error parsing JSON for item details: #{e.message}"
       # Fallback if parsing fails
       {
         name: name,
-        type: "artifact",
+        item_type: "artifact",
         description: description,
-        level: rand(1..10)
+        level: rand(1..20)
       }
     end
   end
+
 end
