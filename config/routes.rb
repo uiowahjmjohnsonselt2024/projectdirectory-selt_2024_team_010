@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   post 'tiles/fight_monster', to: 'tiles#fight_monster'
   post 'tiles/loot_tile', to: 'tiles#loot_tile'
 
+  delete 'items/:id', to: 'games#destroy', as: 'destroy_item'
 
 
   resources :games do
