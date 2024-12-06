@@ -60,6 +60,8 @@ class GamesController < ApplicationController
     @current_game.tiles.each do |tile|
       @tiles[[tile.x_position, tile.y_position]] = tile.biome
     end
+
+    @characters = @current_game.characters.all
   end
 
   def move_character
