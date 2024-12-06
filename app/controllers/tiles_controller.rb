@@ -4,17 +4,17 @@ require 'dotenv'
 require 'openAIService'
 Dotenv.load
 
-
-
 class TilesController < ApplicationController
   before_action :require_login, :get_current_game, :initialize_generator
   BIOMES = [:white, :green, :yellow, :gray, :blue]
+
   def create
     x = params[:x]
     y = params[:y]
     # This is just a check to prevent overwriting a tile using CREATE. UPDATE should be used if that is needed.
-    unless @current_game&.tiles&.where("x_position = ? AND y_position = ?",x,y) then return end
-    # Replace biome selector with something fancier if we have the time.
+    unless @current_game&.tiles&.where("x_position = ? AND y_position = ?", x, y)
+      return
+    end
     @current_game.tiles.create!(x_position: x, y_position: y, biome: BIOMES.sample)
   end
 
@@ -24,12 +24,9 @@ class TilesController < ApplicationController
 
     tile = Tile.find_by(x_position: x, y_position: y)
     if tile
-      # Check if all fields are blank
+      # If tile has no generated content, generate it
       if tile.picture.blank? && tile.scene_description.blank? && tile.treasure_description.blank? && tile.monster_description.blank?
-        # Generate AI content
         ai_generated_content = generate_tile_content(tile)
-
-        # Update the tile with the generated content
         tile.update!(
           picture: ai_generated_content[:picture],
           scene_description: ai_generated_content[:scene_description],
@@ -52,49 +49,59 @@ class TilesController < ApplicationController
     end
   end
 
-
   def generate_tile_content(tile)
     generator = @generator
 
-    # Prepare prompts for the AI
+    # We will no longer ask the AI for loot. We'll only ask for monster and landscape.
     system_prompt = <<~PROMPT
-    You are a creative generator for a video game project. I will give you
-    specifications on what to generate (a text description of a monster, a treasure, or
-    the landscape), and you will return your responses in JSON format as seen below. If my
-    instructions have no mention of either monster, landscape, or loot, then do not return
-    anything for those sections. Only return the specified information.
-    {
-      "monster": {
-        "description": "[Monster description placeholder]",
-        "level": 0
-      },
-      "landscape": {
-        "description": "[Landscape description placeholder]"
-      },
-      "loot": {
-        "name": "[Loot name placeholder]",
-        "rarity": "[Loot rarity placeholder]",
-        "level": 0
+      You are a creative generator for a video game project. I will give you
+      specifications on what to generate (a text description of a monster and the landscape).
+      Return your responses in JSON format with only "monster" and "landscape" keys.
+      No loot generation is requested. Example JSON:
+      {
+        "monster": {
+          "description": "[Monster description placeholder]",
+          "level": 0
+        },
+        "landscape": {
+          "description": "[Landscape description placeholder]"
+        }
       }
-    }
-  PROMPT
+    PROMPT
 
     instruction_prompt = <<~INSTRUCTION
-    Generate content for a tile in the #{tile.biome} biome.
-    Include:
-    - A landscape description
-    - A treasure description
-    - A monster description
-  INSTRUCTION
+      Generate content for a tile in the #{tile.biome} biome.
+      Include:
+      - A landscape description
+      - A monster description
+      Do not include any loot. Do not mention loot.
+    INSTRUCTION
 
-    # Call the GameContentGenerator service
     response = generator.generate_content("gpt-4o-mini", system_prompt, instruction_prompt)
-
     parsed_response = JSON.parse(response, symbolize_names: true)
+
+    # Now we handle loot ourselves:
+    # 5%: an item (e.g. "A mysterious artifact")
+    # 25%: no loot (nil)
+    # 70%: shards (random between 10 and 100)
+    roll = rand(100)
+    treasure_description =
+      if roll < 5
+        # 5% item
+        "A mysterious artifact"
+      elsif roll < 30
+        # 25% none
+        nil
+      else
+        # 70% shards
+        shards = rand(10..100)
+        "Shards:#{shards}"
+      end
+
     {
       picture: parsed_response.dig(:landscape, :description) || "Default picture",
       scene_description: parsed_response.dig(:landscape, :description) || "Default scene description",
-      treasure_description: parsed_response.dig(:loot, :name) || "Default treasure description",
+      treasure_description: treasure_description,
       monster_description: parsed_response.dig(:monster, :description) || "Default monster description"
     }
   end
@@ -105,7 +112,17 @@ class TilesController < ApplicationController
 
     tile = Tile.find_by(x_position: x, y_position: y)
     if tile && tile.treasure_description.present?
-      puts "Treasure taken"
+      treasure = tile.treasure_description
+      if treasure.start_with?("Shards:")
+        # Extract the amount of shards
+        shard_amount = treasure.split(":")[1].to_i
+        current_user.update!(shard_amount: current_user.shard_amount + shard_amount)
+        puts "Shards collected: #{shard_amount}"
+      else
+        # It's an item
+        puts "Treasure taken"
+      end
+
       tile.update!(treasure_description: nil)
       render json: { success: true, tile: tile }
     else
