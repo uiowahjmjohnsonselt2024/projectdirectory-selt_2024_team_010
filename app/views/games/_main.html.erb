@@ -43,18 +43,16 @@
     const cellColors = <%= raw @tiles.to_json %>;
     const gameId = <%= @current_game.id %>
     const characters = <%= raw @characters.to_json %>
+    const currentCharacter = <%= raw @current_character.to_json %>;
+    let current_position = [currentCharacter.x_position, currentCharacter.y_position];
 
     // Get the CSRF token from the meta tags
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    console.log(cellColors)
-
-    let current_position = [0, 0];
     let previous_position = null;
     let current_biome = biome_map[cellColors[formatKey(current_position)]];
 
     displayCurrentBiome();
-    renderOnCurrentTile();
     renderAllCharacters();
 
     function displayCurrentBiome() {
@@ -209,6 +207,7 @@
 
     function renderAllCharacters() {
         const characterIcon = '@';
+        console.log('what')
         for (const character of characters) {
             const tile = document.getElementById(`tile-${character.x_position}-${character.y_position}`);
             const newContent = document.createElement('div');
@@ -216,42 +215,6 @@
             newContent.innerHTML = characterIcon; // Render the new content
             tile.appendChild(newContent);
         }
-    }
-
-    function renderOnCurrentTile() {
-        const content = '🏠';
-
-        // Clear previous content if applicable
-        if (previous_position) {
-            const prevTileId = `tile-${previous_position[0]}-${previous_position[1]}`;
-            const prevTile = document.getElementById(prevTileId);
-            if (prevTile) {
-                // Remove only the rendered content, keep the button
-                const renderedContent = prevTile.querySelector('.rendered-content');
-                if (renderedContent) {
-                    prevTile.removeChild(renderedContent);
-                }
-            }
-        }
-
-        // Get the tile id corresponding to current_position
-        const tileId = `tile-${current_position[0]}-${current_position[1]}`;
-        const tile = document.getElementById(tileId);
-
-        // Check if the rendered content already exists, remove if necessary
-        const existingContent = tile.querySelector('.rendered-content');
-        if (existingContent) {
-            tile.removeChild(existingContent);
-        }
-
-        // Add new content to the tile without removing the button
-        const newContent = document.createElement('div');
-        newContent.className = 'rendered-content';
-        newContent.innerHTML = content; // Render the new content
-        tile.appendChild(newContent);
-
-        // Update the previous position
-        previous_position = [...current_position];
     }
 
     function move(direction) {
@@ -284,7 +247,6 @@
             return;
         }
 
-        // Update the current position
         current_position = [newX, newY];
         current_biome = biome_map[cellColors[formatKey(current_position)]];
 
@@ -296,14 +258,10 @@
             },
         });
 
-
-
+        renderAllCharacters();
         displayCurrentBiome();
 
         console.log(`Moved ${direction} to position: (${newX}, ${newY})`);
-
-        // Render content on the new tile
-        renderOnCurrentTile(); // Example content (a house emoji)
     }
 
     function updateGameSection(content) {
