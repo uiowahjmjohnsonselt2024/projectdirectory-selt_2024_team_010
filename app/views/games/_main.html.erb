@@ -189,13 +189,13 @@
             <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
           `;
 
-                  // Re-add the buttons if still applicable
+                  // Re-add the buttons if still applicable, with class="btn"
                   if (data.treasure_description && data.treasure_description.trim() !== '') {
-                      tileInfo += `<button id="loot-button" onclick="takeTreasure(${data.x}, ${data.y})">Loot</button>`;
+                      tileInfo += `<button id="loot-button" class="btn" onclick="takeTreasure(${data.x}, ${data.y})">Loot</button>`;
                   }
 
                   if (data.monster_description && data.monster_description.trim() !== '') {
-                      tileInfo += `<button id="fight-button" onclick="fightMonster(${data.x}, ${data.y})">Fight</button>`;
+                      tileInfo += `<button id="fight-button" class="btn" onclick="fightMonster(${data.x}, ${data.y})">Fight</button>`;
                   }
 
                   updateGameSection(tileInfo);
