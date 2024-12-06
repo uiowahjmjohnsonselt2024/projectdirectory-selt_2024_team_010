@@ -41,6 +41,8 @@
     };
 
     const cellColors = <%= raw @tiles.to_json %>;
+    const gameId = <%= @current_game.id %>
+    const characters = <%= raw @characters.to_json %>
 
     // Get the CSRF token from the meta tags
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -53,6 +55,7 @@
 
     displayCurrentBiome();
     renderOnCurrentTile();
+    renderAllCharacters();
 
     function displayCurrentBiome() {
         console.log("Current Biome: ", current_biome);
@@ -204,6 +207,17 @@
           .catch(error => console.error("Error refreshing tile info:", error));
     }
 
+    function renderAllCharacters() {
+        const characterIcon = '@';
+        for (const character of characters) {
+            const tile = document.getElementById(`tile-${character.x_position}-${character.y_position}`);
+            const newContent = document.createElement('div');
+            newContent.className = 'rendered-content';
+            newContent.innerHTML = characterIcon; // Render the new content
+            tile.appendChild(newContent);
+        }
+    }
+
     function renderOnCurrentTile() {
         const content = '🏠';
 
@@ -273,6 +287,16 @@
         // Update the current position
         current_position = [newX, newY];
         current_biome = biome_map[cellColors[formatKey(current_position)]];
+
+        fetch(`/games/${gameId}/move_character?x=${newX}&y=${newY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+        });
+
+
 
         displayCurrentBiome();
 

@@ -68,5 +68,7 @@ class GamesController < ApplicationController
     x = params[:x]
     y = params[:y]
     @current_character.update!(x_position: x, y_position: y)
+
+    head :no_content
   end
 end
