@@ -34,23 +34,21 @@
   </div>
 
   <!-- Items Section -->
-  <div id="ItemsSection" class="main-tabcontent" style="flex: 1 1 auto; max-height: 100%; overflow-y: auto;">
-    <h2>Your Items</h2>
+  <div id="ItemsSection" class="main-tabcontent text-with-border" style="flex: 1 1 auto; max-height: 100%; overflow-y: auto;">
+    <h2 class="text-with-border">Your Items</h2>
     <% if @items.present? %>
       <% @items.each do |item| %>
-        <div class="item" data-item-id="<%= item.id %>">
-          <h3><%= item.name %></h3>
-          <p><strong>Level:</strong> <%= item.level %></p>
-          <p><strong>Type:</strong> <%= item.item_type %></p>
-          <p><strong>Description:</strong> <%= item.description %></p>
-
-          <!-- Delete Button -->
-          <button class="delete-button">Delete</button>
+        <div class="item text-with-border" data-item-id="<%= item.id %>">
+          <h3 class="text-with-border"><%= item.name %></h3>
+          <p class="text-with-border"><strong>Level:</strong> <%= item.level %></p>
+          <p class="text-with-border"><strong>Type:</strong> <%= item.item_type %></p>
+          <p class="text-with-border"><strong>Description:</strong> <%= item.description %></p>
+          <button class="delete-button text-with-border">Delete</button>
           <hr>
         </div>
       <% end %>
     <% else %>
-      <p>You have no items.</p>
+      <p class="text-with-border">You have no items.</p>
     <% end %>
   </div>
 
@@ -170,3 +168,8 @@
     document.addEventListener("turbolinks:load", initializeTabs);
     document.addEventListener("turbo:load", initializeTabs);
 </script>
+
+<style>
+
+
+</style>
