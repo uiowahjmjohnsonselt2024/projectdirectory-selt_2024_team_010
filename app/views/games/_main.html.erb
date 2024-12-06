@@ -208,9 +208,9 @@
     }
 
     function renderAllCharacters() {
-        const characterIcon = '🏠';
+        const characterIcon = '@';
         for (const character of characters) {
-            const tile = document.getElementById(`tile-${character.x}-${character.y}`);
+            const tile = document.getElementById(`tile-${character.x_position}-${character.y_position}`);
             const newContent = document.createElement('div');
             newContent.className = 'rendered-content';
             newContent.innerHTML = characterIcon; // Render the new content
