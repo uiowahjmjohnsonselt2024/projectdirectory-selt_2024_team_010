@@ -71,4 +71,10 @@ class GamesController < ApplicationController
 
     head :no_content
   end
+
+  def get_characters
+    @characters = @current_game.characters.all
+
+    render json: { characters: @characters }
+  end
 end

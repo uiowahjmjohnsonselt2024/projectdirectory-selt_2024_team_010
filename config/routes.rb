@@ -27,6 +27,8 @@ Rails.application.routes.draw do
   post 'tiles/fight_monster', to: 'tiles#fight_monster'
   post 'tiles/loot_tile', to: 'tiles#loot_tile'
 
+  get 'characters', to: 'games#get_characters', as: 'characters'
+
 
 
   resources :games do
