@@ -55,6 +55,7 @@
 
     displayCurrentBiome();
     renderOnCurrentTile();
+    renderAllCharacters();
 
     function displayCurrentBiome() {
         console.log("Current Biome: ", current_biome);
@@ -204,6 +205,17 @@
               }
           })
           .catch(error => console.error("Error refreshing tile info:", error));
+    }
+
+    function renderAllCharacters() {
+        const characterIcon = '🏠';
+        for (const character of characters) {
+            const tile = document.getElementById(`tile-${character.x}-${character.y}`);
+            const newContent = document.createElement('div');
+            newContent.className = 'rendered-content';
+            newContent.innerHTML = characterIcon; // Render the new content
+            tile.appendChild(newContent);
+        }
     }
 
     function renderOnCurrentTile() {
