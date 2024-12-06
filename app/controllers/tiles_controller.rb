@@ -5,6 +5,7 @@ require 'openAIService'
 Dotenv.load
 
 class TilesController < ApplicationController
+  @@generated_items = Set.new  # Use a class-level Set to store unique item names
   before_action :require_login, :get_current_game, :initialize_generator
   BIOMES = [:white, :green, :yellow, :gray, :blue]
 
@@ -88,7 +89,8 @@ class TilesController < ApplicationController
         generate_item(generator)
       elsif roll < 30
         # 25% none
-        nil
+        generate_item(generator)
+
       else
         # 70% shards
         #shards = rand(10..100)
@@ -152,30 +154,57 @@ class TilesController < ApplicationController
 
   def generate_item(generator)
     # Here we craft a prompt to generate a single artifact description.
-    # The result should be a short name and a brief description.
-    # We can return a simple string or even JSON. We'll keep it simple.
+    # We'll include a list of previously generated names to prevent duplicates.
+
+    used_names = @@generated_items.to_a
+    name_list_str = used_names.empty? ? "[]" : used_names.map { |n| "\"#{n}\"" }.join(", ")
 
     item_system_prompt = <<~PROMPT
-    You are a creative item generator for a fantasy game.
-    You will return one item in JSON format with "name" and "description" keys only.
-    Example:
-    {
-      "name": "Ancient Crystal Skull",
-      "description": "A skull carved from crystal that emits a faint eerie glow."
-    }
-  PROMPT
+      You are a creative item generator for a fantasy game.
+      You will return one item in JSON format with "name" and "description" keys only.
+      Here is a list of previously generated item names: [#{name_list_str}]
+      You must create a unique item name not present in the above list.
+      Example:
+      {
+        "name": "Ancient Crystal Skull",
+        "description": "A skull carved from crystal that emits a faint eerie glow."
+      }
+    PROMPT
 
     item_instruction_prompt = <<~INSTRUCTION
-    Generate a single mysterious artifact item with a unique name and a short description.
-  INSTRUCTION
+      Generate a single mysterious artifact item with a unique name and a short description.
+      The name must not match any of the previously generated names given. It can be a
+      weapon (sword, bow, staff, axe, hammer) or a shield (diamond, tower, round) or a 
+      piece of armor (cloak, greaves, gauntlets, chestplate) or can just be a random artifact.
+      Any of these can be made of many possible materials (wood, iron, steel, gold, jewels,
+      shadows, sunlight, etc.) Get creative!
+    INSTRUCTION
 
-    item_response = generator.generate_content("gpt-4o-mini", item_system_prompt, item_instruction_prompt)
-    item_data = JSON.parse(item_response, symbolize_names: true)
+    # We'll allow a few retries just in case the model repeats a name.
+    3.times do
+      item_response = generator.generate_content("gpt-4o-mini", item_system_prompt, item_instruction_prompt)
 
-    # Construct a string to store in treasure_description
-    # For example: "Item:Ancient Crystal Skull - A skull carved from crystal..."
-    # Adjust format as desired.
-    "#{item_data[:name]}: #{item_data[:description]}"
+      # Remove Markdown code fences if they exist
+      clean_response = item_response.gsub(/^```json\s*/, '').gsub(/```$/, '')
+
+      begin
+        item_data = JSON.parse(clean_response, symbolize_names: true)
+        item_name = item_data[:name].strip
+
+        # Check if it's already used
+        unless @@generated_items.include?(item_name)
+          # It's unique, store it and return
+          @@generated_items.add(item_name)
+          return "#{item_name}: #{item_data[:description]}"
+        end
+      rescue JSON::ParserError => e
+        puts "Error parsing JSON: #{e.message}"
+      end
+    end
+
+    # If we reach here, we failed to get a unique name after several attempts
+    # Fall back to a generic item or raise an error
+    "Unique Artifact of Mystery: A one-of-a-kind item you have never seen before."
   end
 
 end
