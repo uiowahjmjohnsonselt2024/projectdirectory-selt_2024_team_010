@@ -61,4 +61,10 @@ class GamesController < ApplicationController
       @tiles[[tile.x_position, tile.y_position]] = tile.biome
     end
   end
+
+  def move_character
+    x = params[:x]
+    y = params[:y]
+    @current_character.update!(x_position: x, y_position: y)
+  end
 end
