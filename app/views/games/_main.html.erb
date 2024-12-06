@@ -41,6 +41,8 @@
     };
 
     const cellColors = <%= raw @tiles.to_json %>;
+    const gameId = <%= @current_game.id %>
+    console.log(gameId)
 
     // Get the CSRF token from the meta tags
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -273,6 +275,16 @@
         // Update the current position
         current_position = [newX, newY];
         current_biome = biome_map[cellColors[formatKey(current_position)]];
+
+        fetch(`/games/${gameId}/move_character?x=${newX}&y=${newY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+        });
+
+
 
         displayCurrentBiome();
 
