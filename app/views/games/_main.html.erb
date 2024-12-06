@@ -42,7 +42,7 @@
 
     const cellColors = <%= raw @tiles.to_json %>;
     const gameId = <%= @current_game.id %>
-    console.log(gameId)
+    const characters = <%= raw @characters.to_json %>
 
     // Get the CSRF token from the meta tags
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
