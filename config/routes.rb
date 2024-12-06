@@ -29,6 +29,9 @@ Rails.application.routes.draw do
 
   delete 'items/:id', to: 'games#destroy', as: 'destroy_item'
 
+  get 'characters', to: 'games#get_characters', as: 'characters'
+
+
 
   resources :games do
     get 'list', on: :collection

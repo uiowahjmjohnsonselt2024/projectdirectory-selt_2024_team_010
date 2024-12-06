@@ -76,6 +76,7 @@ class GamesController < ApplicationController
     head :no_content
   end
 
+
   def destroy
     @item = Item.find(params[:id])
     @item.destroy
@@ -83,5 +84,11 @@ class GamesController < ApplicationController
       format.json { head :no_content }
       format.html { redirect_to items_path, notice: 'Item was successfully deleted.' }
     end
+  end
+
+  def get_characters
+    @characters = @current_game.characters.all
+
+    render json: { characters: @characters }
   end
 end
