@@ -24,7 +24,6 @@
       <!-- Armor Tab Content -->
       <div id="Armor" class="main-tabcontent">
         <!-- Armor Items List -->
-
       </div>
 
       <!-- Abilities Tab Content -->
@@ -32,6 +31,9 @@
         <!-- Abilities Items List -->
       </div>
     </div>
+
+    <!-- Button to load AI-generated items -->
+    <button id="load-items-button" style="margin-top:20px;">Load Items from AI</button>
   </div>
 
   <!-- Items Section -->
@@ -67,7 +69,6 @@
                 const sectionId = event.target.dataset.section;
                 document.getElementById(sectionId).style.display = "block";
 
-                // Set active class on clicked main tab
                 event.target.classList.add("active");
             });
         });
@@ -80,22 +81,18 @@
 
             shopTabs.forEach((tab) => {
                 tab.addEventListener("click", (event) => {
-                    // Hide all shop tab contents
                     shopTabContents.forEach((content) => (content.style.display = "none"));
 
-                    // Remove active class from all shop tabs
                     shopTabs.forEach((t) => t.classList.remove("active"));
 
-                    // Show selected shop tab content
                     const categoryId = event.target.dataset.category;
                     shopSection.querySelector(`#${categoryId}`).style.display = "block";
 
-                    // Set active class on clicked shop tab
                     event.target.classList.add("active");
                 });
             });
 
-            // Default shop tab selection
+
             const defaultShopTab = shopSection.querySelector(".tablinks.active");
             if (defaultShopTab) {
                 defaultShopTab.click();
@@ -104,7 +101,7 @@
             }
         }
 
-        // Default main tab selection
+
         const defaultMainTab = document.querySelector(".main-tablinks.active");
         if (defaultMainTab) {
             defaultMainTab.click();
@@ -112,7 +109,10 @@
             mainTabs[0].click();
         }
 
-        // Buy Button Click Handler
+        initializeBuyButtons();
+    }
+
+    function initializeBuyButtons() {
         const buyButtons = document.querySelectorAll(".buy-button");
         buyButtons.forEach((button) => {
             button.addEventListener("click", (event) => {
@@ -121,14 +121,61 @@
                 const itemPrice = itemDetails.querySelector("p:nth-child(3)").textContent;
 
                 alert(`You have purchased ${itemName} for ${itemPrice}`);
-                // Additional logic for purchase can be added here
+
             });
         });
     }
 
-    // Initialize tabs on page load and on Turbolinks/Turbo load
-    document.addEventListener("DOMContentLoaded", initializeTabs);
-    document.addEventListener("turbolinks:load", initializeTabs);
-    document.addEventListener("turbo:load", initializeTabs);
+    async function loadItems() {
+        const response = await fetch('/gameshop/generate_items.json');
+        if (response.ok) {
+            const items = await response.json();
+            insertItemsIntoShop(items);
+        } else {
+            console.error("Failed to load items");
+        }
+    }
+
+    function insertItemsIntoShop(items) {
+        const weaponsContainer = document.getElementById("Weapons");
+        const armorContainer = document.getElementById("Armor");
+        const abilitiesContainer = document.getElementById("Abilities");
+
+        [weaponsContainer, armorContainer, abilitiesContainer].forEach(container => {
+            if (container) container.innerHTML = '';
+        });
+
+        items.forEach(item => {
+            const itemDiv = document.createElement("div");
+            itemDiv.classList.add("item-details");
+
+            itemDiv.innerHTML = `
+          <h3>${item.name}</h3>
+          <p>${item.description}</p>
+          <p>Price: ${item.price}</p>
+          <p>Rarity: ${item.rarity}</p>
+          <button class="buy-button">Buy</button>
+        `;
+
+            if (item.category === "Weapons" && weaponsContainer) {
+                weaponsContainer.appendChild(itemDiv);
+            } else if (item.category === "Armor" && armorContainer) {
+                armorContainer.appendChild(itemDiv);
+            } else if (item.category === "Abilities" && abilitiesContainer) {
+                abilitiesContainer.appendChild(itemDiv);
+            }
+        });
+
+        initializeBuyButtons();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        initializeTabs();
+        const loadItemsButton = document.getElementById("load-items-button");
+        if (loadItemsButton) {
+            loadItemsButton.addEventListener("click", loadItems);
+        }
+    });
+
 
 </script>
