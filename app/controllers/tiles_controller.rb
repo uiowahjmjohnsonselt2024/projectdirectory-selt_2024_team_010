@@ -85,9 +85,12 @@ class TilesController < ApplicationController
       if roll < 5
         generate_item(generator)
       elsif roll < 30
-        generate_item(generator)
+        # nothing 30%
+        nil
       else
-        generate_item(generator)
+        # shards 70% of time, random number
+        shards = rand(10..100)
+        "Shards:#{shards}"
       end
 
     {
