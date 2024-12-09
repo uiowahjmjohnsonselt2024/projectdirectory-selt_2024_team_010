@@ -206,7 +206,8 @@
     }
 
     async function renderAllCharacters() {
-        const characterIcon = '@';
+        const characterIcon = '●';
+        const playerIcon = '✪';
 
         // Refresh all tiles by removing previously rendered content
         const renderedContents = document.querySelectorAll('.rendered-content');
@@ -230,7 +231,11 @@
             if (tile) { // Check if the tile exists
                 const newContent = document.createElement('div');
                 newContent.className = 'rendered-content';
-                newContent.innerHTML = characterIcon; // Render the new content
+                if (character.id === currentCharacter.id) {
+                    newContent.innerHTML = playerIcon;
+                } else {
+                    newContent.innerHTML = characterIcon; // Render the new content
+                }
                 tile.appendChild(newContent);
             }
         }
