@@ -20,7 +20,9 @@ tile_instruction_prompt: > # vars: biome
   Include:
   - A landscape description
   - A monster description
-  Do not include or mention any loot or collectables in the scene.
+  Do not include or mention any loot. Consider adding features into the scene that the player might
+  notice; as an example, if its relevant you could add a trail or a carving on something in the scene,
+  however it is not strictly necessary. You aren't limited by those examples; get creative!
 
 item_system_prompt: > # vars: previous_item_names
   You are a creative item generator for a fantasy game.
@@ -28,10 +30,10 @@ item_system_prompt: > # vars: previous_item_names
   Here is a list of previously generated item names: %{previous_item_names}
   You must create a unique item name not present in the above list.
   Example:
-    {
-      "name": "Ancient Crystal Skull",
-      "description": "A skull carved from crystal that emits a faint eerie glow."
-    }
+  {
+    "name": "Ancient Crystal Skull",
+    "description": "A skull carved from crystal that emits a faint eerie glow."
+  }
 
 item_instruction_prompt: >
   Generate a single mysterious artifact item with a unique name and a short description.
@@ -41,10 +43,25 @@ item_instruction_prompt: >
   Any of these can be made of many possible materials (wood, iron, steel, gold, jewels,
   shadows, sunlight, etc.) Get creative!
 
-image_prompt: >
+item_details_prompt: > # vars: name, description
+  You are a creative item detail generator for a fantasy game.
+  I have an item with the following attributes:
+  Name: %{name}
+  Description: %{description}
+
+  I need a JSON response with the keys: "name", "item_type", and "description".
+  The "item_type" should be one of ["weapon", "shield", "armor", "artifact"].
+  The "description" can be the same or slightly enhanced.
+  Return only the JSON. Example:
+  {
+    "name": "%{name}",
+    "item_type": "weapon",
+    "description": "%{description}"
+  }
+
+image_prompt: > # vars: scene_description
   You are to generate a scene for a fantasy MMORPG game. A game developer has described
   the scene as follows:
-  %{scene_description}
-  Get creative with it; please create unique, diverse environments in terms of climate,
-  biome, and vegetation.
-
+  "%{scene_description}"
+  You can be creative and add uniqueness to your generation by diversifying the environment
+  in terms of climate or habitat, however please remain faithful to the original prompt.
