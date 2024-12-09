@@ -28,7 +28,7 @@ ActiveRecord::Schema.define(version: 20241209031432) do
   end
 
   create_table "items", force: :cascade do |t|
-    t.string  "type"
+    t.string  "item_type"
     t.string  "name"
     t.string  "description"
     t.integer "level"

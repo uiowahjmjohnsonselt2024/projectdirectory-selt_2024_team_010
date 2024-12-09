@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 class ShopController< ApplicationController
 
-  before_action :require_login
+  before_action :require_login, :get_current_game
   def index
     @shard_amount = current_user.shard_amount || 0
     @money_usd = current_user.money_usd || 0

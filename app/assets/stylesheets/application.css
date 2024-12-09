@@ -315,7 +315,7 @@ th {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background-color: rgba(125, 60, 181, 0.9);
+    background-color: #2c003e;
     color: white;
 }
 
@@ -335,7 +335,7 @@ th {
 
 .tab {
     overflow: hidden;
-    background-color: #5a2d82;
+    background-color: #2c003e;
 }
 
 .tab button {
@@ -575,7 +575,7 @@ th {
 /* Main Tabs Styling within the game-shop */
 .game-shop .main-tabs {
     overflow: hidden;
-    background-color: #5a2d82;
+    background-color: #2c003e;
 }
 
 .game-shop .main-tablinks {

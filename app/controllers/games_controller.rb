@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 class GamesController < ApplicationController
-  before_action :require_login, :get_games_list
+  before_action :require_login, :get_games_list, :get_current_game
+
   def index
     @games = @current_user.games
   end
 
   def new
-
   end
 
   def create
     new_game = @current_user.games.create(name: params[:server_name], owner_id: @current_user.id)
     if new_game.save
       flash[:notice] = 'Game successfully created'
-      @current_user.characters.create(game_id: params[:id])
+      @current_user.characters.create(game_id: new_game.id)
 
       colors = ['gray', 'green', 'yellow', 'blue']
       (-3..3).each do |y|
@@ -30,8 +30,6 @@ class GamesController < ApplicationController
         flash[:alert] = 'Server creation failed'
       end
       redirect_to new_game_path
-      # This will be conditional based on why a game couldn't be created, could be because the title was already used,
-      # or could be because they hit a limit on how many games they can have at once, etc.
     end
   end
 
@@ -53,12 +51,44 @@ class GamesController < ApplicationController
 
   def show
     game = Game.find(params[:id])
+    # Update the user's recent_character to the character in this game
     @current_user.update!(recent_character: @current_user.characters.find_by(game_id: game.id).id)
     get_current_game
+
+    # Fetch the current character in this game for the logged-in user
+    @character = @current_user.characters.find_by(game_id: @current_game.id)
+    # Fetch the character's items (assuming you have a has_many :items association on Character)
+    @items = @character.items if @character
 
     @tiles = {}
     @current_game.tiles.each do |tile|
       @tiles[[tile.x_position, tile.y_position]] = tile.biome
     end
+
+    # Fetch all characters in this game, if needed
+    @characters = @current_game.characters.all
+  end
+
+  def move_character
+    x = params[:x]
+    y = params[:y]
+    @current_character.update!(x_position: x, y_position: y)
+    head :no_content
+  end
+
+
+  def destroy
+    @item = Item.find(params[:id])
+    @item.destroy
+    respond_to do |format|
+      format.json { head :no_content }
+      format.html { redirect_to items_path, notice: 'Item was successfully deleted.' }
+    end
+  end
+
+  def get_characters
+    @characters = @current_game.characters.all
+
+    render json: { characters: @characters }
   end
 end

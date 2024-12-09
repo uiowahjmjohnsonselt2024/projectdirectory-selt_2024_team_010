@@ -2,8 +2,16 @@
 <div class="game-right">
   <!-- Character Info Section -->
   <div class="character-info">
-    <h2>Character Info</h2>
-
+    <h2 class="character-title">Character Info</h2>
+    <% if @current_character.present? %>
+      <div class="character-details">
+        <p><strong>Username:</strong> <span class="character-value"><%= @current_user.username %></span></p>
+        <p><strong>Level:</strong> <span class="character-value"><%= @current_character.level %></span></p>
+        <p><strong>Health:</strong> <span class="character-value"><%= @current_character.health %></span></p>
+      </div>
+    <% else %>
+      <p class="no-character-info">No character info available.</p>
+    <% end %>
   </div>
 
   <!-- Chat Section -->
@@ -31,3 +39,51 @@
     <!-- Chat content goes here -->
   </div>
 </div>
+
+<script>
+  const currentCharacter = <% raw @current_character.to_json %>
+</script>
+
+<style>
+    .character-info {
+        font-family: 'Arial', sans-serif;
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background: #f9f9f9;
+    }
+
+    .character-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .character-details p {
+        font-size: 16px;
+        line-height: 1.5;
+        margin: 10px 0;
+        color: #555;
+    }
+
+    .character-details strong {
+        color: #222;
+    }
+
+    .character-value {
+        font-weight: bold;
+        color: #007BFF; /* A pleasing blue color for values */
+    }
+
+    .no-character-info {
+        font-size: 16px;
+        color: #888;
+        text-align: center;
+        margin-top: 15px;
+    }
+</style>
