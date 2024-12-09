@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   post 'admin/edit_user/:id', to: 'admin#edit_user_form', as: 'edit_user_form'
   get 'admin/add_user', to: 'admin#add_user', as: 'add_user'
   post 'admin/add_user', to: 'admin#add_user_form', as: 'add_user_form'
+  delete 'admin/delete_user', to: 'admin#delete_user_form', as: 'delete_user_form'
 
   get 'register', to: 'registrations#new', as: 'register'
   post 'register', to: 'registrations#create'

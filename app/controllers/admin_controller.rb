@@ -22,6 +22,23 @@ class AdminController < ApplicationController
     end
   end
 
+  def delete_user_form
+    @user = User.find_by(id: params[:id])
+
+    if @user
+      if @user.destroy
+        flash[:notice] = "User deleted successfully."
+        redirect_to admin_path
+      else
+        flash[:alert] = "Failed to delete user: #{@user.errors.full_messages.to_sentence}"
+        redirect_to admin_path
+      end
+    else
+      flash[:alert] = "User not found."
+      redirect_to admin_path
+    end
+  end
+
   def add_user
     @user = User.new
   end
