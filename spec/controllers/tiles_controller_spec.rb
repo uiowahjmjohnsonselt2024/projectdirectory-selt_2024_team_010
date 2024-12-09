@@ -19,7 +19,19 @@ RSpec.describe 'TilesController' do
 
   context 'When tile creation is called' do
     it 'succeeds' do
-      pending 'Not implemented'
+      get :tiles_get_tile_path, {
+        x_position: 0,
+        y_position: 0
+      }
+      expect(response).to have_http_status :ok
+    end
+
+    it 'returns valid tile data' do
+      get :tiles_get_tile_path, {
+        x_position: 0,
+        y_position: 0
+      }
+      expect(response).to have_http_status :ok
     end
   end
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20241204205952) do
+ActiveRecord::Schema.define(version: 20241209031432) do
 
   create_table "characters", force: :cascade do |t|
     t.integer "user_id"
@@ -55,11 +55,13 @@ ActiveRecord::Schema.define(version: 20241204205952) do
     t.integer "x_position"
     t.integer "y_position"
     t.string  "biome"
+    t.integer "visitor"
     t.string  "picture"
     t.string  "scene_description"
     t.string  "treasure_description"
     t.string  "monster_description"
     t.integer "visitor_id"
+    t.boolean "picture_generating"
   end
 
   create_table "users", force: :cascade do |t|

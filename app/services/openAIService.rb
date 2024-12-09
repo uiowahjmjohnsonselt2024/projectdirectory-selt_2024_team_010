@@ -40,13 +40,11 @@ if api_key.nil? || api_key.empty?
 end
 
 class GameContentGenerator
-  def initialize(api_key)
-    @client = OpenAI::Client.new(access_token: api_key)
-  end
+  @@api_key = api_key # static var for earlier check
+  @@client = OpenAI::Client.new access_token: @@api_key
 
   # Method to generate content based on the model, system prompt, and instruction
-  def generate_content(model, system_prompt, instruction_prompt)
-
+  def self.generate_content(model, system_prompt, instruction_prompt)
     # Messages array with system prompt and instruction prompt
     messages = [
       { role: "system", content: system_prompt },
@@ -64,6 +62,26 @@ class GameContentGenerator
 
     # Parse and return the assistant's response
     response.dig("choices", 0, "message", "content")
+  end
+
+  # generates an image, and returns the base64-encoded image.
+  def generate_image(prompt)
+    response = @client.images.generate(
+      parameters: {
+        prompt: prompt,
+        n: 1, # Number of images to generate
+        size: "256x256",
+        response_format: "b64_json"
+      },
+    )
+
+    unless response && response["data"] && response["data"].any?
+      puts "Failed to generate an image. Response was;"
+      puts response
+      return nil
+    end
+
+    response["data"].first["b64_json"]
   end
 end
 

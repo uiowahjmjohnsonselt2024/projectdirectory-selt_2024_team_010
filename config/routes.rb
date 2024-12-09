@@ -24,6 +24,8 @@ Rails.application.routes.draw do
 
   get 'tiles', to: 'tiles#get_tile', as: 'get_tile'
   get 'tiles/get_tile', to: 'tiles#get_tile'
+  get 'tiles/get_image', to: 'tiles#get_image'
+
   post 'tiles/fight_monster', to: 'tiles#fight_monster'
   post 'tiles/loot_tile', to: 'tiles#loot_tile'
 
