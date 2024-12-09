@@ -1,24 +1,19 @@
-
-<div class=".container">
+<div class="form-container">
   <h1>Create New Server</h1>
   <%= form_tag games_path, method: :post do %>
-    <div>
-      <%= label_tag 'user[username]', @current_user.username %>
-
+    <div class="form-group">
+      <label>User</label>
+      <p class="readonly-field"><%= @current_user.username %></p>
     </div>
 
-    <div>
+    <div class="form-group">
       <%= label_tag 'server_name', 'Server Name' %>
-      <%= text_field_tag 'server_name', nil, required: true %>
+      <%= text_field_tag 'server_name', nil, required: true, class: 'input-field' %>
     </div>
 
-
-
-
-    <div>
+    <div class="button-group">
       <%= submit_tag 'Create', class: 'btn' %>
       <%= link_to 'Back', games_path, class: 'btn' %>
     </div>
   <% end %>
 </div>
-
