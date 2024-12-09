@@ -1,0 +1,175 @@
+<div class="game-shop" style="display: flex; flex-direction: column; height: 100%;">
+  <!-- Main Tabs -->
+  <div class="main-tabs" style="flex: 0 0 auto;">
+    <button class="main-tablinks active" data-section="ShopSection">Shop</button>
+    <button class="main-tablinks" data-section="ItemsSection">Items</button>
+    <button class="main-tablinks" data-section="GameSection">Tile</button>
+  </div>
+
+  <!-- Shop Section -->
+  <div id="ShopSection" class="main-tabcontent" style="flex: 1 0 auto; overflow-y: auto;">
+    <div class="shop-container">
+      <h2>In-Game Shop</h2>
+      <div class="tab">
+        <button class="tablinks active" data-category="Weapons">Weapons</button>
+        <button class="tablinks" data-category="Armor">Armor</button>
+        <button class="tablinks" data-category="Abilities">Abilities</button>
+      </div>
+
+      <!-- Weapons Tab Content -->
+      <div id="Weapons" class="main-tabcontent" style="display: block;">
+        <!-- Weapons Items List -->
+      </div>
+
+      <!-- Armor Tab Content -->
+      <div id="Armor" class="main-tabcontent">
+        <!-- Armor Items List -->
+      </div>
+
+      <!-- Abilities Tab Content -->
+      <div id="Abilities" class="main-tabcontent">
+        <!-- Abilities Items List -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Items Section -->
+  <div id="ItemsSection" class="main-tabcontent text-with-border" style="flex: 1 1 auto; max-height: 100%; overflow-y: auto;">
+    <h2 class="text-with-border">Your Items</h2>
+    <% if @items.present? %>
+      <% @items.each do |item| %>
+        <div class="item text-with-border" data-item-id="<%= item.id %>">
+          <h3 class="text-with-border"><%= item.name %></h3>
+          <p class="text-with-border"><strong>Level:</strong> <%= item.level %></p>
+          <p class="text-with-border"><strong>Type:</strong> <%= item.item_type %></p>
+          <p class="text-with-border"><strong>Description:</strong> <%= item.description %></p>
+          <button class="delete-button text-with-border">Delete</button>
+          <hr>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="text-with-border">You have no items.</p>
+    <% end %>
+  </div>
+
+  <!-- Game Section -->
+  <div id="GameSection" class="main-tabcontent" style="flex: 1 0 auto;">
+    <h2>Tile</h2>
+    <p>Display game-related content here.</p>
+  </div>
+</div>
+
+
+<script>
+    function initializeTabs() {
+        // Main Tabs Logic
+        const mainTabs = document.querySelectorAll(".main-tablinks");
+        const mainTabContents = document.querySelectorAll(".main-tabcontent");
+
+        mainTabs.forEach((tab) => {
+            tab.addEventListener("click", (event) => {
+                // Hide all main tab contents
+                mainTabContents.forEach((content) => (content.style.display = "none"));
+
+                // Remove active class from all main tabs
+                mainTabs.forEach((t) => t.classList.remove("active"));
+
+                // Show selected main tab content
+                const sectionId = event.target.dataset.section;
+                document.getElementById(sectionId).style.display = "block";
+
+                // Set active class on clicked main tab
+                event.target.classList.add("active");
+            });
+        });
+
+        // Shop Tabs Logic
+        const shopSection = document.getElementById("ShopSection");
+        if (shopSection) {
+            const shopTabs = shopSection.querySelectorAll(".tablinks");
+            const shopTabContents = shopSection.querySelectorAll(".tabcontent");
+
+            shopTabs.forEach((tab) => {
+                tab.addEventListener("click", (event) => {
+                    // Hide all shop tab contents
+                    shopTabContents.forEach((content) => (content.style.display = "none"));
+
+                    // Remove active class from all shop tabs
+                    shopTabs.forEach((t) => t.classList.remove("active"));
+
+                    // Show selected shop tab content
+                    const categoryId = event.target.dataset.category;
+                    shopSection.querySelector(`#${categoryId}`).style.display = "block";
+
+                    // Set active class on clicked shop tab
+                    event.target.classList.add("active");
+                });
+            });
+
+            // Default shop tab selection
+            const defaultShopTab = shopSection.querySelector(".tablinks.active");
+            if (defaultShopTab) {
+                defaultShopTab.click();
+            } else if (shopTabs.length > 0) {
+                shopTabs[0].click();
+            }
+        }
+
+        // Default main tab selection
+        const defaultMainTab = document.querySelector(".main-tablinks.active");
+        if (defaultMainTab) {
+            defaultMainTab.click();
+        } else if (mainTabs.length > 0) {
+            mainTabs[0].click();
+        }
+
+        // Buy Button Click Handler
+        const buyButtons = document.querySelectorAll(".buy-button");
+        buyButtons.forEach((button) => {
+            button.addEventListener("click", (event) => {
+                const itemDetails = event.target.closest(".item-details");
+                const itemName = itemDetails.querySelector("h3").textContent;
+                const itemPrice = itemDetails.querySelector("p:nth-child(3)").textContent;
+
+                alert(`You have purchased ${itemName} for ${itemPrice}`);
+                // Additional logic for purchase can be added here
+            });
+        });
+    }
+    const deleteButtons = document.querySelectorAll(".delete-button");
+    deleteButtons.forEach((button) => {
+        button.addEventListener("click", (event) => {
+            const itemElement = event.target.closest(".item");
+            const itemId = itemElement.getAttribute("data-item-id");
+
+            if (confirm("Are you sure you want to delete this item?")) {
+                fetch(`/items/${itemId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    }
+                }).then((response) => {
+                    if (response.ok) {
+                        // Remove the item's element from the page
+                        itemElement.remove();
+                    } else {
+                        alert("There was an error deleting the item.");
+                    }
+                }).catch((error) => {
+                    console.error("Error:", error);
+                    alert("An error occurred while deleting the item.");
+                });
+            }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", initializeTabs);
+    document.addEventListener("turbolinks:load", initializeTabs);
+    document.addEventListener("turbo:load", initializeTabs);
+</script>
+
+<style>
+
+
+</style>

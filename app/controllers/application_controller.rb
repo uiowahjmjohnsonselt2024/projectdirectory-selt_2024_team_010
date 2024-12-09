@@ -41,4 +41,16 @@ class ApplicationController < ActionController::Base
   def get_games_list
     @games = @current_user.games
   end
+
+  def get_current_game
+    if @current_user.recent_character.nil?
+      @current_game = nil
+      @current_character = nil
+    else
+      # Note: recent_character has no protections on it, we must implement those,
+      # i.e. make sure it references a character that belongs to this user!
+      @current_character = @current_user.characters.find_by_id(@current_user.recent_character)
+      @current_game = @current_character.game
+    end
+  end
 end
