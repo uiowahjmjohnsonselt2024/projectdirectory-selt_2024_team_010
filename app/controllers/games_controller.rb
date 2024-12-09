@@ -42,11 +42,20 @@ class GamesController < ApplicationController
   end
 
   def add
-    new_character = @current_user.characters.create(game_id: params[:id])
-    if new_character.errors.include?(:user_id)
-      flash[:notice] = 'Already added game'
+    game = Game.find(params[:id])
+    if game.characters.count >= game.max_user_count
+      flash[:alert] = 'Game is full'
+      redirect_to list_games_path
+    else
+      new_character = @current_user.characters.create(game_id: params[:id])
+      if new_character.errors.include?(:user_id)
+        flash[:alert] = 'Already added game'
+        redirect_to list_games_path
+      else
+        flash[:notice] = 'Successfully added game'
+        redirect_to games_path
+      end
     end
-    redirect_to games_path
   end
 
   def show
