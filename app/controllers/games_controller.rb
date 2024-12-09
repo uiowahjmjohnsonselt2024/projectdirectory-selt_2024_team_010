@@ -10,7 +10,7 @@ class GamesController < ApplicationController
   end
 
   def create
-    new_game = @current_user.games.create(name: params[:server_name], owner_id: @current_user.id)
+    new_game = @current_user.games.create(name: params[:server_name], owner_id: @current_user.id, max_user_count: 6)
     if new_game.save
       flash[:notice] = 'Game successfully created'
       @current_user.characters.create(game_id: new_game.id)

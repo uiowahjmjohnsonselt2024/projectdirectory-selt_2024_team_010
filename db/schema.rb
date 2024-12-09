@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20241206185721) do
+ActiveRecord::Schema.define(version: 20241209151835) do
 
   create_table "characters", force: :cascade do |t|
     t.integer "user_id"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 20241206185721) do
   create_table "games", force: :cascade do |t|
     t.string  "name"
     t.integer "owner_id"
+    t.integer "max_user_count"
   end
 
   create_table "items", force: :cascade do |t|
