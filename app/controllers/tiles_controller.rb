@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'openai'
 require 'dotenv'
-require 'openAIService'
+require 'game_content_generator'
 Dotenv.load
 
 class TilesController < ApplicationController

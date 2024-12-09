@@ -1,4 +1,4 @@
-require_relative 'app/services/openAIService'
+require_relative 'app/services/game_content_generator'
 require 'dotenv'
 require 'open-uri'
 require 'base64'

@@ -17,17 +17,17 @@
       </div>
 
       <!-- Weapons Tab Content -->
-      <div id="Weapons" class="main-tabcontent" style="display: block;">
+      <div id="Weapons" class="tabcontent" style="display: block;">
         <!-- Weapons Items List -->
       </div>
 
       <!-- Armor Tab Content -->
-      <div id="Armor" class="main-tabcontent">
+      <div id="Armor" class="tabcontent">
         <!-- Armor Items List -->
       </div>
 
       <!-- Abilities Tab Content -->
-      <div id="Abilities" class="main-tabcontent">
+      <div id="Abilities" class="tabcontent">
         <!-- Abilities Items List -->
       </div>
     </div>
@@ -128,9 +128,11 @@
 
     async function loadItems() {
         const response = await fetch('/gameshop/generate_items.json');
+
         if (response.ok) {
-            const items = await response.json();
-            insertItemsIntoShop(items);
+            const data = await response.json();
+            console.log(data)
+            insertItemsIntoShop(data.items);
         } else {
             console.error("Failed to load items");
         }
