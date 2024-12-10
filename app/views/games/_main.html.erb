@@ -162,12 +162,28 @@
 
     // Function to update character info in the DOM
     function updateCharacterInfo(character) {
+        // Update level text
         const levelText = document.querySelector('.character-details p:nth-child(2) .character-value');
         if (levelText) {
-            // Update level text
             levelText.textContent = character.level;
         }
+
+        // Update health values and health bar
+        const healthBar = document.querySelector('.health-bar .health-fill');
+        const currHealthText = document.querySelector('.health-bar-container p .character-value');
+
+
+        if (healthBar && currHealthText) {
+            const healthPercentage = (character.current_health / character.max_health) * 100;
+
+            // Update health bar width
+            healthBar.style.width = `${healthPercentage.toFixed(2)}%`;
+
+            // Update health text
+            currHealthText.textContent = `${character.current_health}`;
+        }
     }
+
 
 
     // A helper function to re-fetch tile info after updates

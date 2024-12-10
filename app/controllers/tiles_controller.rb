@@ -230,7 +230,16 @@ class TilesController < ApplicationController
         new_monster_level = monster_level + increase
         tile.update!(monster_description: "Level:#{new_monster_level}|#{monster_text}")
 
-        render json: { success: true, tile: tile, result: "monster_win" }
+        render json: {
+          success: true,
+          tile: tile,
+          result: "monster_win",
+          character: {
+            current_health: character.currentHealth,
+            max_health: character.maxHealth,
+            level: character.level
+          }
+        }
       end
 
     else
