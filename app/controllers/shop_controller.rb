@@ -14,7 +14,12 @@ class ShopController< ApplicationController
 
   def purchase
     user = current_user
-    quantity = params[:quantity].to_i
+    begin
+      quantity = Integer(params[:quantity])
+    rescue ArgumentError
+      render json: { error: "Quantity must be an integer." }, status: 400
+      return
+    end
     cost = params[:cost].to_f
 
     if quantity <= 0 || cost <= 0
@@ -37,6 +42,7 @@ class ShopController< ApplicationController
       render json: { error: "Failed to update user data: #{user.errors.full_messages.join(', ')}" }, status: 500
     end
   end
+
 
 
   def payment

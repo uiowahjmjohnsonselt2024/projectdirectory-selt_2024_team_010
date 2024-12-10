@@ -22,8 +22,9 @@
                 id="shard-quantity"
                 value="0"
                 min="0"
-                class="shard-input"
-                />
+                step="1"
+            class="shard-input"
+            />
             <button id="increment" class="btn">+</button>
           </div>
 
@@ -270,7 +271,8 @@
 
         // Update cost function
         function updateCost() {
-            const quantity = parseInt(shardQuantityInput.value) || 0;
+            const quantityNumber = parseFloat(shardQuantityInput.value) || 0;
+            const quantity = Math.floor(quantityNumber);
             const costInUSD = quantity * SHARD_COST_BASE_USD;
             costDisplay.textContent = costInUSD.toFixed(2);
         }
@@ -291,12 +293,27 @@
         });
 
         shardQuantityInput.addEventListener('input', () => {
-            let quantity = parseInt(shardQuantityInput.value) || 0;
-            if (quantity < 0) {
-                shardQuantityInput.value = 0;
-            }
+            // Do not update the input value here to avoid interfering with user typing
             updateCost();
         });
+
+        // Add a 'change' event listener to update the input value when the user is done typing
+        shardQuantityInput.addEventListener('change', () => {
+            let quantityString = shardQuantityInput.value;
+            let quantityNumber = parseFloat(quantityString) || 0;
+            let quantity = Math.floor(quantityNumber);
+
+            // Ensure quantity is not negative
+            if (quantity < 0) {
+                quantity = 0;
+            }
+
+            // Update the input value to the integer quantity
+            shardQuantityInput.value = quantity;
+
+            updateCost();
+        });
+
 
         currencySelector.addEventListener('change', () => {
             const selectedCurrency = currencySelector.value;
@@ -335,8 +352,8 @@
             const cost = parseFloat(costDisplay.textContent) || 0;
             const selectedCurrency = 'USD'; // Shard purchases are always in USD
 
-            if (quantity <= 0) {
-                alert("Please enter a valid shard quantity.");
+            if (!Number.isInteger(quantity) || quantity <= 0) {
+                alert("Please enter a valid whole number for shard quantity.");
                 return;
             }
 
