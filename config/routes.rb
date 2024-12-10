@@ -30,6 +30,8 @@ Rails.application.routes.draw do
   delete 'items/:id', to: 'games#destroy', as: 'destroy_item'
 
   get 'characters', to: 'games#get_characters', as: 'characters'
+  get 'characters/items', to: 'games#items', as: 'character_items'
+
 
 
 

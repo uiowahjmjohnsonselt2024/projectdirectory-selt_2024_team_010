@@ -108,8 +108,11 @@
           .then(response => response.json())
           .then(data => {
               if (data.success) {
-                  // Re-fetch the tile to update the displayed info
+                  // Re-fetch the tile to update displayed info
                   refreshTileInfo(x, y);
+
+                  // NEW: Refresh Items Section
+                  refreshItems();
               } else {
                   console.error(data.error);
               }
@@ -118,6 +121,7 @@
               console.error("Error looting treasure:", error);
           });
     }
+
 
     // Function to handle fighting the monster
     function fightMonster(x, y) {
@@ -169,6 +173,7 @@
             <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
             <p><strong>Treasure Description:</strong> ${data.treasure_description || 'N/A'}</p>
             <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
+            <p><strong>Monster Level:</strong> ${data.monster_level || 'N/A'}</p>
         `;
 
         // Determine button states
@@ -280,6 +285,7 @@
 
         renderAllCharacters();
         displayCurrentBiome();
+        refreshTileInfo(newX, newY);
 
         console.log(`Moved ${direction} to position: (${newX}, ${newY})`);
     }
@@ -293,6 +299,77 @@
         `;
         }
     }
+
+    function refreshItems() {
+        fetch('/characters/items', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            }
+        })
+          .then(response => response.json())
+          .then(data => {
+              updateItemsSection(data.items);
+          })
+          .catch(error => console.error("Error fetching items:", error));
+    }
+
+    function updateItemsSection(items) {
+        const itemsSection = document.getElementById('ItemsSection');
+        if (!itemsSection) return;
+
+        let html = '<h2 class="text-with-border">Your Items</h2>';
+        if (items && items.length > 0) {
+            items.forEach(item => {
+                html += `
+        <div class="item text-with-border" data-item-id="${item.id}">
+          <h3 class="text-with-border">${item.name}</h3>
+          <p class="text-with-border"><strong>Level:</strong> ${item.level}</p>
+          <p class="text-with-border"><strong>Type:</strong> ${item.item_type}</p>
+          <p class="text-with-border"><strong>Description:</strong> ${item.description}</p>
+          <button class="btn delete-button">Delete</button>
+          <hr>
+        </div>
+      `;
+            });
+        } else {
+            html += '<p class="text-with-border">You have no items.</p>';
+        }
+
+        itemsSection.innerHTML = html;
+
+        // Rebind the delete button event handlers if needed
+        const deleteButtons = itemsSection.querySelectorAll(".delete-button");
+        deleteButtons.forEach((button) => {
+            button.addEventListener("click", handleDeleteItem);
+        });
+    }
+
+    function handleDeleteItem(event) {
+        const itemElement = event.target.closest(".item");
+        const itemId = itemElement.getAttribute("data-item-id");
+
+        if (confirm("Are you sure you want to delete this item?")) {
+            fetch(`/items/${itemId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            }).then((response) => {
+                if (response.ok) {
+                    itemElement.remove();
+                } else {
+                    alert("There was an error deleting the item.");
+                }
+            }).catch((error) => {
+                console.error("Error:", error);
+                alert("An error occurred while deleting the item.");
+            });
+        }
+    }
+
 </script>
 
 <style>
