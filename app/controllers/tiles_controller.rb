@@ -208,7 +208,17 @@ class TilesController < ApplicationController
         tile.update!(monster_level: nil)
         # Player levels up
         character.update!(level: character.level + 1)
-        render json: { success: true, tile: tile, result: "player_win" }
+        render json: {
+          success: true,
+          tile: tile,
+          result: "player_win",
+          character: {
+            current_health: character.currentHealth,
+            max_health: character.maxHealth,
+            level: character.level
+          }
+        }
+
       else
         # Monster wins
         # Player loses 1 health

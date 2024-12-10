@@ -136,16 +136,39 @@
           .then(response => response.json())
           .then(data => {
               if (data.success) {
-                  // Re-fetch the tile to update the displayed info
+                  // Update the tile information
                   refreshTileInfo(x, y);
+
+                  // Update character info directly
+                  if (data.character) {
+                      updateCharacterInfo(data.character);
+                  }
+
+                  // Notify the user about the result
+                  if (data.result === "player_win") {
+                      alert("You defeated the monster!");
+                  } else if (data.result === "monster_win") {
+                      alert("You lost to the monster. Be careful!");
+                  }
               } else {
                   console.error(data.error);
+                  alert(data.error);
               }
           })
           .catch(error => {
               console.error("Error fighting monster:", error);
           });
     }
+
+    // Function to update character info in the DOM
+    function updateCharacterInfo(character) {
+        const levelText = document.querySelector('.character-details p:nth-child(2) .character-value');
+        if (levelText) {
+            // Update level text
+            levelText.textContent = character.level;
+        }
+    }
+
 
     // A helper function to re-fetch tile info after updates
     function refreshTileInfo(x, y) {
