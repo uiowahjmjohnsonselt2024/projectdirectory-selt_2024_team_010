@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 require 'openai'
-require 'dotenv'
+require 'dotenv' if Rails.env.development? || Rails.env.test?
 require 'openAIService'
 Dotenv.load if Rails.env.development? || Rails.env.test?
 
