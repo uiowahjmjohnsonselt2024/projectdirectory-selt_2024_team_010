@@ -184,24 +184,6 @@ class TilesController < ApplicationController
       roll = rand(1..100)
       puts "Combat roll: #{roll}, Player odds: #{player_odds}, Player Strength: #{player_strength}, Monster Level: #{monster_level}"
 
-
-
-
-      puts("###############################")
-      puts("###############################")
-      puts("###############################")
-      puts("###############################")
-      puts("###############################")
-      puts(roll)
-      puts(player_odds)
-      puts(player_strength)
-      puts(monster_level)
-
-      puts("###############################")
-
-
-
-
       if roll <= player_odds
         # Player wins
         # Monster is slain
@@ -226,21 +208,40 @@ class TilesController < ApplicationController
         new_health = character.currentHealth - 1
         character.update!(currentHealth: new_health)
 
-        # Monster level increases by half the player's strength (rounded down)
-        increase = (player_strength / 2).floor
-        new_monster_level = monster_level + increase
-        tile.update!(monster_level: new_monster_level)
-
-        render json: {
-          success: true,
-          tile: tile,
-          result: "monster_win",
-          character: {
-            current_health: character.currentHealth,
-            max_health: character.maxHealth,
-            level: character.level
+        # Check if player's health is 0
+        if character.currentHealth <= 0
+          # Reset character's health and level
+          character.items.destroy_all
+          character.update!(currentHealth: character.maxHealth, level: 1)
+          render json: {
+            success: true,
+            tile: tile,
+            result: "player_died",
+            message: "You died! All of your items have been lost, and your level is reset to 1.",
+            character:
+              {
+                current_health: character.currentHealth,
+                level: character.level,
+                max_health: character.maxHealth,
+              }
           }
-        }
+        else
+          # Monster level increases by half the player's strength (rounded down)
+          increase = (player_strength / 2).floor
+          new_monster_level = monster_level + increase
+          tile.update!(monster_level: new_monster_level)
+
+          render json: {
+            success: true,
+            tile: tile,
+            result: "monster_win",
+            character: {
+              current_health: character.currentHealth,
+              max_health: character.maxHealth,
+              level: character.level
+            }
+          }
+        end
       end
 
     else

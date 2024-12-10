@@ -149,6 +149,8 @@
                       alert("You defeated the monster!");
                   } else if (data.result === "monster_win") {
                       alert("You lost to the monster. Be careful!");
+                  } else if (data.result === "player_died") {
+                      alert(data.message); // Display death message
                   }
               } else {
                   console.error(data.error);
