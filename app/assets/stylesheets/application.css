@@ -293,3 +293,350 @@ th {
     background-color: #1e3c72;
     color: #DADADA;
 }
+
+
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Game Container */
+.game-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+
+/* Left Partial - Shop Section */
+.game-shop {
+    width: 35%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: #2c003e;
+    color: white;
+}
+
+.shop-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.shop-container h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-align: center;
+    color: white;
+}
+
+.tab {
+    overflow: hidden;
+    background-color: #2c003e;
+}
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 16px;
+    transition: 0.3s;
+    font-size: 16px;
+    color: white;
+}
+
+.tab button:hover {
+    background-color: #71409c; /* Lighter purple on hover */
+}
+
+.tab button.active {
+    background-color: #71409c;
+}
+
+.tabcontent {
+    display: none;
+    padding: 10px 0;
+    border-top: none;
+
+}
+
+.tabcontent:first-of-type {
+    display: block;
+}
+
+/* Shop Items */
+.shop-items {
+    list-style: none;
+    padding: 0;
+}
+
+.shop-item {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 0;
+}
+
+.item-image {
+    width: 60px;
+    height: 60px;
+    margin-right: 15px;
+}
+
+.item-details {
+    flex: 1;
+}
+
+.shop-item h3,
+.shop-item p,
+.shop-item .buy-button {
+    color: white;
+}
+
+.buy-button {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.buy-button:hover {
+    background-color: #218838;
+}
+
+/* Main Content */
+.game-main {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: #f0f0f0;
+}
+
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+/* Right Partial */
+.game-right {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: rgba(241, 241, 241, 0.9);
+}
+
+/* Character Info Section */
+.character-info {
+    flex: 1 1 33%;
+    padding: 15px;
+    background-color: rgba(125, 60, 181, 0.9);
+    color: white;
+    overflow-y: auto;
+}
+
+.character-info h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.character-info p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+/* Chat Section */
+.chat-container {
+    flex: 2 1 67%;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.chat-container h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-align: center;
+    color: #333;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    margin: 0 auto;
+    width: 80%;
+    text-align: center;
+}
+
+.chat-message {
+    margin-bottom: 10px;
+}
+
+.chat-message strong {
+    color: #007bff;
+}
+
+/* Chat Form */
+#chat-form {
+    display: flex;
+    margin-top: 10px;
+    justify-content: center;
+}
+
+#chat-form input[type="text"] {
+    flex: 1;
+    padding: 8px;
+    font-size: 14px;
+    margin-right: 5px;
+    max-width: 70%;
+}
+
+#chat-form button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#chat-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Scrollbar Styling */
+.shop-container::-webkit-scrollbar,
+.chat-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.shop-container::-webkit-scrollbar-thumb,
+.chat-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.shop-container::-webkit-scrollbar-track,
+.chat-container::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.game-shop,
+.game-main,
+.game-right {
+    margin: 0;
+    padding: 0;
+}
+
+.shop-container,
+.shop-container h2,
+.shop-container p,
+.shop-container .buy-button {
+    color: white;
+}
+
+.chat-container,
+.chat-container h2,
+.chat-container p,
+.chat-container .chat-message {
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    .game-container {
+        flex-direction: column;
+    }
+
+    .game-shop,
+    .game-main,
+    .game-right {
+        width: 100%;
+        height: auto;
+    }
+
+    .shop-container,
+    .chat-container,
+    .character-info {
+        height: auto;
+    }
+}
+
+/* Main Tabs Styling within the game-shop */
+.game-shop .main-tabs {
+    overflow: hidden;
+    background-color: #2c003e;
+}
+
+.game-shop .main-tablinks {
+    background-color: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 16px;
+    font-size: 16px;
+    color: white;
+    transition: 0.3s;
+}
+
+.game-shop .main-tablinks:hover {
+    background-color: #71409c;
+}
+
+.game-shop .main-tablinks.active {
+    background-color: #71409c;
+}
+
+.game-shop .main-tabcontent {
+    display: none;
+    padding: 10px 0;
+    border-top: none;
+}
+
+.game-shop .main-tabcontent:first-of-type {
+    display: block;
+}
+
+.game-shop .tab {
+    overflow: hidden;
+    background-color: #71409c;
+}
+
+.game-shop .tablinks {
+    background-color: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: white;
+    transition: 0.3s;
+}
+
+.game-shop .tablinks:hover {
+    background-color: #8557b5;
+}
+
+.game-shop .tablinks.active {
+    background-color: #8557b5;
+}
+
+.game-shop .tabcontent {
+    display: none;
+    padding: 8px 0;
+    border-top: none;
+}
+
+.game-shop .tabcontent:first-of-type {
+    display: block;
+}

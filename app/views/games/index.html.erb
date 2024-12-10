@@ -15,14 +15,8 @@
       <tr>
         <td><%=game.name%></td>
         <td><%=game.user.username%></td>
-        <td><%= "4/6" %></td>
-        <td>
-          <% if 4 < 6 %>
-            <%= link_to 'Join', game_path(game), class: 'btn' %>
-          <% else %>
-            <span>Full</span>
-          <% end %>
-        </td>
+        <td><%= game.characters.count %>/<%= game.max_user_count %></td>
+        <td><%= link_to 'Join', game_path(game), class: 'btn' %></td>
       </tr>
     <% end %>
     </tbody>

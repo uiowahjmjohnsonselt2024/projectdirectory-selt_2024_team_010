@@ -11,16 +11,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20241127000206) do
+ActiveRecord::Schema.define(version: 20241209180124) do
 
   create_table "characters", force: :cascade do |t|
     t.integer "user_id"
     t.integer "game_id"
+    t.integer "level",         default: 1
+    t.integer "currentHealth", default: 5
+    t.integer "x_position"
+    t.integer "y_position"
+    t.integer "maxHealth",     default: 10
   end
 
   create_table "games", force: :cascade do |t|
     t.string  "name"
     t.integer "owner_id"
+    t.integer "max_user_count"
+  end
+
+  create_table "items", force: :cascade do |t|
+    t.string  "item_type"
+    t.string  "name"
+    t.string  "description"
+    t.integer "level"
+    t.integer "character_id"
   end
 
   create_table "payments", force: :cascade do |t|
@@ -38,15 +52,28 @@ ActiveRecord::Schema.define(version: 20241127000206) do
     t.datetime "updated_at",    null: false
   end
 
+  create_table "tiles", force: :cascade do |t|
+    t.integer "game_id"
+    t.integer "x_position"
+    t.integer "y_position"
+    t.string  "biome"
+    t.string  "picture"
+    t.string  "scene_description"
+    t.string  "treasure_description"
+    t.string  "monster_description"
+    t.integer "visitor_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string   "username"
     t.string   "email"
     t.string   "password_digest"
-    t.float    "shard_amount"
-    t.float    "money_usd"
+    t.float    "shard_amount",     default: 0.0
+    t.float    "money_usd",        default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "session"
+    t.string   "recent_character"
+    t.boolean  "isAdmin",          default: false
   end
 
 end
