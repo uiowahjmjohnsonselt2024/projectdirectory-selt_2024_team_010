@@ -37,16 +37,28 @@
   </div>
 
   <!-- Items Section -->
-  <div id="ItemsSection" class="main-tabcontent">
-    <!-- Items Content -->
-    <h2>Your Items</h2>
-    <p>Display your items here.</p>
+  <div id="ItemsSection" class="main-tabcontent text-with-border" style="flex: 1 1 auto; max-height: 100%; overflow-y: auto;">
+    <h2 class="text-with-border">Your Items</h2>
+    <% if @items.present? %>
+      <% @items.each do |item| %>
+        <div class="item text-with-border" data-item-id="<%= item.id %>">
+          <h3 class="text-with-border"><%= item.name %></h3>
+          <p class="text-with-border"><strong>Level:</strong> <%= item.level %></p>
+          <p class="text-with-border"><strong>Type:</strong> <%= item.item_type %></p>
+          <p class="text-with-border"><strong>Description:</strong> <%= item.description %></p>
+          <button class="delete-button text-with-border">Delete</button>
+          <hr>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="text-with-border">You have no items.</p>
+    <% end %>
   </div>
 
   <!-- Game Section -->
   <div id="GameSection" class="main-tabcontent">
     <!-- Game Content -->
-    <h2> Tile </h2>
+    <h2>Tile</h2>
     <p>Display game-related content here.</p>
   </div>
 </div>
@@ -82,31 +94,15 @@
             shopTabs.forEach((tab) => {
                 tab.addEventListener("click", (event) => {
                     shopTabContents.forEach((content) => (content.style.display = "none"));
-
                     shopTabs.forEach((t) => t.classList.remove("active"));
 
                     const categoryId = event.target.dataset.category;
-                    shopSection.querySelector(`#${categoryId}`).style.display = "block";
+                    const categoryContent = shopSection.querySelector(`#${categoryId}`);
+                    if (categoryContent) categoryContent.style.display = "block";
 
                     event.target.classList.add("active");
                 });
             });
-
-
-            const defaultShopTab = shopSection.querySelector(".tablinks.active");
-            if (defaultShopTab) {
-                defaultShopTab.click();
-            } else if (shopTabs.length > 0) {
-                shopTabs[0].click();
-            }
-        }
-
-
-        const defaultMainTab = document.querySelector(".main-tablinks.active");
-        if (defaultMainTab) {
-            defaultMainTab.click();
-        } else if (mainTabs.length > 0) {
-            mainTabs[0].click();
         }
 
         initializeBuyButtons();
@@ -127,14 +123,16 @@
     }
 
     async function loadItems() {
-        const response = await fetch('/gameshop/generate_items.json');
-
-        if (response.ok) {
-            const data = await response.json();
-            console.log(data)
-            insertItemsIntoShop(data.items);
-        } else {
-            console.error("Failed to load items");
+        try {
+            const response = await fetch('/gameshop/generate_items.json');
+            if (response.ok) {
+                const data = await response.json();
+                insertItemsIntoShop(data.items);
+            } else {
+                console.error("Failed to load items");
+            }
+        } catch (error) {
+            console.error("Error fetching items:", error);
         }
     }
 
@@ -152,12 +150,12 @@
             itemDiv.classList.add("item-details");
 
             itemDiv.innerHTML = `
-          <h3>${item.name}</h3>
-          <p>${item.description}</p>
-          <p>Price: ${item.price}</p>
-          <p>Rarity: ${item.rarity}</p>
-          <button class="buy-button">Buy</button>
-        `;
+              <h3>${item.name}</h3>
+              <p>${item.description}</p>
+              <p>Price: ${item.price}</p>
+              <p>Rarity: ${item.rarity}</p>
+              <button class="buy-button">Buy</button>
+            `;
 
             if (item.category === "Weapons" && weaponsContainer) {
                 weaponsContainer.appendChild(itemDiv);
@@ -173,11 +171,10 @@
 
     document.addEventListener("DOMContentLoaded", () => {
         initializeTabs();
+        loadItems(); // Automatically load items
         const loadItemsButton = document.getElementById("load-items-button");
         if (loadItemsButton) {
             loadItemsButton.addEventListener("click", loadItems);
         }
     });
-
-
 </script>

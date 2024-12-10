@@ -41,18 +41,19 @@
     };
 
     const cellColors = <%= raw @tiles.to_json %>;
+    const gameId = <%= @current_game.id %>;
+    let characters = <%= raw @characters.to_json %>;
+    const currentCharacter = <%= raw @current_character.to_json %>;
+    let current_position = [currentCharacter.x_position, currentCharacter.y_position];
 
     // Get the CSRF token from the meta tags
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    console.log(cellColors)
-
-    let current_position = [0, 0];
     let previous_position = null;
     let current_biome = biome_map[cellColors[formatKey(current_position)]];
 
     displayCurrentBiome();
-    renderOnCurrentTile();
+    renderAllCharacters();
 
     function displayCurrentBiome() {
         console.log("Current Biome: ", current_biome);
@@ -204,40 +205,40 @@
           .catch(error => console.error("Error refreshing tile info:", error));
     }
 
-    function renderOnCurrentTile() {
-        const content = '🏠';
+    async function renderAllCharacters() {
+        const characterIcon = '●';
+        const playerIcon = '✪';
 
-        // Clear previous content if applicable
-        if (previous_position) {
-            const prevTileId = `tile-${previous_position[0]}-${previous_position[1]}`;
-            const prevTile = document.getElementById(prevTileId);
-            if (prevTile) {
-                // Remove only the rendered content, keep the button
-                const renderedContent = prevTile.querySelector('.rendered-content');
-                if (renderedContent) {
-                    prevTile.removeChild(renderedContent);
+        // Refresh all tiles by removing previously rendered content
+        const renderedContents = document.querySelectorAll('.rendered-content');
+        for (const content of renderedContents) {
+            content.remove();
+        }
+
+        let response = (await fetch(`/characters`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+        }));
+
+        characters = (await response.json()).characters;
+
+        // Render all characters on their respective tiles
+        for (const character of characters) {
+            const tile = document.getElementById(`tile-${character.x_position}-${character.y_position}`);
+            if (tile) { // Check if the tile exists
+                const newContent = document.createElement('div');
+                newContent.className = 'rendered-content';
+                if (character.id === currentCharacter.id) {
+                    newContent.innerHTML = playerIcon;
+                } else {
+                    newContent.innerHTML = characterIcon; // Render the new content
                 }
+                tile.appendChild(newContent);
             }
         }
-
-        // Get the tile id corresponding to current_position
-        const tileId = `tile-${current_position[0]}-${current_position[1]}`;
-        const tile = document.getElementById(tileId);
-
-        // Check if the rendered content already exists, remove if necessary
-        const existingContent = tile.querySelector('.rendered-content');
-        if (existingContent) {
-            tile.removeChild(existingContent);
-        }
-
-        // Add new content to the tile without removing the button
-        const newContent = document.createElement('div');
-        newContent.className = 'rendered-content';
-        newContent.innerHTML = content; // Render the new content
-        tile.appendChild(newContent);
-
-        // Update the previous position
-        previous_position = [...current_position];
     }
 
     function move(direction) {
@@ -270,16 +271,22 @@
             return;
         }
 
-        // Update the current position
         current_position = [newX, newY];
         current_biome = biome_map[cellColors[formatKey(current_position)]];
 
+        fetch(`/games/${gameId}/move_character?x=${newX}&y=${newY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+        });
+
+
+        renderAllCharacters();
         displayCurrentBiome();
 
         console.log(`Moved ${direction} to position: (${newX}, ${newY})`);
-
-        // Render content on the new tile
-        renderOnCurrentTile(); // Example content (a house emoji)
     }
 
     function updateGameSection(content) {

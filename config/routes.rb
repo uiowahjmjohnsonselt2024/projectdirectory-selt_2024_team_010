@@ -29,11 +29,16 @@ Rails.application.routes.draw do
 
   get 'gameshop', to: 'gameshop#index'
   get 'gameshop/generate_items', to: 'gameshop#generate_items'
+  delete 'items/:id', to: 'games#destroy', as: 'destroy_item'
+
+  get 'characters', to: 'games#get_characters', as: 'characters'
+
 
 
   resources :games do
     get 'list', on: :collection
     post 'add', on: :member
+    post 'move_character', on: :member
     #resources :tiles
     # We can also add the resources :characters here if we decide we need a controller for it. It will allow us to
     # ensure that the game session the character or tile is attached to is always knowable.

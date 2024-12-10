@@ -28,7 +28,12 @@
 
 
 require 'openai'
+require 'dotenv'
 
+Dotenv.load
+
+# Ensure API key is loaded
+api_key = ENV['OPEN_API_KEY']
 # Ensure API key is loaded
 if api_key.nil? || api_key.empty?
   puts "Error: OPENAI_API_KEY is not set in the .env file."

@@ -1,3 +1,8 @@
+require 'dotenv'
+Dotenv.load
+
+
+
 class GameshopController < ApplicationController
   def index
 
@@ -5,9 +10,9 @@ class GameshopController < ApplicationController
 
   # Action to generate items using OpenAI and return them as JSON (or HTML)
   def generate_items
+    api_key = ENV['OPEN_API_KEY']
     # Initialize our content generator
-    generator = GameContentGenerator.new(ENV['OPENAI_API_KEY'])
-
+    generator = GameContentGenerator.new(api_key)
     # Define system and user instructions:
     # The system prompt sets the context of what the assistant is (an expert game item generator).
     system_prompt = <<~PROMPT
