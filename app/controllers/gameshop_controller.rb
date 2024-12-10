@@ -8,9 +8,35 @@ class GameshopController < ApplicationController
 
   end
 
+  def buy
+    item = params[:item]
+    character = current_user.characters.first
+    Item.create!(
+      name: item.name,
+      item_type: item.category,  # renamed to item_type
+      description: item.description,
+      level: item.rarity,
+      character_id: character.id
+      )
+    character = current_user.characters.first
+    if character.nil?
+      render json: { error: "No character found to assign item to." }, status: 400
+      return
+    end
+
+    # Create a new item record in the items table with item_type instead of type
+    Item.create!(
+      name: item.name,
+      item_type: item.type,  # renamed to item_type
+      description: item.description,
+      level: item.level,
+      character_id: character.id
+    )
+  end
+
   # Action to generate items using OpenAI and return them as JSON (or HTML)
   def generate_items
-    api_key = ENV['OPEN_API_KEY']
+    api_key = ENV['OPENAI_API_KEY']
     # Initialize our content generator
     generator = GameContentGenerator.new(api_key)
     # Define system and user instructions:

@@ -115,9 +115,36 @@
                 const itemDetails = event.target.closest(".item-details");
                 const itemName = itemDetails.querySelector("h3").textContent;
                 const itemPrice = itemDetails.querySelector("p:nth-child(3)").textContent;
+                const itemCategory = itemDetails.dataset.category;
+                const itemDescription = itemDetails.dataset.description;
+                const itemRarity = itemDetails.dataset.rarity;
 
+                // Alert to confirm the purchase
                 alert(`You have purchased ${itemName} for ${itemPrice}`);
 
+                const itemData = {
+                    name: itemName,
+                    type: itemCategory,
+                    description: itemDescription,
+                    level: itemRarity
+                };
+
+                fetch('/gameshop/buy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ item: itemData })
+                })
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                          alert(data.message);
+                      } else {
+                          alert("Failed to purchase item.");
+                      }
+                  })
             });
         });
     }
@@ -135,6 +162,9 @@
             console.error("Error fetching items:", error);
         }
     }
+
+
+
 
     function insertItemsIntoShop(items) {
         const weaponsContainer = document.getElementById("Weapons");
