@@ -82,18 +82,9 @@ class TilesController < ApplicationController
 
 
     # Extract monster data
-    monster_level = rand(20) + 20
+    monster_level = rand(20) + 200
     monster_desc = parsed_response.dig(:monster, :description) || "Default monster description"
 
-    puts("###############################")
-    puts("###############################")
-    puts("###############################")
-    puts("###############################")
-    puts("###############################")
-    puts(monster_desc)
-    puts(monster_level.to_s)
-
-    puts("###############################")
 
     # Custom loot logic
     roll = rand(100)
@@ -165,17 +156,9 @@ class TilesController < ApplicationController
     tile = @current_game.tiles.find_by(x_position: x, y_position: y)
     if tile && tile.monster_description.present?
       # Parse monster level and description
-      # monster_description format: "Level:<monster_level>|<description>"
-      m_desc = tile.monster_description
-      level_match = m_desc.match(/Level:(\d+)\|(.*)/)
-      if level_match
-        monster_level = level_match[1].to_i
-        monster_text = level_match[2].strip
-      else
-        # fallback if not matched
-        monster_level = 1
-        monster_text = tile.monster_description
-      end
+
+      monster_text = tile.monster_description
+      monster_level = tile.monster_level
 
       # Get the current character for the user in this game
       character = current_user.characters.find_by(game_id: @current_game.id)
@@ -200,6 +183,24 @@ class TilesController < ApplicationController
 
       roll = rand(1..100)
       puts "Combat roll: #{roll}, Player odds: #{player_odds}, Player Strength: #{player_strength}, Monster Level: #{monster_level}"
+
+
+
+
+      puts("###############################")
+      puts("###############################")
+      puts("###############################")
+      puts("###############################")
+      puts("###############################")
+      puts(roll)
+      puts(player_odds)
+      puts(player_strength)
+      puts(monster_level)
+
+      puts("###############################")
+
+
+
 
       if roll <= player_odds
         # Player wins
@@ -228,7 +229,7 @@ class TilesController < ApplicationController
         # Monster level increases by half the player's strength (rounded down)
         increase = (player_strength / 2).floor
         new_monster_level = monster_level + increase
-        tile.update!(monster_description: "Level:#{new_monster_level}|#{monster_text}")
+        tile.update!(monster_level: new_monster_level)
 
         render json: {
           success: true,
