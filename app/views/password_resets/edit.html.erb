@@ -1,18 +1,20 @@
-<h1>Reset Password</h1>
-<%= form_tag password_reset_path(params[:id]), method: :patch, class: "form-reset-password" do %>
-  <%= hidden_field_tag :password_reset_token, params[:id] %>
+<div class="form-container">
+  <h1>Reset Password</h1>
+  <%= form_tag password_reset_path(params[:id]), method: :patch do %>
+    <%= hidden_field_tag "user[password_reset_token]", params[:id] %>
 
-  <div class="form-group">
-    <%= label_tag :password, "Password", class: "form-label" %>
-    <%= password_field_tag :password, nil, required: true, class: "form-control" %>
-  </div>
+    <div>
+      <%= label_tag "user[password]", "Password" %>
+      <%= password_field_tag "user[password]", nil, required: true %>
+    </div>
 
-  <div class="form-group">
-    <%= label_tag :password_confirmation, "Confirm Password", class: "form-label" %>
-    <%= password_field_tag :password_confirmation, nil, required: true, class: "form-control" %>
-  </div>
+    <div>
+      <%= label_tag "user[password_confirmation]", "Confirm Password" %>
+      <%= password_field_tag "user[password_confirmation]", nil, required: true %>
+    </div>
 
-  <div class="form-group">
-    <%= submit_tag "Reset Password", class: "btn btn-primary" %>
-  </div>
-<% end %>
+    <div>
+      <%= submit_tag "Reset Password", class: "btn" %>
+    </div>
+  <% end %>
+</div>

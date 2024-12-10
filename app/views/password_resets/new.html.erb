@@ -1,12 +1,13 @@
 <div class="form-container">
   <h1>Forgot Password</h1>
-  <%= form_tag password_resets_path, method: :post, class: "form-forgot-password" do %>
-    <div class="form-group">
-      <%= label_tag :email, "Enter your email address", class: "form-label" %>
-      <%= email_field_tag :email, nil, required: true, class: "form-control" %>
+  <%= form_tag password_resets_path, method: :post do %>
+    <div>
+      <%= label_tag :email, "Enter your email address" %>
+      <%= email_field_tag :email, nil, required: true %>
     </div>
-    <div class="form-group">
-      <%= submit_tag "Send Reset Email", class: "btn btn-primary" %>
+    <div>
+      <%= submit_tag "Send Reset Email", class: "btn" %>
+      <%= link_to 'Back', welcome_path, class: 'btn' %>
     </div>
   <% end %>
 </div>
