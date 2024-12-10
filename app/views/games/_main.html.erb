@@ -1,0 +1,394 @@
+<div class="game-main">
+  <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+    <!-- The Table Grid -->
+
+    <% @tiles.inspect %>
+    <table>
+      <% (-3..3).each do |y| %>
+        <tr>
+          <% (-3..3).each do |x| %>
+            <td style="background-color: <%= @tiles[[x, y]] %>;">
+              <div class="content">
+                <button
+                    id="tile-<%= x %>-<%= y %>"
+                    class="cell-button"
+                    onclick="clickCell(<%= x %>, <%= y %>, '<%= @tiles[[x, y]] %>')">
+                </button>
+              </div>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </table>
+
+    <!-- Navigation Buttons -->
+    <div class="navigation plus-layout">
+      <button class="move-button move-up" onclick="move('up')">▲</button>
+      <button class="move-button move-left" onclick="move('left')">◀</button>
+      <button class="move-button move-center"></button>
+      <button class="move-button move-right" onclick="move('right')">▶</button>
+      <button class="move-button move-down" onclick="move('down')">▼</button>
+    </div>
+  </div>
+</div>
+
+<script>
+    const biome_map = {
+        yellow: 'desert',
+        gray: 'mountain',
+        green: 'forest',
+        blue: 'ocean'
+    };
+
+    const cellColors = <%= raw @tiles.to_json %>;
+    const gameId = <%= @current_game.id %>;
+    let characters = <%= raw @characters.to_json %>;
+    const currentCharacter = <%= raw @current_character.to_json %>;
+    let current_position = [currentCharacter.x_position, currentCharacter.y_position];
+
+    // Get the CSRF token from the meta tags
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    let previous_position = null;
+    let current_biome = biome_map[cellColors[formatKey(current_position)]];
+
+    displayCurrentBiome();
+    renderAllCharacters();
+
+    function displayCurrentBiome() {
+        console.log("Current Biome: ", current_biome);
+    }
+
+    function formatKey(position) {
+        return `[${position[0]}, ${position[1]}]`;
+    }
+
+    function clickCell(x, y, color) {
+        console.log("Point: ", x, y);
+        console.log("Biome: ", biome_map[color]);
+
+        const tileInfo = `
+      <h3>Tile Information</h3>
+      <p>Loading...</p>
+    `;
+        updateGameSection(tileInfo);
+
+        // Fetch tile information from the backend
+        fetch(`/tiles/get_tile?x=${x}&y=${y}`)
+          .then((response) => {
+              if (!response.ok) {
+                  throw new Error("Tile not found.");
+              }
+              return response.json();
+          })
+          .then((data) => {
+              if (data.error) {
+                  console.error(data.error);
+                  updateGameSection(`<p>${data.error}</p>`);
+              } else {
+                  updateTileInfoSection(data);
+              }
+          })
+          .catch((error) => {
+              console.error("Error fetching tile:", error);
+              updateGameSection(`<p>Error fetching tile information.</p>`);
+          });
+    }
+
+    // Function to handle taking the treasure
+    function takeTreasure(x, y) {
+        fetch(`/tiles/loot_tile`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({ x: x, y: y })
+        })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  // Re-fetch the tile to update the displayed info
+                  refreshTileInfo(x, y);
+              } else {
+                  console.error(data.error);
+              }
+          })
+          .catch(error => {
+              console.error("Error looting treasure:", error);
+          });
+    }
+
+    // Function to handle fighting the monster
+    function fightMonster(x, y) {
+        fetch(`/tiles/fight_monster`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({ x: x, y: y })
+        })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  // Re-fetch the tile to update the displayed info
+                  refreshTileInfo(x, y);
+              } else {
+                  console.error(data.error);
+              }
+          })
+          .catch(error => {
+              console.error("Error fighting monster:", error);
+          });
+    }
+
+    // A helper function to re-fetch tile info after updates
+    function refreshTileInfo(x, y) {
+        fetch(`/tiles/get_tile?x=${x}&y=${y}`)
+          .then(response => response.json())
+          .then(data => {
+              if (data.error) {
+                  updateGameSection(`<p>${data.error}</p>`);
+              } else {
+                  updateTileInfoSection(data);
+              }
+          })
+          .catch(error => console.error("Error refreshing tile info:", error));
+    }
+
+    function updateTileInfoSection(data) {
+        // Check if user is on this tile
+        const isCurrentPosition = (data.x === current_position[0] && data.y === current_position[1]);
+
+        let tileInfo = `
+            <h3>Tile Information</h3>
+            <p><strong>Position:</strong> (${data.x}, ${data.y})</p>
+            <p><strong>Biome:</strong> ${data.biome}</p>
+            <p><strong>Picture:</strong> ${data.picture || 'None'}</p>
+            <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
+            <p><strong>Treasure Description:</strong> ${data.treasure_description || 'N/A'}</p>
+            <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
+        `;
+
+        // Determine button states
+        let buttonDisabled = '';
+        let buttonStyle = '';
+
+        if (!isCurrentPosition) {
+            buttonDisabled = 'disabled';
+            buttonStyle = 'style="color:gray; background-color:#ccc;"';
+        }
+
+        // Add the Loot button if treasure_description exists
+        if (data.treasure_description && data.treasure_description.trim() !== '') {
+            tileInfo += `
+              <button id="loot-button" class="btn" onclick="takeTreasure(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
+                  Loot
+              </button>
+            `;
+        }
+
+        // Add the Fight button if monster_description exists
+        if (data.monster_description && data.monster_description.trim() !== '') {
+            tileInfo += `
+              <button id="fight-button" class="btn" onclick="fightMonster(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
+                Fight
+              </button>
+            `;
+        }
+
+        updateGameSection(tileInfo);
+    }
+
+    async function renderAllCharacters() {
+        const characterIcon = '●';
+        const playerIcon = '✪';
+
+        // Refresh all tiles by removing previously rendered content
+        const renderedContents = document.querySelectorAll('.rendered-content');
+        for (const content of renderedContents) {
+            content.remove();
+        }
+
+        let response = (await fetch(`/characters`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+        }));
+
+        characters = (await response.json()).characters;
+
+        // Render all characters on their respective tiles
+        for (const character of characters) {
+            const tile = document.getElementById(`tile-${character.x_position}-${character.y_position}`);
+            if (tile) { // Check if the tile exists
+                const newContent = document.createElement('div');
+                newContent.className = 'rendered-content';
+                if (character.id === currentCharacter.id) {
+                    newContent.innerHTML = playerIcon;
+                } else {
+                    newContent.innerHTML = characterIcon; // Render the new content
+                }
+                tile.appendChild(newContent);
+            }
+        }
+    }
+
+    function move(direction) {
+        const [currentX, currentY] = current_position;
+
+        let newX = currentX;
+        let newY = currentY;
+
+        switch (direction) {
+            case 'up':
+                newY -= 1; // Move up (decrease y)
+                break;
+            case 'down':
+                newY += 1; // Move down (increase y)
+                break;
+            case 'left':
+                newX -= 1; // Move left (decrease x)
+                break;
+            case 'right':
+                newX += 1; // Move right (increase x)
+                break;
+            default:
+                console.log("Invalid direction");
+                return;
+        }
+
+        // Ensure the new position is within bounds
+        if (newX < -3 || newX > 3 || newY < -3 || newY > 3) {
+            console.log("Cannot move outside the grid boundaries.");
+            return;
+        }
+
+        current_position = [newX, newY];
+        current_biome = biome_map[cellColors[formatKey(current_position)]];
+
+        fetch(`/games/${gameId}/move_character?x=${newX}&y=${newY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+        });
+
+        renderAllCharacters();
+        displayCurrentBiome();
+
+        console.log(`Moved ${direction} to position: (${newX}, ${newY})`);
+    }
+
+    function updateGameSection(content) {
+        const gameSection = document.getElementById("GameSection");
+        if (gameSection) {
+            gameSection.innerHTML = `
+            <h2>Tile</h2>
+            ${content}
+        `;
+        }
+    }
+</script>
+
+<style>
+    table {
+        max-width: 500px; /* Set a maximum size for the table */
+        border-collapse: collapse; /* Keep the borders clean */
+    }
+
+    td {
+        width: 14.3%; /* 1/7th of the table width for even columns */
+        border: 2px solid black;
+        position: relative;
+    }
+
+    td .content {
+        aspect-ratio: 1 / 1; /* Maintain square cells */
+        width: 100%; /* Fill the parent td */
+    }
+
+    .cell-button {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: transparent; /* Make the button invisible */
+        border: none; /* Remove default button border */
+        cursor: pointer; /* Make it clickable */
+    }
+
+    .cell-button:hover {
+        background-color: rgba(0, 0, 0, 0.1); /* Optional: Add a hover effect */
+    }
+
+    .navigation {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .move-button {
+        width: 50px;
+        height: 50px;
+        background-color: lightgray;
+        border: 2px solid black;
+        border-radius: 50%;
+        text-align: center;
+        font-size: 20px;
+        cursor: pointer;
+        position: absolute;
+        transition: background-color 0.2s ease; /* Smooth transition effect */
+    }
+
+    .move-up {
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .move-left {
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+    }
+
+    .move-center {
+        display: none;
+    }
+
+    .move-right {
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+    }
+
+    .move-down {
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .move-button:hover {
+        background-color: #fff; /* Slightly darker gray */
+    }
+
+    .rendered-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        color: black;
+        pointer-events: none; /* Make it non-interactive */
+    }
+</style>
