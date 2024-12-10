@@ -86,36 +86,7 @@
                   console.error(data.error);
                   updateGameSection(`<p>${data.error}</p>`);
               } else {
-                  // Construct the tile information display
-                  let tileInfo = `
-            <h3>Tile Information</h3>
-            <p><strong>Position:</strong> (${data.x}, ${data.y})</p>
-            <p><strong>Biome:</strong> ${data.biome}</p>
-            <p><strong>Picture:</strong> ${data.picture || 'None'}</p>
-            <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
-            <p><strong>Treasure Description:</strong> ${data.treasure_description || 'N/A'}</p>
-            <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
-          `;
-
-                  // Add the Loot button if treasure_description exists
-                  if (data.treasure_description && data.treasure_description.trim() !== '') {
-                      tileInfo += `
-              <button id="loot-button" class="btn" onclick="takeTreasure(${data.x}, ${data.y})">
-                  Loot
-              </button>
-            `;
-                  }
-
-                  // Add the Fight button if monster_description exists
-                  if (data.monster_description && data.monster_description.trim() !== '') {
-                      tileInfo += `
-              <button id="fight-button" class="btn" onclick="fightMonster(${data.x}, ${data.y})">
-                Fight
-              </button>
-            `;
-                  }
-
-                  updateGameSection(tileInfo);
+                  updateTileInfoSection(data);
               }
           })
           .catch((error) => {
@@ -180,7 +151,17 @@
               if (data.error) {
                   updateGameSection(`<p>${data.error}</p>`);
               } else {
-                  let tileInfo = `
+                  updateTileInfoSection(data);
+              }
+          })
+          .catch(error => console.error("Error refreshing tile info:", error));
+    }
+
+    function updateTileInfoSection(data) {
+        // Check if user is on this tile
+        const isCurrentPosition = (data.x === current_position[0] && data.y === current_position[1]);
+
+        let tileInfo = `
             <h3>Tile Information</h3>
             <p><strong>Position:</strong> (${data.x}, ${data.y})</p>
             <p><strong>Biome:</strong> ${data.biome}</p>
@@ -188,21 +169,36 @@
             <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
             <p><strong>Treasure Description:</strong> ${data.treasure_description || 'N/A'}</p>
             <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
-          `;
+        `;
 
-                  // Re-add the buttons if still applicable, with class="btn"
-                  if (data.treasure_description && data.treasure_description.trim() !== '') {
-                      tileInfo += `<button id="loot-button" class="btn" onclick="takeTreasure(${data.x}, ${data.y})">Loot</button>`;
-                  }
+        // Determine button states
+        let buttonDisabled = '';
+        let buttonStyle = '';
 
-                  if (data.monster_description && data.monster_description.trim() !== '') {
-                      tileInfo += `<button id="fight-button" class="btn" onclick="fightMonster(${data.x}, ${data.y})">Fight</button>`;
-                  }
+        if (!isCurrentPosition) {
+            buttonDisabled = 'disabled';
+            buttonStyle = 'style="color:gray; background-color:#ccc;"';
+        }
 
-                  updateGameSection(tileInfo);
-              }
-          })
-          .catch(error => console.error("Error refreshing tile info:", error));
+        // Add the Loot button if treasure_description exists
+        if (data.treasure_description && data.treasure_description.trim() !== '') {
+            tileInfo += `
+              <button id="loot-button" class="btn" onclick="takeTreasure(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
+                  Loot
+              </button>
+            `;
+        }
+
+        // Add the Fight button if monster_description exists
+        if (data.monster_description && data.monster_description.trim() !== '') {
+            tileInfo += `
+              <button id="fight-button" class="btn" onclick="fightMonster(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
+                Fight
+              </button>
+            `;
+        }
+
+        updateGameSection(tileInfo);
     }
 
     async function renderAllCharacters() {

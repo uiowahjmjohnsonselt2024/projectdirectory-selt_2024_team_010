@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 require 'openai'
-require 'dotenv'
 require 'game_content_generator'
-Dotenv.load
+require 'dotenv' if Rails.env.development? || Rails.env.test?
+Dotenv.load if Rails.env.development? || Rails.env.test?
 
 class TilesController < ApplicationController
   @@generated_items = Set.new  # Use a class-level Set to store unique item names

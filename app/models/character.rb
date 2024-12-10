@@ -5,6 +5,7 @@ class Character < ActiveRecord::Base
 
   validates :user_id, presence: true, uniqueness: { scope: :game_id }
   validates :game_id, presence: true
-  validates :health, presence: true
+  validates :currentHealth, presence: true
+  validates :maxHealth, presence: true
   validates :level, presence: true
 end

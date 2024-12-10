@@ -357,11 +357,6 @@
                 return;
             }
 
-            if (quantity <= 0) {
-                alert("Please enter a valid shard quantity.");
-                return;
-            }
-
             try {
                 const response = await fetch("/shop/purchase", {
                     method: "POST",
