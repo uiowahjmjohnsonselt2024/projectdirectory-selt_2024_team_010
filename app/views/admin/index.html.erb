@@ -45,6 +45,7 @@
       <th>Name</th>
       <th>Host</th>
       <th>Capacity</th>
+      <th>Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -52,7 +53,10 @@
       <tr>
         <td><%= game.name %></td>
         <td><%= game.user.username %></td>
-        <td><%= "4/6" %></td>
+        <td><%= game.characters.count %>/<%= game.max_user_count %></td>
+        <td>
+          <%= link_to 'Edit', admin_path, class: 'btn' %>
+        </td>
       </tr>
     <% end %>
     </tbody>
