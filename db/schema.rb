@@ -68,12 +68,14 @@ ActiveRecord::Schema.define(version: 20241209180124) do
     t.string   "username"
     t.string   "email"
     t.string   "password_digest"
-    t.float    "shard_amount",     default: 0.0
-    t.float    "money_usd",        default: 0.0
+    t.float    "shard_amount",           default: 0.0
+    t.float    "money_usd",              default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "recent_character"
-    t.boolean  "isAdmin",          default: false
+    t.boolean  "isAdmin",                default: false
+    t.string   "password_reset_token"
+    t.datetime "password_reset_sent_at"
   end
 
 end
