@@ -82,8 +82,43 @@ class TilesController < ApplicationController
 
 
     # Extract monster data
-    monster_level = rand(20) + 200
     monster_desc = parsed_response.dig(:monster, :description) || "Default monster description"
+
+    # Calculate player strength
+    player_level = @current_character.level
+    player_items = @current_character.items.order(level: :desc).limit(3) # top 3 items
+    if player_items.any?
+      player_strength = player_level + player_items.sum(:level)
+    else
+      player_strength = player_level # no items
+    end
+
+
+    #Calculate Monster strength
+    monster_levels = {
+      easy: (player_strength / 2.0).ceil, # Half of the player's strength, minimum 1
+      medium: player_strength, # Equal to the player's strength
+      hard: (player_strength * 2), # Two times the player's strength
+      boss: (player_strength * 5) # Five times the player's strength
+    }
+
+    # Add random aspect (10% of the monster's level)
+    monster_levels.each do |difficulty, level|
+      random_factor = rand((level * 0.1).to_i + 1) # Random up to 10% of the level
+      monster_levels[difficulty] = [level + random_factor, 1].max # Ensure minimum of 1
+    end
+
+    difficulty_weights = {
+      easy: 20,
+      medium: 50,
+      hard: 20,
+      boss: 10
+    }
+    weighted_difficulties = difficulty_weights.flat_map { |difficulty, weight| [difficulty] * weight }
+    selected_difficulty = weighted_difficulties.sample
+
+    # Use the selected difficulty to calculate monster level
+    monster_level = monster_levels[selected_difficulty]
 
 
     # Custom loot logic
@@ -191,6 +226,11 @@ class TilesController < ApplicationController
         tile.update!(monster_level: nil)
         # Player levels up
         character.update!(level: character.level + 1)
+
+        if character.currentHealth < character.maxHealth
+          character.update!(currentHealth: character.currentHealth + 1)
+        end
+
         render json: {
           success: true,
           tile: tile,
