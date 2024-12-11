@@ -75,14 +75,7 @@ class GamesController < ApplicationController
     end
 
     # Fetch all characters in this game, if needed
-    @characters = @current_game.characters.all
-  end
-
-  def move_character
-    x = params[:x]
-    y = params[:y]
-    @current_character.update!(x_position: x, y_position: y)
-    head :no_content
+    #@characters = @current_game.characters.all
   end
 
 
@@ -93,11 +86,5 @@ class GamesController < ApplicationController
       format.json { head :no_content }
       format.html { redirect_to items_path, notice: 'Item was successfully deleted.' }
     end
-  end
-
-  def get_characters
-    @characters = @current_game.characters.all
-
-    render json: { characters: @characters }
   end
 end
