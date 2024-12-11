@@ -116,7 +116,9 @@
                   // NEW: Refresh Items Section
                   refreshItems();
               } else {
-                  console.error(data.error);
+                  refreshTileInfo(x, y);
+                  console.error(data.message);
+                  alert(data.message);
               }
           })
           .catch(error => {
@@ -155,8 +157,9 @@
                       alert(data.message); // Display death message
                   }
               } else {
-                  console.error(data.error);
-                  alert(data.error);
+                  refreshTileInfo(x, y);
+                  console.error(data.message);
+                  alert(data.message);
               }
           })
           .catch(error => {
@@ -340,7 +343,7 @@
 
         renderAllCharacters();
         displayCurrentBiome();
-        refreshTileInfo(newX, newY);
+        refreshTileInfo(x, y);
 
         // I am disabling the buttons on movement and re-enabling them after 0.5 seconds to allow for the movement to
         // refresh.

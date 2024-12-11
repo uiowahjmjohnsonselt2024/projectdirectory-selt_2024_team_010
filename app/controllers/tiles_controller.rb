@@ -180,7 +180,11 @@ class TilesController < ApplicationController
       tile.update!(treasure_description: nil)
       render json: { success: true, tile: tile }
     else
-      render json: { error: "No treasure to take." }, status: 404
+      render json: {
+        message: "No treasure to loot.",
+        result: "no_loot",
+        tile: tile,
+      }
     end
   end
 
@@ -283,9 +287,12 @@ class TilesController < ApplicationController
           }
         end
       end
-
     else
-      render json: { error: "No monster to fight." }, status: 404
+      render json: {
+        message: "No monster to fight.",
+        result: "no_monster",
+        tile: tile,
+      }
     end
   end
 
