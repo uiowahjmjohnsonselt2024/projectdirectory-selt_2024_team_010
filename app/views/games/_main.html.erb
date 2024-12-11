@@ -204,6 +204,7 @@
     }
 
     async function renderAllCharacters() {
+        clearTimeout(characterPoll); // Do not let the timeout loops stack!
         const characterIcon = '●';
         const playerIcon = '✪';
 
@@ -286,11 +287,13 @@
         renderAllCharacters();
         displayCurrentBiome();
 
-        // The theoretical idea here is don't reenable the buttons until the new positions are rendered. Unfortunately,
-        // renderAllCharacters() is an async function so this doesn't work.
-        moveButtons.forEach((button) => {
-            button.disabled = false
-        })
+        // I am disabling the buttons on movement and re-enabling them after 0.5 seconds to allow for the movement to
+        // refresh.
+        setTimeout(()=>{
+            moveButtons.forEach((button) => {
+              button.disabled = false
+          })}, 500);
+
 
         console.log(`Moved ${direction} to position: (${x}, ${y})`);
     }
