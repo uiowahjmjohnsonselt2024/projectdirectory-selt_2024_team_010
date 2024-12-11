@@ -42,7 +42,8 @@ Rails.application.routes.draw do
   
   get 'characters/items', to: 'games#items', as: 'character_items'
 
-
+  post 'chat', to: 'chat#create', as: 'chat_send'
+  get 'chat', to: 'chat#list', as: 'chat_list'
 
   resources :games do
     get 'list', on: :collection
