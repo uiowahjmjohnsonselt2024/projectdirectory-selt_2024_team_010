@@ -51,6 +51,9 @@
     let previous_position = null;
     let current_biome = biome_map[cellColors[formatKey(current_position)]];
 
+    //Looping poll variables
+    let characterPoll;
+
     displayCurrentBiome();
     renderAllCharacters();
 
@@ -233,26 +236,25 @@
                 tile.appendChild(newContent);
             }
         }
+        // Call myself every 3 seconds after the last time I have been called.
+        characterPoll = setTimeout(() => {renderAllCharacters()}, 3000)
     }
 
     function move(direction) {
-        const [currentX, currentY] = current_position;
-
-        let newX = currentX;
-        let newY = currentY;
+        let [x, y] = current_position;
 
         switch (direction) {
             case 'up':
-                newY -= 1; // Move up (decrease y)
+                y -= 1; // Move up (decrease y)
                 break;
             case 'down':
-                newY += 1; // Move down (increase y)
+                y += 1; // Move down (increase y)
                 break;
             case 'left':
-                newX -= 1; // Move left (decrease x)
+                x -= 1; // Move left (decrease x)
                 break;
             case 'right':
-                newX += 1; // Move right (increase x)
+                x += 1; // Move right (increase x)
                 break;
             default:
                 console.log("Invalid direction");
@@ -260,12 +262,12 @@
         }
 
         // Ensure the new position is within bounds
-        if (newX < -3 || newX > 3 || newY < -3 || newY > 3) {
+        if (x < -3 || x > 3 || y < -3 || y > 3) {
             console.log("Cannot move outside the grid boundaries.");
             return;
         }
 
-        current_position = [newX, newY];
+        current_position = [x, y];
         current_biome = biome_map[cellColors[formatKey(current_position)]];
 
         const moveButtons = document.getElementById("movement").childNodes
@@ -273,7 +275,7 @@
             button.disabled = true
         })
 
-        fetch(`/move_character?x=${newX}&y=${newY}`, {
+        fetch(`/move_character?x=${x}&y=${y}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -290,7 +292,7 @@
             button.disabled = false
         })
 
-        console.log(`Moved ${direction} to position: (${newX}, ${newY})`);
+        console.log(`Moved ${direction} to position: (${x}, ${y})`);
     }
 
     function updateGameSection(content) {
