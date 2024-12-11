@@ -148,7 +148,7 @@
                       if (data.success) {
                           alert(data.message);
                           // Append the newly purchased item directly:
-                          appendNewItemToInventory(data.item);
+                          
                           refreshUserItems();
                       } else {
                           alert("Failed to purchase item.");
@@ -233,13 +233,14 @@
           .catch(error => console.error("Error refreshing items:", error));
     }
 
+
     function appendNewItemToInventory(item) {
         // Append a new item directly to the inventory without clearing:
         const itemsSection = document.getElementById("ItemsSection");
 
         const itemDiv = document.createElement("div");
         itemDiv.classList.add("item", "text-with-border");
-        itemDiv.setAttribute("data-item-id", item.id);
+
 
         itemDiv.innerHTML = `
           <h3 class="text-with-border">${item.name}</h3>
