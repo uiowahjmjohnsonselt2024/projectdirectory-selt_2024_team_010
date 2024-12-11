@@ -29,16 +29,18 @@ Rails.application.routes.draw do
 
   delete 'items/:id', to: 'games#destroy', as: 'destroy_item'
 
+  get 'characters', to: 'characters#get_characters', as: 'characters'
+  post 'move_character', to: 'characters#move_character', as: 'move_character'
+
   get 'characters', to: 'games#get_characters', as: 'characters'
   get 'characters/items', to: 'games#items', as: 'character_items'
-
 
 
 
   resources :games do
     get 'list', on: :collection
     post 'add', on: :member
-    post 'move_character', on: :member
+    #post 'move_character', on: :member
     #resources :tiles
     # We can also add the resources :characters here if we decide we need a controller for it. It will allow us to
     # ensure that the game session the character or tile is attached to is always knowable.
