@@ -6,6 +6,7 @@ class ChatController < ApplicationController
       @current_game.chats.order(time_sent: :asc).first.destroy # Only 6(?) messages should be kept around.
     end
     head :no_content
+
   end
 
   def list
