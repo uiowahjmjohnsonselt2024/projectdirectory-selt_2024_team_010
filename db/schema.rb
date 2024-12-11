@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20241209180124) do
+ActiveRecord::Schema.define(version: 20241210204041) do
 
   create_table "characters", force: :cascade do |t|
     t.integer "user_id"
@@ -62,18 +62,22 @@ ActiveRecord::Schema.define(version: 20241209180124) do
     t.string  "treasure_description"
     t.string  "monster_description"
     t.integer "visitor_id"
+    t.integer "monster_level"
   end
 
   create_table "users", force: :cascade do |t|
     t.string   "username"
     t.string   "email"
     t.string   "password_digest"
-    t.float    "shard_amount"
-    t.float    "money_usd"
+    t.float    "shard_amount",           default: 0.0
+    t.float    "money_usd",              default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "session"
     t.string   "recent_character"
+    t.boolean  "isAdmin",                default: false
+    t.string   "password_reset_token"
+    t.datetime "password_reset_sent_at"
   end
 
 end
