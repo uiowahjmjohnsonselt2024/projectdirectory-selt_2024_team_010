@@ -69,6 +69,7 @@
         const mainTabs = document.querySelectorAll(".main-tablinks");
         const mainTabContents = document.querySelectorAll(".main-tabcontent");
 
+
         mainTabs.forEach((tab) => {
             tab.addEventListener("click", (event) => {
                 // Hide all main tab contents
@@ -119,8 +120,6 @@
                 const itemDescription = itemDetails.dataset.description;
                 const itemRarity = itemDetails.dataset.rarity;
 
-                // Convert UI category to allowed backend categories if needed:
-                // Assuming: "Weapons" -> "weapon", "Armor" -> "armor", "Abilities" -> "artifact"
                 let normalizedCategory = itemCategory.toLowerCase();
                 if (normalizedCategory === 'weapons') normalizedCategory = 'weapon';
                 if (normalizedCategory === 'armor') normalizedCategory = 'armor';
@@ -150,6 +149,7 @@
                           alert(data.message);
                           // Append the newly purchased item directly:
                           appendNewItemToInventory(data.item);
+                          refreshUserItems();
                       } else {
                           alert("Failed to purchase item.");
                       }
@@ -193,7 +193,6 @@
     }
 
     function refreshUserItems() {
-        // This function is still here if you want to reload items fully, but no longer needed for immediate purchase updates
         fetch('/items.json', {
             headers: {
                 'Accept': 'application/json'
@@ -308,19 +307,20 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+
+        loadItems(); // Automatically load items
         initializeTabs();
         // Ensure the first main tab is active and visible on initial load:
         const firstMainTab = document.querySelector(".main-tablinks");
         if (firstMainTab) firstMainTab.click();
 
-        loadItems(); // Automatically load items
+
         const loadItemsButton = document.getElementById("load-items-button");
         if (loadItemsButton) {
             loadItemsButton.addEventListener("click", loadItems);
         }
         initializeDeleteButtons();
     });
-    document.addEventListener("DOMContentLoaded", initializeTabs);
     document.addEventListener("turbolinks:load", initializeTabs);
     document.addEventListener("turbo:load", initializeTabs);
 </script>
