@@ -227,14 +227,22 @@
         for (const character of characters) {
             const tile = document.getElementById(`tile-${character.x_position}-${character.y_position}`);
             if (tile) { // Check if the tile exists
-                const newContent = document.createElement('div');
-                newContent.className = 'player';
-                if (character.id === currentCharacter.id) {
-                    newContent.innerHTML = character.username+"<br>"+playerIcon;
+                if (tile.firstElementChild) { //There is already a player representation here
+                    const characterCount = Number(tile.firstElementChild.getAttribute("data-count")) + 1
+                    tile.firstElementChild.setAttribute("data-count",characterCount)
+                    tile.firstElementChild.innerHTML = character.username + "<br>"
+                      + characterIcon + "x" + characterCount
                 } else {
-                    newContent.innerHTML = character.username+"<br>"+characterIcon; // Render the new content
+                    const newContent = document.createElement('div');
+                    newContent.setAttribute("data-count","1")
+                    newContent.className = 'player';
+                    if (character.id === currentCharacter.id) {
+                        newContent.innerHTML = character.username + "<br>" + playerIcon;
+                    } else {
+                        newContent.innerHTML = character.username + "<br>" + characterIcon;
+                    }
+                    tile.appendChild(newContent);
                 }
-                tile.appendChild(newContent);
             }
         }
         // Call myself every 3 seconds after the last time I have been called.
