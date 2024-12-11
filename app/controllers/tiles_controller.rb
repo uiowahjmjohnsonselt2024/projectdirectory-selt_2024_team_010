@@ -181,7 +181,7 @@ class TilesController < ApplicationController
       render json: { success: true, tile: tile }
     else
       render json: {
-        message: "No treasure to loot.",
+        message: "Too late! This treasure is gone.",
         result: "no_loot",
         tile: tile,
       }
@@ -289,7 +289,7 @@ class TilesController < ApplicationController
       end
     else
       render json: {
-        message: "No monster to fight.",
+        message: "This monster has already been slain!",
         result: "no_monster",
         tile: tile,
       }
