@@ -61,10 +61,10 @@ class TilesController < ApplicationController
     No loot generation is requested. Example JSON:
     {
       "monster": {
-        "description": "[Monster description placeholder]",
+        "description": "[Monster description placeholder. 3 sentences max!]",
       },
       "landscape": {
-        "description": "[Landscape description placeholder]"
+        "description": "[Landscape description placeholder. 3 sentences max!]"
       }
     }
   PROMPT
@@ -317,7 +317,7 @@ class TilesController < ApplicationController
       The name must not match any of the previously generated names given. It can be a
       weapon (sword, bow, staff, axe, hammer) or a shield (diamond, tower, round) or a
       piece of armor (cloak, greaves, gauntlets, chestplate) or just a random artifact. 
-      Be creative!
+      Be creative! Description must be 3 sentences max!
     INSTRUCTION
 
     3.times do

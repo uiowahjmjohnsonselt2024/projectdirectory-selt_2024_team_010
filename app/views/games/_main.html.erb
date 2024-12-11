@@ -54,6 +54,8 @@
     //Looping poll variables
     let characterPoll;
 
+    let loading = false;
+
     displayCurrentBiome();
     renderAllCharacters();
 
@@ -191,8 +193,14 @@
 
 
     // A helper function to re-fetch tile info after updates
-    function refreshTileInfo(x, y) {
-        fetch(`/tiles/get_tile?x=${x}&y=${y}`)
+    async function refreshTileInfo(x, y) {
+        const tileInfo = `
+      <h3>Tile Information</h3>
+      <p>Loading...</p>
+    `;
+        updateGameSection(tileInfo);
+
+        await fetch(`/tiles/get_tile?x=${x}&y=${y}`)
           .then(response => response.json())
           .then(data => {
               if (data.error) {
@@ -211,10 +219,14 @@
         let tileInfo = `
             <h3>Tile Information</h3>
             <p><strong>Position:</strong> (${data.x}, ${data.y})</p>
-            <p><strong>Biome:</strong> ${data.biome}</p>
+            <p><strong>Biome:</strong> ${biome_map[data.biome]}</p>
+            <br>
             <p><strong>Picture:</strong> ${data.picture || 'None'}</p>
+            <br>
             <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
+            <br>
             <p><strong>Treasure Description:</strong> ${data.treasure_description || 'N/A'}</p>
+            <br>
             <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
             <p><strong>Monster Level:</strong> ${data.monster_level || 'N/A'}</p>
         `;
@@ -296,6 +308,7 @@
     }
 
     function move(direction) {
+        loading = true;
         let [x, y] = current_position;
 
         switch (direction) {
@@ -348,8 +361,6 @@
             moveButtons.forEach((button) => {
               button.disabled = false
           })}, 500);
-
-
         console.log(`Moved ${direction} to position: (${x}, ${y})`);
     }
 
@@ -357,9 +368,8 @@
         const gameSection = document.getElementById("GameSection");
         if (gameSection) {
             gameSection.innerHTML = `
-            <h2>Tile</h2>
-            ${content}
-        `;
+                <h2>Tile</h2>
+                ${content}`;
         }
     }
 
