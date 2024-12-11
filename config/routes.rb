@@ -18,6 +18,7 @@ Rails.application.routes.draw do
 
   get 'register', to: 'registrations#new', as: 'register'
   post 'register', to: 'registrations#create'
+  resources :password_resets, only: [:new, :create, :edit, :update]
 
   get 'welcome', to: 'welcome#index', as: 'welcome'
 
