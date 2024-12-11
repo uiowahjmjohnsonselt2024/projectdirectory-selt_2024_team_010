@@ -46,7 +46,7 @@
           <p class="text-with-border"><strong>Level:</strong> <%= item.level %></p>
           <p class="text-with-border"><strong>Type:</strong> <%= item.item_type %></p>
           <p class="text-with-border"><strong>Description:</strong> <%= item.description %></p>
-          <button class="btn">Delete</button>
+          <button class="btn delete-button">Delete</button>
           <hr>
         </div>
       <% end %>
@@ -56,7 +56,7 @@
   </div>
 
   <!-- Game Section -->
-  <div id="GameSection" class="main-tabcontent" style="flex: 1 0 auto;">
+  <div id="GameSection" class="main-tabcontent" style="flex: 1 1 auto; max-height: 100%; overflow-y: auto;">
     <h2>Tile</h2>
     <p>Display game-related content here.</p>
   </div>
@@ -119,14 +119,21 @@
                 const itemDescription = itemDetails.dataset.description;
                 const itemRarity = itemDetails.dataset.rarity;
 
-                // Alert to confirm the purchase
+                // Convert UI category to allowed backend categories if needed:
+                // Assuming: "Weapons" -> "weapon", "Armor" -> "armor", "Abilities" -> "artifact"
+                let normalizedCategory = itemCategory.toLowerCase();
+                if (normalizedCategory === 'weapons') normalizedCategory = 'weapon';
+                if (normalizedCategory === 'armor') normalizedCategory = 'armor';
+                if (normalizedCategory === 'abilities') normalizedCategory = 'artifact';
+
+                // Confirm the purchase
                 alert(`You have purchased ${itemName} for ${itemPrice}`);
 
                 const itemData = {
                     name: itemName,
-                    type: itemCategory,
+                    category: normalizedCategory,
                     description: itemDescription,
-                    level: itemRarity
+                    rarity: itemRarity
                 };
 
                 fetch('/gameshop/buy', {
@@ -141,40 +148,111 @@
                   .then(data => {
                       if (data.success) {
                           alert(data.message);
+                          // Append the newly purchased item directly:
+                          appendNewItemToInventory(data.item);
                       } else {
                           alert("Failed to purchase item.");
                       }
                   })
+                  .catch((error) => {
+                      console.error("Error purchasing item:", error);
+                      alert("There was an error completing the purchase.");
+                  });
             });
         });
     }
-    const deleteButtons = document.querySelectorAll(".delete-button");
-    deleteButtons.forEach((button) => {
-        button.addEventListener("click", (event) => {
-            const itemElement = event.target.closest(".item");
-            const itemId = itemElement.getAttribute("data-item-id");
 
-            if (confirm("Are you sure you want to delete this item?")) {
-                fetch(`/items/${itemId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json'
-                    }
-                }).then((response) => {
-                    if (response.ok) {
-                        // Remove the item's element from the page
-                        itemElement.remove();
-                    } else {
-                        alert("There was an error deleting the item.");
-                    }
-                }).catch((error) => {
-                    console.error("Error:", error);
-                    alert("An error occurred while deleting the item.");
-                });
-            }
+    function initializeDeleteButtons() {
+        const deleteButtons = document.querySelectorAll(".delete-button");
+        deleteButtons.forEach((button) => {
+            button.addEventListener("click", (event) => {
+                const itemElement = event.target.closest(".item");
+                const itemId = itemElement.getAttribute("data-item-id");
+
+                if (confirm("Are you sure you want to delete this item?")) {
+                    fetch(`/items/${itemId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json'
+                        }
+                    }).then((response) => {
+                        if (response.ok) {
+                            // Remove the item's element from the page
+                            itemElement.remove();
+                        } else {
+                            alert("There was an error deleting the item.");
+                        }
+                    }).catch((error) => {
+                        console.error("Error:", error);
+                        alert("An error occurred while deleting the item.");
+                    });
+                }
+            });
         });
-    });
+    }
+
+    function refreshUserItems() {
+        // This function is still here if you want to reload items fully, but no longer needed for immediate purchase updates
+        fetch('/items.json', {
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+          .then(response => response.json())
+          .then(data => {
+              const itemsSection = document.getElementById("ItemsSection");
+
+              // Clear existing items
+              itemsSection.innerHTML = `
+                <h2 class="text-with-border">Your Items</h2>
+              `;
+
+              if (data.items && data.items.length > 0) {
+                  data.items.forEach(item => {
+                      const itemDiv = document.createElement("div");
+                      itemDiv.classList.add("item", "text-with-border");
+                      itemDiv.setAttribute("data-item-id", item.id);
+
+                      itemDiv.innerHTML = `
+                        <h3 class="text-with-border">${item.name}</h3>
+                        <p class="text-with-border"><strong>Level:</strong> ${item.level}</p>
+                        <p class="text-with-border"><strong>Type:</strong> ${item.item_type}</p>
+                        <p class="text-with-border"><strong>Description:</strong> ${item.description}</p>
+                        <button class="btn delete-button">Delete</button>
+                        <hr>
+                      `;
+
+                      itemsSection.appendChild(itemDiv);
+                  });
+
+                  initializeDeleteButtons();
+              } else {
+                  itemsSection.innerHTML += `<p class="text-with-border">You have no items.</p>`;
+              }
+          })
+          .catch(error => console.error("Error refreshing items:", error));
+    }
+
+    function appendNewItemToInventory(item) {
+        // Append a new item directly to the inventory without clearing:
+        const itemsSection = document.getElementById("ItemsSection");
+
+        const itemDiv = document.createElement("div");
+        itemDiv.classList.add("item", "text-with-border");
+        itemDiv.setAttribute("data-item-id", item.id);
+
+        itemDiv.innerHTML = `
+          <h3 class="text-with-border">${item.name}</h3>
+          <p class="text-with-border"><strong>Level:</strong> ${item.level}</p>
+          <p class="text-with-border"><strong>Type:</strong> ${item.item_type}</p>
+          <p class="text-with-border"><strong>Description:</strong> ${item.description}</p>
+          <button class="btn delete-button">Delete</button>
+          <hr>
+        `;
+        itemsSection.appendChild(itemDiv);
+        initializeDeleteButtons();
+    }
 
     async function loadItems() {
         try {
@@ -190,9 +268,6 @@
         }
     }
 
-
-
-
     function insertItemsIntoShop(items) {
         const weaponsContainer = document.getElementById("Weapons");
         const armorContainer = document.getElementById("Armor");
@@ -206,6 +281,11 @@
             const itemDiv = document.createElement("div");
             itemDiv.classList.add("item-details");
 
+            // Set data-attributes so we can extract them later
+            itemDiv.dataset.category = item.category;     // e.g. "Weapons", "Armor", "Abilities"
+            itemDiv.dataset.description = item.description;
+            itemDiv.dataset.rarity = item.rarity;
+
             itemDiv.innerHTML = `
               <h3>${item.name}</h3>
               <p>${item.description}</p>
@@ -214,6 +294,7 @@
               <button class="buy-button">Buy</button>
             `;
 
+            // Append to the correct container
             if (item.category === "Weapons" && weaponsContainer) {
                 weaponsContainer.appendChild(itemDiv);
             } else if (item.category === "Armor" && armorContainer) {
@@ -228,10 +309,15 @@
 
     document.addEventListener("DOMContentLoaded", () => {
         initializeTabs();
+        // Ensure the first main tab is active and visible on initial load:
+        const firstMainTab = document.querySelector(".main-tablinks");
+        if (firstMainTab) firstMainTab.click();
+
         loadItems(); // Automatically load items
         const loadItemsButton = document.getElementById("load-items-button");
         if (loadItemsButton) {
             loadItemsButton.addEventListener("click", loadItems);
         }
+        initializeDeleteButtons();
     });
 </script>
