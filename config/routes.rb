@@ -39,7 +39,7 @@ Rails.application.routes.draw do
 
   get 'characters', to: 'characters#get_characters', as: 'characters'
   post 'move_character', to: 'characters#move_character', as: 'move_character'
-  
+
   get 'characters/items', to: 'games#items', as: 'character_items'
 
   post 'chat', to: 'chat#create', as: 'chat_send'
