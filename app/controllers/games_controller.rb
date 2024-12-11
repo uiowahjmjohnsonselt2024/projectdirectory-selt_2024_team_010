@@ -75,14 +75,7 @@ class GamesController < ApplicationController
     end
 
     # Fetch all characters in this game, if needed
-    @characters = @current_game.characters.all
-  end
-
-  def move_character
-    x = params[:x]
-    y = params[:y]
-    @current_character.update!(x_position: x, y_position: y)
-    head :no_content
+    #@characters = @current_game.characters.all
   end
 
 
@@ -95,9 +88,17 @@ class GamesController < ApplicationController
     end
   end
 
+
   def get_characters
     @characters = @current_game.characters.all
 
     render json: { characters: @characters }
+  end
+
+  def items
+    character = @current_user.characters.find_by(game_id: @current_game.id)
+    @items = character.items
+
+    render json: { items: @items.as_json(only: [:id, :name, :item_type, :description, :level]) }
   end
 end
