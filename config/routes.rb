@@ -31,7 +31,8 @@ Rails.application.routes.draw do
 
   get 'characters', to: 'games#get_characters', as: 'characters'
 
-
+  get '/auth/:provider/callback', to: 'sessions#auth_success', as: 'auth_success'
+  get '/auth/failure', to: 'sessions#auth_failure', as: 'auth_failure'
 
   resources :games do
     get 'list', on: :collection

@@ -22,4 +22,27 @@ class SessionsController < ApplicationController
     flash[:notice] = "Logged out successfully"
     redirect_to welcome_path
   end
+
+  def auth_success
+    auth = request.env['omniauth.auth']
+
+    user = User.from_omniauth(auth)
+    if user
+      if user instance_of? ActiveRecord::RecordInvalid
+        params[:message] = "Failed in creating the record;\n\n" + user.record.errors.full_messages.join("\n")
+        redirect_to auth_failure_path
+      else
+        session[:session_token] = user.session_token
+        flash[:notice] = "Logged in successfully"
+        redirect_to dashboard_path
+      end
+    else
+      redirect_to login_path
+    end
+  end
+
+  def auth_failure
+    flash[:warning] = "Authentication failed. :(\nReason: #{params[:message]}"
+    redirect_to
+  end
 end
