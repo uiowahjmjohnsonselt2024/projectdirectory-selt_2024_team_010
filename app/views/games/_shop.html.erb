@@ -320,4 +320,7 @@
         }
         initializeDeleteButtons();
     });
+    document.addEventListener("DOMContentLoaded", initializeTabs);
+    document.addEventListener("turbolinks:load", initializeTabs);
+    document.addEventListener("turbo:load", initializeTabs);
 </script>
