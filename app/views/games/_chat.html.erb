@@ -30,7 +30,7 @@
     <div class="chat-messages" id="chat-messages">
       <div class="chat-message"><strong>Server:</strong> this is a test</div>
     </div>
-    <%= form_tag chat_send_path,onsubmit: 'clearText()', method: :poll do %>
+    <%= form_tag chat_send_path 'send_form', onsubmit: 'clearText()', method: :post do %>
       <%= text_field_tag 'message', nil, required: true, class: 'chat-input' %>
       <%= submit_tag 'Submit', class: 'btn' %>
     <% end %>
@@ -44,10 +44,11 @@
     //setInterval(() => {updateChat()}, 3000) //Re-poll the chat every 3 seconds (3000 ms)
     function clearText(event) {
         // access input field
+        document.getElementById('send_form').submit();
         let input1 = document.getElementById('message');
         // clear the input field.
         input1.value = "";
-        return true;
+        updateChat();
     }
     async function updateChat() {
         console.log("Chat being called!")
