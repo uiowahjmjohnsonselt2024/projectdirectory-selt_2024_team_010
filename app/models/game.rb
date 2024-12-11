@@ -3,6 +3,7 @@ class Game < ActiveRecord::Base
   has_many :characters, dependent: :destroy
   has_many :users, through: :characters
   has_many :tiles, dependent: :destroy
+  has_many :chats, dependent: :destroy
 
   validates :owner_id, presence: true
   validates :name, presence: true, uniqueness: { scope: :owner_id } #Names are unique over a given owner.
