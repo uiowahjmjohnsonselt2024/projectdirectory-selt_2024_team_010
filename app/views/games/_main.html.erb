@@ -22,7 +22,7 @@
     </table>
 
     <!-- Navigation Buttons -->
-    <div class="navigation plus-layout">
+    <div class="navigation plus-layout" id="movement">
       <button class="move-button move-up" onclick="move('up')">▲</button>
       <button class="move-button move-left" onclick="move('left')">◀</button>
       <button class="move-button move-center"></button>
@@ -42,7 +42,6 @@
 
     const cellColors = <%= raw @tiles.to_json %>;
     const gameId = <%= @current_game.id %>;
-    let characters = <%= raw @characters.to_json %>;
     const currentCharacter = <%= raw @current_character.to_json %>;
     let current_position = [currentCharacter.x_position, currentCharacter.y_position];
 
@@ -227,9 +226,9 @@
                 const newContent = document.createElement('div');
                 newContent.className = 'player';
                 if (character.id === currentCharacter.id) {
-                    newContent.innerHTML = playerIcon;
+                    newContent.innerHTML = character.username+"<br>"+playerIcon;
                 } else {
-                    newContent.innerHTML = characterIcon; // Render the new content
+                    newContent.innerHTML = character.username+"<br>"+characterIcon; // Render the new content
                 }
                 tile.appendChild(newContent);
             }
@@ -269,7 +268,12 @@
         current_position = [newX, newY];
         current_biome = biome_map[cellColors[formatKey(current_position)]];
 
-        fetch(`/games/${gameId}/move_character?x=${newX}&y=${newY}`, {
+        const moveButtons = document.getElementById("movement").childNodes
+        moveButtons.forEach((button) => { // Disable the buttons until the screen has updated.
+            button.disabled = true
+        })
+
+        fetch(`/move_character?x=${newX}&y=${newY}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -279,6 +283,12 @@
 
         renderAllCharacters();
         displayCurrentBiome();
+
+        // The theoretical idea here is don't reenable the buttons until the new positions are rendered. Unfortunately,
+        // renderAllCharacters() is an async function so this doesn't work.
+        moveButtons.forEach((button) => {
+            button.disabled = false
+        })
 
         console.log(`Moved ${direction} to position: (${newX}, ${newY})`);
     }
