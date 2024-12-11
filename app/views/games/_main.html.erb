@@ -205,12 +205,6 @@
         const characterIcon = '●';
         const playerIcon = '✪';
 
-        // Refresh all tiles by removing previously rendered content
-        const renderedContents = document.querySelectorAll('.rendered-content');
-        for (const content of renderedContents) {
-            content.remove();
-        }
-
         let response = (await fetch(`/characters`, {
             method: 'GET',
             headers: {
@@ -218,15 +212,20 @@
                 'X-CSRF-Token': csrfToken
             },
         }));
-
         characters = (await response.json()).characters;
+
+        //Wait until the response is collected before attempting to redraw the character positions.
+        const renderedContents = document.querySelectorAll('.player');
+        for (const content of renderedContents) {
+            content.remove();
+        }
 
         // Render all characters on their respective tiles
         for (const character of characters) {
             const tile = document.getElementById(`tile-${character.x_position}-${character.y_position}`);
             if (tile) { // Check if the tile exists
                 const newContent = document.createElement('div');
-                newContent.className = 'rendered-content';
+                newContent.className = 'player';
                 if (character.id === currentCharacter.id) {
                     newContent.innerHTML = playerIcon;
                 } else {
@@ -381,7 +380,7 @@
         background-color: #fff; /* Slightly darker gray */
     }
 
-    .rendered-content {
+    .player {
         width: 100%;
         height: 100%;
         display: flex;
