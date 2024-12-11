@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20241209180124) do
+ActiveRecord::Schema.define(version: 20241210204041) do
 
   create_table "characters", force: :cascade do |t|
     t.integer "user_id"
@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(version: 20241209180124) do
     t.string  "treasure_description"
     t.string  "monster_description"
     t.integer "visitor_id"
+    t.integer "monster_level"
   end
 
   create_table "users", force: :cascade do |t|
