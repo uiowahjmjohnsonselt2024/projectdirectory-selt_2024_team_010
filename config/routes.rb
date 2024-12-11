@@ -9,8 +9,16 @@ Rails.application.routes.draw do
   post 'users/reset_username', to: 'settings#update_username', as: 'update_username'
   post 'users/reset_password', to: 'settings#update_password', as: 'update_password'
 
+  get 'admin', to: 'admin#index', as: 'admin'
+  get 'admin/edit_user/:id', to: 'admin#edit_user', as: 'edit_user'
+  post 'admin/edit_user/:id', to: 'admin#edit_user_form', as: 'edit_user_form'
+  get 'admin/add_user', to: 'admin#add_user', as: 'add_user'
+  post 'admin/add_user', to: 'admin#add_user_form', as: 'add_user_form'
+  delete 'admin/delete_user', to: 'admin#delete_user_form', as: 'delete_user_form'
+
   get 'register', to: 'registrations#new', as: 'register'
   post 'register', to: 'registrations#create'
+  resources :password_resets, only: [:new, :create, :edit, :update]
 
   get 'welcome', to: 'welcome#index', as: 'welcome'
 
@@ -32,7 +40,6 @@ Rails.application.routes.draw do
   get 'characters', to: 'characters#get_characters', as: 'characters'
   post 'move_character', to: 'characters#move_character', as: 'move_character'
 
-  #get 'characters', to: 'games#get_characters', as: 'characters'
   get 'characters/items', to: 'games#items', as: 'character_items'
 
 
