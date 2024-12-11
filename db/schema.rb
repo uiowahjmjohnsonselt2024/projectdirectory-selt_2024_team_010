@@ -11,15 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20241209151835) do
+ActiveRecord::Schema.define(version: 20241210204041) do
 
   create_table "characters", force: :cascade do |t|
     t.integer "user_id"
     t.integer "game_id"
-    t.integer "level",      default: 1
-    t.integer "health",     default: 5
+    t.integer "level",         default: 1
+    t.integer "currentHealth", default: 5
     t.integer "x_position"
     t.integer "y_position"
+    t.integer "maxHealth",     default: 10
   end
 
   create_table "games", force: :cascade do |t|
@@ -61,6 +62,7 @@ ActiveRecord::Schema.define(version: 20241209151835) do
     t.string  "treasure_description"
     t.string  "monster_description"
     t.integer "visitor_id"
+    t.integer "monster_level"
   end
 
   create_table "users", force: :cascade do |t|

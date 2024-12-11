@@ -28,9 +28,9 @@
 
 
 require 'openai'
-require 'dotenv'
+require 'dotenv' if Rails.env.development? || Rails.env.test?
 
-Dotenv.load
+Dotenv.load if Rails.env.development? || Rails.env.test?
 
 # Ensure API key is loaded
 api_key = ENV['OPENAI_API_KEY']
