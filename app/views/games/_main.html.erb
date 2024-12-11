@@ -22,7 +22,7 @@
     </table>
 
     <!-- Navigation Buttons -->
-    <div class="navigation plus-layout">
+    <div class="navigation plus-layout" id="movement">
       <button class="move-button move-up" onclick="move('up')">▲</button>
       <button class="move-button move-left" onclick="move('left')">◀</button>
       <button class="move-button move-center"></button>
@@ -42,7 +42,6 @@
 
     const cellColors = <%= raw @tiles.to_json %>;
     const gameId = <%= @current_game.id %>;
-    let characters = <%= raw @characters.to_json %>;
     const currentCharacter = <%= raw @current_character.to_json %>;
     let current_position = [currentCharacter.x_position, currentCharacter.y_position];
 
@@ -51,6 +50,9 @@
 
     let previous_position = null;
     let current_biome = biome_map[cellColors[formatKey(current_position)]];
+
+    //Looping poll variables
+    let characterPoll;
 
     displayCurrentBiome();
     renderAllCharacters();
@@ -108,8 +110,11 @@
           .then(response => response.json())
           .then(data => {
               if (data.success) {
-                  // Re-fetch the tile to update the displayed info
+                  // Re-fetch the tile to update displayed info
                   refreshTileInfo(x, y);
+
+                  // NEW: Refresh Items Section
+                  refreshItems();
               } else {
                   console.error(data.error);
               }
@@ -118,6 +123,7 @@
               console.error("Error looting treasure:", error);
           });
     }
+
 
     // Function to handle fighting the monster
     function fightMonster(x, y) {
@@ -132,16 +138,57 @@
           .then(response => response.json())
           .then(data => {
               if (data.success) {
-                  // Re-fetch the tile to update the displayed info
+                  // Update the tile information
                   refreshTileInfo(x, y);
+
+                  // Update character info directly
+                  if (data.character) {
+                      updateCharacterInfo(data.character);
+                  }
+
+                  // Notify the user about the result
+                  if (data.result === "player_win") {
+                      alert("You defeated the monster!");
+                  } else if (data.result === "monster_win") {
+                      alert("You lost to the monster. Be careful!");
+                  } else if (data.result === "player_died") {
+                      alert(data.message); // Display death message
+                  }
               } else {
                   console.error(data.error);
+                  alert(data.error);
               }
           })
           .catch(error => {
               console.error("Error fighting monster:", error);
           });
     }
+
+    // Function to update character info in the DOM
+    function updateCharacterInfo(character) {
+        // Update level text
+        const levelText = document.querySelector('.character-details p:nth-child(2) .character-value');
+        if (levelText) {
+            levelText.textContent = character.level;
+        }
+
+        // Update health values and health bar
+        const healthBar = document.querySelector('.health-bar .health-fill');
+        const currHealthText = document.querySelector('.health-bar-container p .character-value');
+
+
+        if (healthBar && currHealthText) {
+            const healthPercentage = (character.current_health / character.max_health) * 100;
+
+            // Update health bar width
+            healthBar.style.width = `${healthPercentage.toFixed(2)}%`;
+
+            // Update health text
+            currHealthText.textContent = `${character.current_health}`;
+        }
+    }
+
+
 
     // A helper function to re-fetch tile info after updates
     function refreshTileInfo(x, y) {
@@ -169,6 +216,7 @@
             <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
             <p><strong>Treasure Description:</strong> ${data.treasure_description || 'N/A'}</p>
             <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
+            <p><strong>Monster Level:</strong> ${data.monster_level || 'N/A'}</p>
         `;
 
         // Determine button states
@@ -202,14 +250,9 @@
     }
 
     async function renderAllCharacters() {
+        clearTimeout(characterPoll); // Do not let the timeout loops stack!
         const characterIcon = '●';
         const playerIcon = '✪';
-
-        // Refresh all tiles by removing previously rendered content
-        const renderedContents = document.querySelectorAll('.rendered-content');
-        for (const content of renderedContents) {
-            content.remove();
-        }
 
         let response = (await fetch(`/characters`, {
             method: 'GET',
@@ -218,43 +261,55 @@
                 'X-CSRF-Token': csrfToken
             },
         }));
-
         characters = (await response.json()).characters;
+
+        //Wait until the response is collected before attempting to redraw the character positions.
+        const renderedContents = document.querySelectorAll('.player');
+        for (const content of renderedContents) {
+            content.remove();
+        }
 
         // Render all characters on their respective tiles
         for (const character of characters) {
             const tile = document.getElementById(`tile-${character.x_position}-${character.y_position}`);
             if (tile) { // Check if the tile exists
-                const newContent = document.createElement('div');
-                newContent.className = 'rendered-content';
-                if (character.id === currentCharacter.id) {
-                    newContent.innerHTML = playerIcon;
+                if (tile.firstElementChild) { //There is already a player representation here
+                    const characterCount = Number(tile.firstElementChild.getAttribute("data-count")) + 1
+                    tile.firstElementChild.setAttribute("data-count",characterCount)
+                    tile.firstElementChild.innerHTML = character.username + "<br>"
+                      + characterIcon + "x" + characterCount
                 } else {
-                    newContent.innerHTML = characterIcon; // Render the new content
+                    const newContent = document.createElement('div');
+                    newContent.setAttribute("data-count","1")
+                    newContent.className = 'player';
+                    if (character.id === currentCharacter.id) {
+                        newContent.innerHTML = character.username + "<br>" + playerIcon;
+                    } else {
+                        newContent.innerHTML = character.username + "<br>" + characterIcon;
+                    }
+                    tile.appendChild(newContent);
                 }
-                tile.appendChild(newContent);
             }
         }
+        // Call myself every 3 seconds after the last time I have been called.
+        characterPoll = setTimeout(() => {renderAllCharacters()}, 3000)
     }
 
     function move(direction) {
-        const [currentX, currentY] = current_position;
-
-        let newX = currentX;
-        let newY = currentY;
+        let [x, y] = current_position;
 
         switch (direction) {
             case 'up':
-                newY -= 1; // Move up (decrease y)
+                y -= 1; // Move up (decrease y)
                 break;
             case 'down':
-                newY += 1; // Move down (increase y)
+                y += 1; // Move down (increase y)
                 break;
             case 'left':
-                newX -= 1; // Move left (decrease x)
+                x -= 1; // Move left (decrease x)
                 break;
             case 'right':
-                newX += 1; // Move right (increase x)
+                x += 1; // Move right (increase x)
                 break;
             default:
                 console.log("Invalid direction");
@@ -262,15 +317,20 @@
         }
 
         // Ensure the new position is within bounds
-        if (newX < -3 || newX > 3 || newY < -3 || newY > 3) {
+        if (x < -3 || x > 3 || y < -3 || y > 3) {
             console.log("Cannot move outside the grid boundaries.");
             return;
         }
 
-        current_position = [newX, newY];
+        current_position = [x, y];
         current_biome = biome_map[cellColors[formatKey(current_position)]];
 
-        fetch(`/games/${gameId}/move_character?x=${newX}&y=${newY}`, {
+        const moveButtons = document.getElementById("movement").childNodes
+        moveButtons.forEach((button) => { // Disable the buttons until the screen has updated.
+            button.disabled = true
+        })
+
+        fetch(`/move_character?x=${x}&y=${y}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -280,8 +340,17 @@
 
         renderAllCharacters();
         displayCurrentBiome();
+        refreshTileInfo(x, y);
 
-        console.log(`Moved ${direction} to position: (${newX}, ${newY})`);
+        // I am disabling the buttons on movement and re-enabling them after 0.5 seconds to allow for the movement to
+        // refresh.
+        setTimeout(()=>{
+            moveButtons.forEach((button) => {
+              button.disabled = false
+          })}, 500);
+
+
+        console.log(`Moved ${direction} to position: (${x}, ${y})`);
     }
 
     function updateGameSection(content) {
@@ -293,6 +362,77 @@
         `;
         }
     }
+
+    function refreshItems() {
+        fetch('/characters/items', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            }
+        })
+          .then(response => response.json())
+          .then(data => {
+              updateItemsSection(data.items);
+          })
+          .catch(error => console.error("Error fetching items:", error));
+    }
+
+    function updateItemsSection(items) {
+        const itemsSection = document.getElementById('ItemsSection');
+        if (!itemsSection) return;
+
+        let html = '<h2 class="text-with-border">Your Items</h2>';
+        if (items && items.length > 0) {
+            items.forEach(item => {
+                html += `
+        <div class="item text-with-border" data-item-id="${item.id}">
+          <h3 class="text-with-border">${item.name}</h3>
+          <p class="text-with-border"><strong>Level:</strong> ${item.level}</p>
+          <p class="text-with-border"><strong>Type:</strong> ${item.item_type}</p>
+          <p class="text-with-border"><strong>Description:</strong> ${item.description}</p>
+          <button class="btn delete-button">Delete</button>
+          <hr>
+        </div>
+      `;
+            });
+        } else {
+            html += '<p class="text-with-border">You have no items.</p>';
+        }
+
+        itemsSection.innerHTML = html;
+
+        // Rebind the delete button event handlers if needed
+        const deleteButtons = itemsSection.querySelectorAll(".delete-button");
+        deleteButtons.forEach((button) => {
+            button.addEventListener("click", handleDeleteItem);
+        });
+    }
+
+    function handleDeleteItem(event) {
+        const itemElement = event.target.closest(".item");
+        const itemId = itemElement.getAttribute("data-item-id");
+
+        if (confirm("Are you sure you want to delete this item?")) {
+            fetch(`/items/${itemId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            }).then((response) => {
+                if (response.ok) {
+                    itemElement.remove();
+                } else {
+                    alert("There was an error deleting the item.");
+                }
+            }).catch((error) => {
+                console.error("Error:", error);
+                alert("An error occurred while deleting the item.");
+            });
+        }
+    }
+
 </script>
 
 <style>
@@ -381,7 +521,7 @@
         background-color: #fff; /* Slightly darker gray */
     }
 
-    .rendered-content {
+    .player {
         width: 100%;
         height: 100%;
         display: flex;
