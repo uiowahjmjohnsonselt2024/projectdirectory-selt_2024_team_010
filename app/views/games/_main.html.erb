@@ -138,7 +138,7 @@
                       const amount = Number(treasure.innerHTML.split(":")[1].trim());
 
                       const currentAmount = Number(document.getElementById("shard_amount").innerHTML);
-                      
+
                       document.getElementById("shard_amount").innerHTML = (amount + currentAmount).toString();
                   }
 
@@ -300,10 +300,22 @@
               </button>
             `;
 
+        if (data.x !== current_position[0] || data.y !== current_position[1]) {
+            tileInfo += `
+              <button id="teleport-button" class="btn-secondary" onclick="teleport(${data.x}, ${data.y})">
+                Teleport
+              </button>
+            `;
+        }
+
         updateGameSection(tileInfo);
     }
 
     async function regenerateTile(x, y) {
+
+    }
+
+    async function teleport(x, y) {
 
     }
 
