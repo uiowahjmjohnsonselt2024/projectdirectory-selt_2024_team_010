@@ -1,7 +1,5 @@
-require 'dotenv'
 require 'openai'
 require 'openAIService'
-Dotenv.load
 
 class GameshopController < ApplicationController
   def index
@@ -45,8 +43,7 @@ class GameshopController < ApplicationController
   end
 
   def generate_items
-    api_key = ENV['OPENAI_API_KEY']
-    generator = OpenAIService.new(api_key)
+    generator = OpenAIService.new
 
     system_prompt = <<~PROMPT
     You are a game item generator, specialized in creating unique items for a fantasy RPG.

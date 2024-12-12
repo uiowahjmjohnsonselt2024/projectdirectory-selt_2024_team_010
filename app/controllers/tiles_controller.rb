@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 require 'openai'
 require 'openAIService'
-require 'dotenv' if Rails.env.development? || Rails.env.test?
-Dotenv.load if Rails.env.development? || Rails.env.test?
 
 class TilesController < ApplicationController
   @@generated_items = Set.new  # Use a class-level Set to store unique item names
@@ -299,8 +297,7 @@ class TilesController < ApplicationController
   private
 
   def initialize_generator
-    api_key = ENV['OPENAI_API_KEY']
-    @generator = OpenAIService.new(api_key)
+    @generator = OpenAIService.new
   end
 
   def generate_item(generator)
