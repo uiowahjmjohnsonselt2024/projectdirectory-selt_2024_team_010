@@ -33,7 +33,7 @@
     </div>
 
     <!-- Button to load AI-generated items -->
-    <button id="load-items-button" style="margin-top:20px;">Load Items from AI</button>
+    <button id="load-items-button" class="btn-secondary">Load Items from AI</button>
   </div>
 
   <!-- Items Section -->
@@ -226,14 +226,13 @@
         itemDiv.classList.add("item-details");
         itemDiv.dataset.category = item.category;
         itemDiv.dataset.description = item.description;
-        itemDiv.dataset.rarity = item.rarity;
+        itemDiv.dataset.level = item.level;
 
         itemDiv.innerHTML = `
     <h3>${item.name}</h3>
     <p>${item.description}</p>
     <p><strong>Price:</strong> ${item.price}</p>
-    <p><strong>Level:</strong> ${item.level}</p>
-    <button class="btn-secondary buy" data-item-name="${item.name}" data-item-category="${item.category}" data-item-description="${item.description}" data-item-rarity="${item.rarity}">Buy</button>
+    <button style="margin-top: 5px" class="btn-secondary buy" data-item-name="${item.name}" data-item-category="${item.category}" data-item-description="${item.description}" data-item-level="${item.level}">Buy</button>
   `;
         return itemDiv;
     }
@@ -298,7 +297,7 @@
                     name: button.dataset.itemName,
                     category: backendCategory, // Normalized category
                     description: button.dataset.itemDescription,
-                    rarity: button.dataset.itemRarity
+                    level: button.dataset.itemLevel
                 };
 
                 try {
