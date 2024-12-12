@@ -256,6 +256,10 @@
     function initializeDeleteButtons() {
         const deleteButtons = document.querySelectorAll(".delete-button");
         deleteButtons.forEach((button) => {
+            if (button.dataset.listenerAttached === "true") {
+                return;
+            }
+
             button.addEventListener("click", (event) => {
                 const itemElement = event.target.closest(".item");
                 const itemId = itemElement.getAttribute("data-item-id");
@@ -280,6 +284,7 @@
                     });
                 }
             });
+            button.dataset.listenerAttached = "true";
         });
     }
 
