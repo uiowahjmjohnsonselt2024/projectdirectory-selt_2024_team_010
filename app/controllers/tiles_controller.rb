@@ -340,8 +340,7 @@ class TilesController < ApplicationController
         scene_description: tile.scene_description,
         treasure_description: tile.treasure_description,
         monster_description: tile.monster_description,
-        monster_level: tile.monster_level,
-        character: @current_character
+        monster_level: tile.monster_level
       }
     else
       render json: { error: "Failed to regenerate tile." }, status: :internal_server_error

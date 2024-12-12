@@ -134,7 +134,7 @@
           .then(data => {
               if (data.success) {
                   const treasure = document.getElementById(`treasure`);
-                  if (treasure.innerHTML.startsWith("Shards: ")) {
+                  if (treasure.innerHTML.startsWith("Shards:")) {
                       const amount = Number(treasure.innerHTML.split(":")[1].trim());
 
                       const currentAmount = Number(document.getElementById("shard_amount").innerHTML);
@@ -145,7 +145,6 @@
                   // Re-fetch the tile to update displayed info
                   refreshTileInfo(x, y);
                   refreshItems();
-                  updateCharacterInfo(currentCharacter);
               } else {
                   refreshTileInfo(x, y);
                   console.error(data.message);
@@ -227,8 +226,6 @@
             // Update health text
             currHealthText.textContent = `${character.current_health}`;
         }
-
-        const shardDisplay = document.querySelector('.shard_amount');
 
 
     }
@@ -350,7 +347,6 @@
 
             // Regeneration successful. The tile should now be updated.
             updateTileInfoSection(data);
-            updateCharacterInfo(data.character)
         } catch (error) {
             console.error("Error regenerating tile:", error);
             updateGameSection("<p>Error regenerating tile.</p>");
