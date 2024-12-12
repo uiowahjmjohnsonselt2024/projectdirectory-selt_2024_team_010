@@ -34,10 +34,10 @@
 
 <script>
     const biome_map = {
-        yellow: 'desert',
-        gray: 'mountain',
-        green: 'forest',
-        blue: 'ocean'
+        yellow: 'Desert',
+        gray: 'Mountain',
+        green: 'Forest',
+        blue: 'Ocean'
     };
 
     const cellColors = <%= raw @tiles.to_json %>;
@@ -241,7 +241,7 @@
 
         let tileInfo = `
             <h3>Tile Information</h3>
-            <p><strong>Position:</strong> (${data.x}, ${data.y})</p>
+            <p><strong>Position:</strong> (${data.x}, ${-data.y})</p>
             <p><strong>Biome:</strong> ${biome_map[data.biome]}</p>
             <br>
             <p><strong>Picture:</strong> ${data.picture || 'None'}</p>
@@ -262,6 +262,8 @@
             buttonDisabled = 'disabled';
             buttonStyle = 'style="color:gray; background-color:#ccc;"';
         }
+
+        tileInfo += `<div style="margin-top: 10px" />`
 
         // Add the Loot button if treasure_description exists
         if (data.treasure_description && data.treasure_description.trim() !== '') {
