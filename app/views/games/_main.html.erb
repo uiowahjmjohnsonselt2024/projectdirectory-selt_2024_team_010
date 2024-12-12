@@ -59,6 +59,26 @@
     displayCurrentBiome();
     renderAllCharacters();
 
+    fetch(`/tiles/get_tile?x=${current_position[0]}&y=${current_position[1]}`)
+      .then((response) => {
+          if (!response.ok) {
+              throw new Error("Tile not found.");
+          }
+          return response.json();
+      })
+      .then((data) => {
+          if (data.error) {
+              console.error(data.error);
+              updateGameSection(`<p>${data.error}</p>`);
+          } else {
+              updateTileInfoSection(data);
+          }
+      })
+      .catch((error) => {
+          console.error("Error fetching tile:", error);
+          updateGameSection(`<p>Error fetching tile information.</p>`);
+      });
+
     function displayCurrentBiome() {
         console.log("Current Biome: ", current_biome);
     }
@@ -246,7 +266,7 @@
         // Add the Loot button if treasure_description exists
         if (data.treasure_description && data.treasure_description.trim() !== '') {
             tileInfo += `
-              <button id="loot-button" class="btn" onclick="takeTreasure(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
+              <button id="loot-button" class="btn-secondary" onclick="takeTreasure(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
                   Loot
               </button>
             `;
@@ -255,14 +275,14 @@
         // Add the Fight button if monster_description exists
         if (data.monster_description && data.monster_description.trim() !== '') {
             tileInfo += `
-              <button id="fight-button" class="btn" onclick="fightMonster(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
+              <button id="fight-button" class="btn-secondary" onclick="fightMonster(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
                 Fight
               </button>
             `;
         }
 
         tileInfo += `
-              <button id="regenerate-button" class="btn" onclick="regenerateTile(${data.x}, ${data.y})">
+              <button id="regenerate-button" class="btn-secondary" onclick="regenerateTile(${data.x}, ${data.y})">
                 Regenerate
               </button>
             `;
