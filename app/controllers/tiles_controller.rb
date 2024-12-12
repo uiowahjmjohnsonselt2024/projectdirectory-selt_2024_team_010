@@ -124,13 +124,13 @@ class TilesController < ApplicationController
     # Custom loot logic
     roll = rand(100)
     treasure_description =
-      if roll < 5
+      if roll < 10
         generate_item(generator)
-      elsif roll < 30
-        nil
-      else
+      elsif roll < 80
         shards = rand(10..100)
         "Shards:#{shards}"
+      else
+        nil
       end
 
     {
