@@ -34,6 +34,7 @@ Rails.application.routes.draw do
   get 'tiles/get_tile', to: 'tiles#get_tile'
   post 'tiles/fight_monster', to: 'tiles#fight_monster'
   post 'tiles/loot_tile', to: 'tiles#loot_tile'
+  post 'tiles/regenerate', to: 'tiles#regenerate_tile'
 
   get 'gameshop', to: 'gameshop#index'
   get 'gameshop/generate_items', to: 'gameshop#generate_items'
@@ -48,7 +49,7 @@ Rails.application.routes.draw do
   get 'characters', to: 'characters#get_characters', as: 'characters'
   post 'move_character', to: 'characters#move_character', as: 'move_character'
 
-  get 'characters/items', to: 'games#items', as: 'character_items'
+  get 'characters/items', to: 'characters#items', as: 'character_items'
 
   post 'chat', to: 'chat#create', as: 'chat_send'
   get 'chat', to: 'chat#list', as: 'chat_list'
