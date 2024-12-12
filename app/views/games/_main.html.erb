@@ -144,9 +144,8 @@
 
                   // Re-fetch the tile to update displayed info
                   refreshTileInfo(x, y);
-
-                  // NEW: Refresh Items Section
                   refreshItems();
+                  updateCharacterInfo();
               } else {
                   refreshTileInfo(x, y);
                   console.error(data.message);

@@ -159,11 +159,9 @@ class TilesController < ApplicationController
         puts "Treasure taken"
         item_info = generate_item_details(treasure)
 
-        # Ensure we have a character_id to attach this item to.
-        # Adjust this as needed to get the correct character. For example:
-        character = current_user.characters.first
+        character = @current_user.characters.find_by(game_id: @current_game.id)
         if character.nil?
-          render json: { error: "No character found to assign item to." }, status: 400
+          render json: { error: "No character found to assign item to." }, status: 420
           return
         end
 
