@@ -145,7 +145,7 @@
                   // Re-fetch the tile to update displayed info
                   refreshTileInfo(x, y);
                   refreshItems();
-                  updateCharacterInfo();
+                  updateCharacterInfo(currentCharacter);
               } else {
                   refreshTileInfo(x, y);
                   console.error(data.message);
@@ -174,7 +174,6 @@
                   // Update the tile information
                   refreshTileInfo(x, y);
 
-                  // Update character info directly
                   if (data.character) {
                       updateCharacterInfo(data.character);
                   }
@@ -200,6 +199,10 @@
 
     // Function to update character info in the DOM
     function updateCharacterInfo(character) {
+
+        console.log(character);
+
+
         // Update level text
         const levelText = document.querySelector('.character-details p:nth-child(2) .character-value');
         if (levelText) {
@@ -210,6 +213,10 @@
         const healthBar = document.querySelector('.health-bar .health-fill');
         const currHealthText = document.querySelector('.health-bar-container p .character-value');
 
+        if(currHealthText)
+        {
+            currHealthText.textContent = character.current_health;
+        }
 
         if (healthBar && currHealthText) {
             const healthPercentage = (character.current_health / character.max_health) * 100;
@@ -220,6 +227,10 @@
             // Update health text
             currHealthText.textContent = `${character.current_health}`;
         }
+
+        const shardDisplay = document.querySelector('.shard_amount');
+
+
     }
 
 
@@ -339,6 +350,7 @@
 
             // Regeneration successful. The tile should now be updated.
             updateTileInfoSection(data);
+            updateCharacterInfo(data.character)
         } catch (error) {
             console.error("Error regenerating tile:", error);
             updateGameSection("<p>Error regenerating tile.</p>");
