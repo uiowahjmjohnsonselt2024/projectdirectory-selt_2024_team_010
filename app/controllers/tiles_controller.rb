@@ -128,7 +128,7 @@ class TilesController < ApplicationController
         generate_item(generator)
       elsif roll < 80
         shards = rand(10..100)
-        "Shards:#{shards}"
+        "Shards: #{shards}"
       else
         nil
       end
@@ -341,7 +341,6 @@ class TilesController < ApplicationController
         treasure_description: tile.treasure_description,
         monster_description: tile.monster_description,
         monster_level: tile.monster_level,
-        character: @current_character
       }
     else
       render json: { error: "Failed to regenerate tile." }, status: :internal_server_error
