@@ -39,13 +39,12 @@ Rails.application.routes.draw do
   get 'gameshop/generate_items', to: 'gameshop#generate_items'
   delete 'items/:id', to: 'games#destroy', as: 'destroy_item'
 
-  post 'gameshop/buy', to: 'gameshop#buy', as: 'buy_item'
   get 'gameshop/items', to: 'gameshop#items', as: 'user_items'
-
+  get 'gameshop', to: 'gameshop#index'
+  post 'gameshop/buy', to: 'gameshop#buy'
 
   resources :items, only: [:index]
 
-  get 'characters', to: 'games#get_characters', as: 'characters'
   get 'characters', to: 'characters#get_characters', as: 'characters'
   post 'move_character', to: 'characters#move_character', as: 'move_character'
 
