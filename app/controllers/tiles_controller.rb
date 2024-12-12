@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 require 'openai'
-require 'game_content_generator'
+require 'openAIService'
 require 'dotenv' if Rails.env.development? || Rails.env.test?
 Dotenv.load if Rails.env.development? || Rails.env.test?
 
@@ -300,7 +300,7 @@ class TilesController < ApplicationController
 
   def initialize_generator
     api_key = ENV['OPENAI_API_KEY']
-    @generator = GameContentGenerator.new(api_key)
+    @generator = OpenAIService.new(api_key)
   end
 
   def generate_item(generator)

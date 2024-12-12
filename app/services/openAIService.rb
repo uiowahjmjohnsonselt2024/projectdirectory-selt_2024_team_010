@@ -40,7 +40,7 @@ if api_key.nil? || api_key.empty?
   exit
 end
 
-class GameContentGenerator
+class OpenAIService
   def initialize(api_key)
     @client = OpenAI::Client.new(access_token: api_key)
   end
