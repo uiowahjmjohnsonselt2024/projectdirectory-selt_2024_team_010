@@ -1,5 +1,5 @@
 <div class="game-main">
-  <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+  <div style="display: flex; justify-content: center; align-items: center; gap: 20px; padding: 10px">
     <!-- The Table Grid -->
 
     <% @tiles.inspect %>
@@ -261,7 +261,17 @@
             `;
         }
 
+        tileInfo += `
+              <button id="regenerate-button" class="btn" onclick="regenerateTile(${data.x}, ${data.y})">
+                Regenerate
+              </button>
+            `;
+
         updateGameSection(tileInfo);
+    }
+
+    async function regenerateTile(x, y) {
+
     }
 
     async function renderAllCharacters() {
