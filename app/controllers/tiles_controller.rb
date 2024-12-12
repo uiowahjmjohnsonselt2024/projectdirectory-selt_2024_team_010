@@ -317,13 +317,18 @@ class TilesController < ApplicationController
     # Deduct 50 shards
     @current_user.shard_amount -= 50
 
-    # Regenerate tile (reset its attributes, like biome, treasure, monster, etc.)
-    # Here you can put your logic for resetting the tile.
-    # For example:
-    # colors = ['gray', 'green', 'yellow', 'blue']
-    # tile.biome = colors.sample
+    #chance to change biome just for fun
+    colors = ['gray', 'green', 'yellow', 'blue']
+    tile.biome = colors.sample
 
-    generate_tile_content(tile)
+    ai_generated_content = generate_tile_content(tile)
+    tile.update!(
+      picture: ai_generated_content[:picture],
+      scene_description: ai_generated_content[:scene_description],
+      treasure_description: ai_generated_content[:treasure_description],
+      monster_description: ai_generated_content[:monster_description],
+      monster_level: ai_generated_content[:monster_level]
+    )
 
     # Save both character and tile
     if @current_user.save && tile.save
