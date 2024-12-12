@@ -130,7 +130,7 @@ class TilesController < ApplicationController
         nil
       else
         shards = rand(10..100)
-        "Shards:#{shards}"
+        "Shards: #{shards}"
       end
 
     {

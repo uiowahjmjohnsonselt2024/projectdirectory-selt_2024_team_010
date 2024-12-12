@@ -94,6 +94,7 @@
         const tileInfo = `
       <h2>Tile Information</h2>
       <p>Loading...</p>
+      <div class="loading-spinner"></div>
     `;
         updateGameSection(tileInfo);
 
@@ -220,6 +221,7 @@
         const tileInfo = `
       <h2>Tile Information</h2>
       <p>Loading...</p>
+      <div class="loading-spinner"></div>
     `;
         updateGameSection(tileInfo);
 
@@ -574,5 +576,20 @@
         font-size: 14px;
         color: black;
         pointer-events: none; /* Make it non-interactive */
+    }
+
+    .loading-spinner {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid gold; /* Blue */
+        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+        animation: spin 2s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 </style>
