@@ -61,6 +61,7 @@
 </div>
 
 <script>
+  console.log(<%= raw @items.to_json %>)
     let shopItemsLoaded = sessionStorage.getItem("shopItemsLoaded") === "true";
     let initialized = false;
 
@@ -237,35 +238,35 @@
         return itemDiv;
     }
 
-    async function refreshUserItems(newItem = null) {
-        const itemsSection = document.getElementById("ItemsSection");
-
-        if (newItem) {
-            const newItemDiv = createInventoryItemDiv(newItem);
-            itemsSection.appendChild(newItemDiv);
-        } else {
-            try {
-                const response = await fetch("/items.json");
-                if (!response.ok) throw new Error("Failed to fetch user items");
-
-                const data = await response.json();
-
-                itemsSection.innerHTML = `<h2 class="text-with-border">Your Items</h2>`;
-                if (data.items && data.items.length > 0) {
-                    data.items.forEach(item => {
-                        const itemDiv = createInventoryItemDiv(item);
-                        itemsSection.appendChild(itemDiv);
-                    });
-                } else {
-                    itemsSection.innerHTML += `<p class="text-with-border">You have no items.</p>`;
-                }
-            } catch (error) {
-                console.error("Error refreshing items:", error);
-            }
-        }
-
-        initializeDeleteButtons();
-    }
+    // async function refreshUserItems(newItem = null) {
+    //     const itemsSection = document.getElementById("ItemsSection");
+    //
+    //     if (newItem) {
+    //         const newItemDiv = createInventoryItemDiv(newItem);
+    //         itemsSection.appendChild(newItemDiv);
+    //     } else {
+    //         try {
+    //             const response = await fetch("/items.json");
+    //             if (!response.ok) throw new Error("Failed to fetch user items");
+    //
+    //             const data = await response.json();
+    //
+    //             itemsSection.innerHTML = `<h2 class="text-with-border">Your Items</h2>`;
+    //             if (data.items && data.items.length > 0) {
+    //                 data.items.forEach(item => {
+    //                     const itemDiv = createInventoryItemDiv(item);
+    //                     itemsSection.appendChild(itemDiv);
+    //                 });
+    //             } else {
+    //                 itemsSection.innerHTML += `<p class="text-with-border">You have no items.</p>`;
+    //             }
+    //         } catch (error) {
+    //             console.error("Error refreshing items:", error);
+    //         }
+    //     }
+    //
+    //     initializeDeleteButtons();
+    // }
 
     function createInventoryItemDiv(item) {
         const itemDiv = document.createElement("div");
@@ -284,35 +285,32 @@
     }
 
     function initializeDeleteButtons() {
-        const itemsSection = document.getElementById("ItemsSection");
-
-        itemsSection.addEventListener("click", async event => {
-            if (event.target.classList.contains("delete-button")) {
+        const deleteButtons = document.querySelectorAll(".delete-button");
+        deleteButtons.forEach((button) => {
+            button.addEventListener("click", (event) => {
                 const itemElement = event.target.closest(".item");
-                const itemId = itemElement.dataset.itemId;
+                const itemId = itemElement.getAttribute("data-item-id");
 
                 if (confirm("Are you sure you want to delete this item?")) {
-                    try {
-                        const response = await fetch(`/items/${itemId}`, {
-                            method: "DELETE",
-                            headers: {
-                                "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
-                                "Accept": "application/json"
-                            }
-                        });
-
-                        if (response.ok) {
-                            itemElement.remove();
-                            alert("Item deleted successfully.");
-                        } else {
-                            alert("Failed to delete the item.");
+                    fetch(`/items/${itemId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json'
                         }
-                    } catch (error) {
-                        console.error("Error deleting item:", error);
+                    }).then((response) => {
+                        if (response.ok) {
+                            // Remove the item's element from the page
+                            itemElement.remove();
+                        } else {
+                            alert("There was an error deleting the item.");
+                        }
+                    }).catch((error) => {
+                        console.error("Error:", error);
                         alert("An error occurred while deleting the item.");
-                    }
+                    });
                 }
-            }
+            });
         });
     }
 
@@ -346,7 +344,7 @@
                     const result = await response.json();
                     if (response.ok) {
                         alert(result.message || "Item purchased successfully!");
-                        refreshUserItems(result.item);
+                        //refreshUserItems(result.item);
                     } else {
                         alert(result.error || "Failed to purchase item.");
                     }
