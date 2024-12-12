@@ -44,8 +44,6 @@ Rails.application.routes.draw do
   get 'gameshop', to: 'gameshop#index'
   post 'gameshop/buy', to: 'gameshop#buy'
 
-  resources :items, only: [:index]
-
   get 'characters', to: 'characters#get_characters', as: 'characters'
   post 'move_character', to: 'characters#move_character', as: 'move_character'
 

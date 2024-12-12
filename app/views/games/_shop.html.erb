@@ -233,40 +233,10 @@
     <p>${item.description}</p>
     <p><strong>Price:</strong> ${item.price}</p>
     <p><strong>Rarity:</strong> ${item.rarity}</p>
-    <button class="buy-button" data-item-name="${item.name}" data-item-category="${item.category}" data-item-description="${item.description}" data-item-rarity="${item.rarity}">Buy</button>
+    <button class="btn-secondary buy" data-item-name="${item.name}" data-item-category="${item.category}" data-item-description="${item.description}" data-item-rarity="${item.rarity}">Buy</button>
   `;
         return itemDiv;
     }
-
-    // async function refreshUserItems(newItem = null) {
-    //     const itemsSection = document.getElementById("ItemsSection");
-    //
-    //     if (newItem) {
-    //         const newItemDiv = createInventoryItemDiv(newItem);
-    //         itemsSection.appendChild(newItemDiv);
-    //     } else {
-    //         try {
-    //             const response = await fetch("/items.json");
-    //             if (!response.ok) throw new Error("Failed to fetch user items");
-    //
-    //             const data = await response.json();
-    //
-    //             itemsSection.innerHTML = `<h2 class="text-with-border">Your Items</h2>`;
-    //             if (data.items && data.items.length > 0) {
-    //                 data.items.forEach(item => {
-    //                     const itemDiv = createInventoryItemDiv(item);
-    //                     itemsSection.appendChild(itemDiv);
-    //                 });
-    //             } else {
-    //                 itemsSection.innerHTML += `<p class="text-with-border">You have no items.</p>`;
-    //             }
-    //         } catch (error) {
-    //             console.error("Error refreshing items:", error);
-    //         }
-    //     }
-    //
-    //     initializeDeleteButtons();
-    // }
 
     function createInventoryItemDiv(item) {
         const itemDiv = document.createElement("div");
@@ -318,7 +288,7 @@
         const shopSection = document.querySelector(".shop-container");
 
         shopSection.addEventListener("click", async event => {
-            if (event.target.classList.contains("buy-button")) {
+            if (event.target.classList.contains("buy")) {
                 const button = event.target;
 
                 // Normalize category for backend expectations
@@ -343,6 +313,10 @@
 
                     const result = await response.json();
                     if (response.ok) {
+                        const itemsSection = document.getElementById("ItemsSection");
+                        const newItemDiv = createInventoryItemDiv(result.item);
+                        itemsSection.appendChild(newItemDiv);
+
                         alert(result.message || "Item purchased successfully!");
                         //refreshUserItems(result.item);
                     } else {
