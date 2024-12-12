@@ -7,26 +7,36 @@ class GameshopController < ApplicationController
   end
 
   def buy
+    # check for if they have at least one character
     character = current_user.characters.first
     if character.nil?
       render json: { error: "No character found to assign item to." }, status: :bad_request
       return
     end
 
-    item_params = params.require(:item).permit(:name, :description, :level, :category)
+    item_params = params.require(:item).permit(:name, :description, :level, :category, :price)
 
-    # Normalize category to match expected item_type values
+    # Convert price to a numeric value (float or integer)
+    price = item_params[:price].to_f
+
+    # Check if user has enough shards
+    if current_user.shard_amount < price
+      render json: { error: "You do not have enough shards to purchase this item." }, status: :unprocessable_entity
+      return
+    end
+
+    # Normalize category
     item_type_value = case item_params[:category].to_s.downcase
                       when "weapons" then "weapon"
                       when "armor" then "armor"
                       when "abilities" then "artifact"
-                      else nil
+                      else
+                        render json: { error: "#{item_params[:category]} is not a valid category" }, status: :unprocessable_entity
+                        return
                       end
 
-    unless item_type_value
-      render json: { error: "#{item_params[:category]} is not a valid category" }, status: :unprocessable_entity
-      return
-    end
+    # Deduct price from user's shards
+    current_user.update!(shard_amount: current_user.shard_amount - price)
 
     # Create the item
     item = Item.create!(
@@ -41,6 +51,7 @@ class GameshopController < ApplicationController
   rescue ActiveRecord::RecordInvalid => e
     render json: { error: e.message }, status: :unprocessable_entity
   end
+
 
   def generate_items
     generator = OpenAIService.new
