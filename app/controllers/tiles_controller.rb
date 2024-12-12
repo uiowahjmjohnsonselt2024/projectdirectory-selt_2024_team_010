@@ -347,7 +347,48 @@ class TilesController < ApplicationController
     end
   end
 
+  def teleport_tile
+    x = params[:x].to_i
+    y = params[:y].to_i
+
+    # Ensure the tile exists in the current game
+    tile = @current_game.tiles.find_by(x_position: x, y_position: y)
+
+    unless tile
+      render json: { error: "Tile not found." }, status: :not_found
+      return
+    end
+
+    character = current_user.characters.find_by(game_id: @current_game.id)
+    unless character
+      render json: { error: "Character not found." }, status: :unprocessable_entity
+      return
+    end
+
+    # Check if user has enough shards
+    if @current_user.shard_amount < 5
+      render json: { error: "You do not have enough shards to teleport." }, status: :unprocessable_entity
+      return
+    end
+
+    # Deduct shards and move character
+    @current_user.shard_amount -= 5
+    character.update!(x_position: x, y_position: y)
+    @current_user.save!
+
+    render json: {
+      success: true,
+      x: x,
+      y: y,
+      current_shards: @current_user.shard_amount,
+      message: "Teleported to (#{x}, #{-y}) for 5 shards."
+    }
+  end
+
   private
+
+
+
 
   def initialize_generator
     api_key = ENV['OPENAI_API_KEY']
