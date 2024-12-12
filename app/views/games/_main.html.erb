@@ -1,5 +1,5 @@
-<div class="game-main">
-  <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+<div class="game-main" style="border-right: 2px solid black">
+  <div style="display: flex; justify-content: center; align-items: center; gap: 20px; padding: 10px">
     <!-- The Table Grid -->
 
     <% @tiles.inspect %>
@@ -34,10 +34,10 @@
 
 <script>
     const biome_map = {
-        yellow: 'desert',
-        gray: 'mountain',
-        green: 'forest',
-        blue: 'ocean'
+        yellow: 'Desert',
+        gray: 'Mountain',
+        green: 'Forest',
+        blue: 'Ocean'
     };
 
     const cellColors = <%= raw @tiles.to_json %>;
@@ -54,8 +54,30 @@
     //Looping poll variables
     let characterPoll;
 
+    let loading = false;
+
     displayCurrentBiome();
     renderAllCharacters();
+
+    fetch(`/tiles/get_tile?x=${current_position[0]}&y=${current_position[1]}`)
+      .then((response) => {
+          if (!response.ok) {
+              throw new Error("Tile not found.");
+          }
+          return response.json();
+      })
+      .then((data) => {
+          if (data.error) {
+              console.error(data.error);
+              updateGameSection(`<p>${data.error}</p>`);
+          } else {
+              updateTileInfoSection(data);
+          }
+      })
+      .catch((error) => {
+          console.error("Error fetching tile:", error);
+          updateGameSection(`<p>Error fetching tile information.</p>`);
+      });
 
     function displayCurrentBiome() {
         console.log("Current Biome: ", current_biome);
@@ -70,8 +92,9 @@
         console.log("Biome: ", biome_map[color]);
 
         const tileInfo = `
-      <h3>Tile Information</h3>
+      <h2>Tile Information</h2>
       <p>Loading...</p>
+      <div class="loading-spinner"></div>
     `;
         updateGameSection(tileInfo);
 
@@ -110,10 +133,17 @@
           .then(response => response.json())
           .then(data => {
               if (data.success) {
+                  const treasure = document.getElementById(`treasure`);
+                  if (treasure.innerHTML.startsWith("Shards:")) {
+                      const amount = Number(treasure.innerHTML.split(":")[1].trim());
+
+                      const currentAmount = Number(document.getElementById("shard_amount").innerHTML);
+
+                      document.getElementById("shard_amount").innerHTML = (amount + currentAmount).toString();
+                  }
+
                   // Re-fetch the tile to update displayed info
                   refreshTileInfo(x, y);
-
-                  // NEW: Refresh Items Section
                   refreshItems();
               } else {
                   refreshTileInfo(x, y);
@@ -143,7 +173,6 @@
                   // Update the tile information
                   refreshTileInfo(x, y);
 
-                  // Update character info directly
                   if (data.character) {
                       updateCharacterInfo(data.character);
                   }
@@ -169,6 +198,10 @@
 
     // Function to update character info in the DOM
     function updateCharacterInfo(character) {
+
+        console.log(character);
+
+
         // Update level text
         const levelText = document.querySelector('.character-details p:nth-child(2) .character-value');
         if (levelText) {
@@ -179,6 +212,10 @@
         const healthBar = document.querySelector('.health-bar .health-fill');
         const currHealthText = document.querySelector('.health-bar-container p .character-value');
 
+        if(currHealthText)
+        {
+            currHealthText.textContent = character.current_health;
+        }
 
         if (healthBar && currHealthText) {
             const healthPercentage = (character.current_health / character.max_health) * 100;
@@ -194,8 +231,15 @@
 
 
     // A helper function to re-fetch tile info after updates
-    function refreshTileInfo(x, y) {
-        fetch(`/tiles/get_tile?x=${x}&y=${y}`)
+    async function refreshTileInfo(x, y) {
+        const tileInfo = `
+      <h2>Tile Information</h2>
+      <p>Loading...</p>
+      <div class="loading-spinner"></div>
+    `;
+        updateGameSection(tileInfo);
+
+        await fetch(`/tiles/get_tile?x=${x}&y=${y}`)
           .then(response => response.json())
           .then(data => {
               if (data.error) {
@@ -212,12 +256,16 @@
         const isCurrentPosition = (data.x === current_position[0] && data.y === current_position[1]);
 
         let tileInfo = `
-            <h3>Tile Information</h3>
-            <p><strong>Position:</strong> (${data.x}, ${data.y})</p>
-            <p><strong>Biome:</strong> ${data.biome}</p>
+            <h2>Tile Information</h2>
+            <p><strong>Position:</strong> (${data.x}, ${-data.y})</p>
+            <p><strong>Biome:</strong> ${biome_map[data.biome]}</p>
+            <br>
             <p><strong>Picture:</strong> ${data.picture || 'None'}</p>
+            <br>
             <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
-            <p><strong>Treasure Description:</strong> ${data.treasure_description || 'N/A'}</p>
+            <br>
+            <p><strong>Treasure Description:</strong> <span id="treasure">${data.treasure_description || 'N/A'}</span></p>
+            <br>
             <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
             <p><strong>Monster Level:</strong> ${data.monster_level || 'N/A'}</p>
         `;
@@ -231,10 +279,12 @@
             buttonStyle = 'style="color:gray; background-color:#ccc;"';
         }
 
+        tileInfo += `<div style="margin-top: 10px" />`
+
         // Add the Loot button if treasure_description exists
         if (data.treasure_description && data.treasure_description.trim() !== '') {
             tileInfo += `
-              <button id="loot-button" class="btn" onclick="takeTreasure(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
+              <button id="loot-button" class="btn-secondary" onclick="takeTreasure(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
                   Loot
               </button>
             `;
@@ -243,14 +293,129 @@
         // Add the Fight button if monster_description exists
         if (data.monster_description && data.monster_description.trim() !== '') {
             tileInfo += `
-              <button id="fight-button" class="btn" onclick="fightMonster(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
+              <button id="fight-button" class="btn-secondary" onclick="fightMonster(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
                 Fight
               </button>
             `;
         }
 
+        tileInfo += `
+              <button id="regenerate-button" class="btn-secondary" onclick="regenerateTile(${data.x}, ${data.y})">
+                Regenerate
+              </button>
+            `;
+
+        // Check if it's not the current tile
+        const notCurrentTile = !(data.x === current_position[0] && data.y === current_position[1]);
+
+        // Calculate the Manhattan distance from the current position
+        const distance = Math.abs(data.x - current_position[0]) + Math.abs(data.y - current_position[1]);
+
+        // Only show the Teleport button if it's not current tile AND not adjacent
+        if (notCurrentTile && distance > 1) {
+            tileInfo += `
+                <button id="teleport-button" class="btn-secondary" onclick="teleport(${data.x}, ${data.y})">
+                  Teleport
+                </button>
+              `;
+        }
+
+
         updateGameSection(tileInfo);
     }
+
+    async function regenerateTile(x, y) {
+        const answer = confirm("Attention: regenerating a tile costs 250 shards. Continue?");
+        if (!answer) return;
+
+        const gameSection = document.getElementById("GameSection");
+        updateGameSection(`
+        <h2>Tile Information</h2>
+        <p>Regenerating tile...</p>
+        <div class="loading-spinner"></div>
+    `);
+
+        try {
+            const response = await fetch('/tiles/regenerate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({ x: x, y: y })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || data.error) {
+                // If there's an error (not enough shards or something else)
+                alert(data.error || "Error regenerating tile.");
+                refreshTileInfo(x, y);
+                return;
+            }
+
+            const currentAmount = Number(document.getElementById("shard_amount").innerHTML);
+
+            document.getElementById("shard_amount").innerHTML = (currentAmount - 250).toString();
+
+            // Regeneration successful. The tile should now be updated.
+            updateTileInfoSection(data);
+        } catch (error) {
+            console.error("Error regenerating tile:", error);
+            updateGameSection("<p>Error regenerating tile.</p>");
+        }
+    }
+
+
+    async function teleport(x, y) {
+        const answer = confirm("Teleporting costs 5 shards. Continue?");
+        if (!answer) return;
+
+        updateGameSection(`
+        <h2>Tile Information</h2>
+        <p>Teleporting...</p>
+        <div class="loading-spinner"></div>
+    `);
+
+        try {
+            const response = await fetch('/tiles/teleport', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({ x: x, y: y })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || data.error) {
+                alert(data.error || "Error teleporting.");
+                // Refresh the tile info to restore previous state
+                refreshTileInfo(current_position[0], current_position[1]);
+                return;
+            }
+
+            // Update current position
+            current_position = [data.x, data.y];
+
+            // Update shard amount
+            document.getElementById("shard_amount").innerHTML = data.current_shards.toString();
+
+            // Re-render characters
+            renderAllCharacters();
+
+            // Refresh tile info of the new position
+            refreshTileInfo(data.x, data.y);
+
+            alert(data.message);
+
+        } catch (error) {
+            console.error("Error teleporting:", error);
+            updateGameSection("<p>Error teleporting.</p>");
+        }
+    }
+
 
     async function renderAllCharacters() {
         clearTimeout(characterPoll); // Do not let the timeout loops stack!
@@ -299,6 +464,7 @@
     }
 
     function move(direction) {
+        loading = true;
         let [x, y] = current_position;
 
         switch (direction) {
@@ -341,6 +507,7 @@
             },
         });
 
+
         renderAllCharacters();
         displayCurrentBiome();
         refreshTileInfo(x, y);
@@ -351,8 +518,6 @@
             moveButtons.forEach((button) => {
               button.disabled = false
           })}, 500);
-
-
         console.log(`Moved ${direction} to position: (${x}, ${y})`);
     }
 
@@ -360,9 +525,7 @@
         const gameSection = document.getElementById("GameSection");
         if (gameSection) {
             gameSection.innerHTML = `
-            <h2>Tile</h2>
-            ${content}
-        `;
+                ${content}`;
         }
     }
 
@@ -533,5 +696,20 @@
         font-size: 14px;
         color: black;
         pointer-events: none; /* Make it non-interactive */
+    }
+
+    .loading-spinner {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid gold; /* Blue */
+        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+        animation: spin 2s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 </style>
