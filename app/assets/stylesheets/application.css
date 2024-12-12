@@ -139,6 +139,27 @@ footer {
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4), 0 0 12px rgba(0, 123, 255, 0.8);
 }
 
+.btn-secondary {
+    display: inline-block;
+    font-family: "Arial", sans-serif;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #DAA520, #FFD700);
+    border: none;
+    border-radius: 25px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 0 8px rgba(218, 165, 32, 0.5);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4), 0 0 12px rgba(218, 165, 32, 0.8);
+}
+
 /* Welcome Text */
 .center-container {
     display: flex;
@@ -417,7 +438,7 @@ th {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background-color: #f0f0f0;
+    background-color: rgba(241, 241, 241, 0.9);
 }
 
 .main-content {
