@@ -316,6 +316,7 @@
                         const itemsSection = document.getElementById("ItemsSection");
                         const newItemDiv = createInventoryItemDiv(result.item);
                         itemsSection.appendChild(newItemDiv);
+                        initializeDeleteButtons();
 
                         alert(result.message || "Item purchased successfully!");
                         //refreshUserItems(result.item);
