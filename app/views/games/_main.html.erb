@@ -133,6 +133,15 @@
           .then(response => response.json())
           .then(data => {
               if (data.success) {
+                  const treasure = document.getElementById(`treasure`);
+                  if (treasure.innerHTML.startsWith("Shards: ")) {
+                      const amount = Number(treasure.innerHTML.split(":")[1].trim());
+
+                      const currentAmount = Number(document.getElementById("shard_amount").innerHTML);
+                      
+                      document.getElementById("shard_amount").innerHTML = (amount + currentAmount).toString();
+                  }
+
                   // Re-fetch the tile to update displayed info
                   refreshTileInfo(x, y);
 
@@ -250,7 +259,7 @@
             <br>
             <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
             <br>
-            <p><strong>Treasure Description:</strong> ${data.treasure_description || 'N/A'}</p>
+            <p><strong>Treasure Description:</strong> <span id="treasure">${data.treasure_description || 'N/A'}</span></p>
             <br>
             <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
             <p><strong>Monster Level:</strong> ${data.monster_level || 'N/A'}</p>
