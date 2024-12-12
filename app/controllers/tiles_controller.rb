@@ -308,13 +308,13 @@ class TilesController < ApplicationController
     end
 
     # Check if the user/character has enough shards
-    if @current_user.shard_amount < 50
+    if @current_user.shard_amount < 250
       render json: { error: "You do not have enough shards. Please collect or buy more." }, status: :unprocessable_entity
       return
     end
 
-    # Deduct 50 shards
-    @current_user.shard_amount -= 50
+    # Deduct 250 shards
+    @current_user.shard_amount -= 250
 
     #chance to change biome just for fun
     colors = ['gray', 'green', 'yellow', 'blue']
