@@ -30,10 +30,14 @@
     <div class="chat-messages" id="chat-messages">
       <div class="chat-message"><strong>Server:</strong> this is a test</div>
     </div>
-    <%= form_tag chat_send_path 'send_form', onsubmit: 'clearText()', method: :post do %>
-      <%= text_field_tag 'message', nil, required: true, class: 'chat-input' %>
-      <%= submit_tag 'Submit', class: 'btn' %>
-    <% end %>
+    <div class="chat-container">
+      <div id="chat-messages"></div>
+
+      <form id="send_form">
+        <input type="text" id="message_input" required class="chat-input">
+        <button type="button" id="submit_button" class="btn">Submit</button>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -42,16 +46,25 @@
     let chatPoll;
     updateChat()
     //setInterval(() => {updateChat()}, 3000) //Re-poll the chat every 3 seconds (3000 ms)
-    function clearText(event) {
-        // access input field
-        document.getElementById('send_form').submit();
-        let input1 = document.getElementById('message');
+
+    document.getElementById('submit_button').addEventListener('click', () => {
+        let input = document.getElementById('message_input');
+        fetch(`/chat?message=${input.value}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+        });
+
+
         // clear the input field.
-        input1.value = "";
+        input.value = "";
         updateChat();
-    }
+    });
+
     async function updateChat() {
-        console.log("Chat being called!")
+        //console.log("Chat being called!")
         clearTimeout(chatPoll) //If this gets manually called, do not recall it while executing.
         let response = (await fetch(`/chat`, {
             method: 'GET',
@@ -64,7 +77,7 @@
 
         const chatBox = document.getElementById('chat-messages')
         chatBox.innerHTML = '' // Remove the old chat messages
-        console.log(chatLog)
+        //console.log(chatLog)
 
         for (const message of chatLog.chatLog) { // Create the new messages.
             let newEntry = document.createElement('div')
