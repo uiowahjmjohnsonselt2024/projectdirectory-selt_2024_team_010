@@ -4,7 +4,7 @@ end
 
 Given(/^A server with the name "([^"]*)" and host "([^"]*)" exists$/) do |name, host|
   test_host = User.find_by_username(host)
-  test_host.games.create!(name: name, owner_id: test_host.id)
+  test_host.games.create!(name: name, owner_id: test_host.id, max_user_count: 6)
 end
 
 When(/^I create a server with the name "([^"]*)"$/) do |name|
