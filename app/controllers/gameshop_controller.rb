@@ -13,7 +13,7 @@ class GameshopController < ApplicationController
       return
     end
 
-    item_params = params.require(:item).permit(:name, :description, :rarity, :category)
+    item_params = params.require(:item).permit(:name, :description, :level, :category)
 
     # Normalize category to match expected item_type values
     item_type_value = case item_params[:category].to_s.downcase
@@ -33,7 +33,7 @@ class GameshopController < ApplicationController
       name: item_params[:name],
       item_type: item_type_value,
       description: item_params[:description],
-      level: item_params[:rarity],
+      level: rand(1..20),
       character_id: character.id
     )
 
@@ -52,7 +52,6 @@ class GameshopController < ApplicationController
     - category (string: Weapons, Armor, or Abilities)
     - price (integer or float)
     - description (string)
-    - rarity (string: common, uncommon, rare, epic, legendary)
     Make sure the JSON is valid and includes an array of items.
   PROMPT
 
@@ -65,7 +64,7 @@ class GameshopController < ApplicationController
   PROMPT
 
     # Generate content
-    generated_content = generator.generate_content("gpt-3.5-turbo", system_prompt, instruction_prompt)
+    generated_content = generator.generate_content("gpt-4o-mini", system_prompt, instruction_prompt)
     Rails.logger.debug "Generated Content from OpenAI: #{generated_content}"
 
     begin
