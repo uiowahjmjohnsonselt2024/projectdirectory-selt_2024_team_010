@@ -296,6 +296,53 @@ class TilesController < ApplicationController
     end
   end
 
+  def regenerate_tile
+    x = params[:x].to_i
+    y = params[:y].to_i
+
+    # Find the tile in the current game
+    tile = @current_game.tiles.find_by(x_position: x, y_position: y)
+
+    unless tile
+      render json: { error: "Tile not found." }, status: :not_found
+      return
+    end
+
+    # Check if the user/character has enough shards
+    if @current_user.shard_amount < 50
+      render json: { error: "You do not have enough shards. Please collect or buy more." }, status: :unprocessable_entity
+      return
+    end
+
+    # Deduct 50 shards
+    @current_user.shard_amount -= 50
+
+    # Regenerate tile (reset its attributes, like biome, treasure, monster, etc.)
+    # Here you can put your logic for resetting the tile.
+    # For example:
+    # colors = ['gray', 'green', 'yellow', 'blue']
+    # tile.biome = colors.sample
+
+    generate_tile_content(tile)
+
+    # Save both character and tile
+    if @current_user.save && tile.save
+      # Return the updated tile info in the same format as get_tile
+      render json: {
+        x: tile.x_position,
+        y: tile.y_position,
+        biome: tile.biome,
+        picture: tile.picture,
+        scene_description: tile.scene_description,
+        treasure_description: tile.treasure_description,
+        monster_description: tile.monster_description,
+        monster_level: tile.monster_level
+      }
+    else
+      render json: { error: "Failed to regenerate tile." }, status: :internal_server_error
+    end
+  end
+
   private
 
   def initialize_generator

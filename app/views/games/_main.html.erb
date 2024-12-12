@@ -312,8 +312,40 @@
     }
 
     async function regenerateTile(x, y) {
+        const gameSection = document.getElementById("GameSection");
+        updateGameSection(`
+        <h2>Tile Information</h2>
+        <p>Regenerating tile...</p>
+        <div class="loading-spinner"></div>
+    `);
 
+        try {
+            const response = await fetch('/tiles/regenerate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({ x: x, y: y })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || data.error) {
+                // If there's an error (not enough shards or something else)
+                alert(data.error || "Error regenerating tile.");
+                refreshTileInfo(x, y);
+                return;
+            }
+
+            // Regeneration successful. The tile should now be updated.
+            updateTileInfoSection(data);
+        } catch (error) {
+            console.error("Error regenerating tile:", error);
+            updateGameSection("<p>Error regenerating tile.</p>");
+        }
     }
+
 
     async function teleport(x, y) {
 

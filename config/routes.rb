@@ -34,6 +34,7 @@ Rails.application.routes.draw do
   get 'tiles/get_tile', to: 'tiles#get_tile'
   post 'tiles/fight_monster', to: 'tiles#fight_monster'
   post 'tiles/loot_tile', to: 'tiles#loot_tile'
+  post 'tiles/regenerate', to: 'tiles#regenerate_tile'
 
   delete 'items/:id', to: 'games#destroy', as: 'destroy_item'
 
