@@ -1,4 +1,4 @@
-<div class="game-main">
+<div class="game-main" style="border-right: 2px solid black">
   <div style="display: flex; justify-content: center; align-items: center; gap: 20px; padding: 10px">
     <!-- The Table Grid -->
 
@@ -92,7 +92,7 @@
         console.log("Biome: ", biome_map[color]);
 
         const tileInfo = `
-      <h3>Tile Information</h3>
+      <h2>Tile Information</h2>
       <p>Loading...</p>
     `;
         updateGameSection(tileInfo);
@@ -218,7 +218,7 @@
     // A helper function to re-fetch tile info after updates
     async function refreshTileInfo(x, y) {
         const tileInfo = `
-      <h3>Tile Information</h3>
+      <h2>Tile Information</h2>
       <p>Loading...</p>
     `;
         updateGameSection(tileInfo);
@@ -240,7 +240,7 @@
         const isCurrentPosition = (data.x === current_position[0] && data.y === current_position[1]);
 
         let tileInfo = `
-            <h3>Tile Information</h3>
+            <h2>Tile Information</h2>
             <p><strong>Position:</strong> (${data.x}, ${-data.y})</p>
             <p><strong>Biome:</strong> ${biome_map[data.biome]}</p>
             <br>
@@ -403,7 +403,6 @@
         const gameSection = document.getElementById("GameSection");
         if (gameSection) {
             gameSection.innerHTML = `
-                <h2>Tile</h2>
                 ${content}`;
         }
     }

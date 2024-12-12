@@ -438,7 +438,7 @@ th {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background-color: #f0f0f0;
+    background-color: rgba(241, 241, 241, 0.9);
 }
 
 .main-content {
