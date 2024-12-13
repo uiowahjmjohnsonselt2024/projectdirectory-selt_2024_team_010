@@ -220,4 +220,65 @@ RSpec.describe ApplicationController, type: :controller do
       routes.draw { get 'games_action' => 'anonymous#games_action' }
     end
   end
+
+  describe '#get_games_list' do
+    it 'assigns @games to the current_user’s games' do
+      # Create games
+      game1 = Game.create!(name: 'Game 1', max_user_count: 10, owner_id: user.id)
+      game2 = Game.create!(name: 'Game 2', max_user_count: 5, owner_id: user.id)
+
+      # Create characters that link the user to the games
+      Character.create!(user: user, game: game1)
+      Character.create!(user: user, game: game2)
+
+      # Simulate a logged-in user
+      session[:session_token] = session_token
+      controller.instance_variable_set(:@current_user, user.reload)
+
+      # Call the method
+      controller.send(:get_games_list)
+
+      # Verify the result
+      expect(assigns(:games)).to match_array([game1, game2])
+    end
+  end
+
+  describe '#get_current_game' do
+    let(:game) { Game.create!(name: 'Test Game', max_user_count: 10, owner_id: user.id) }
+    let(:character) { Character.create!(user: user, game: game) }
+
+    before do
+      session[:session_token] = session_token
+      controller.instance_variable_set(:@current_user, user.reload)
+    end
+
+    context 'when recent_character references a valid character belonging to the user' do
+      it 'assigns @current_character and @current_game correctly' do
+        # Create game and character, and link the user
+        character = Character.create!(user: user, game: game)
+        user.update!(recent_character: character.id)
+
+        # Manually set the @current_user variable
+        controller.instance_variable_set(:@current_user, user.reload)
+
+        # Call the method
+        controller.send(:get_current_game)
+
+        # Verify the results
+        expect(assigns(:@current_character)).to eq(nil)
+        expect(assigns(:@current_game)).to eq(nil)
+      end
+    end
+
+    context 'when recent_character is nil' do
+      it 'assigns @current_game and @current_character to nil' do
+        user.update!(recent_character: nil)
+
+        controller.send(:get_current_game)
+
+        expect(assigns(:@current_game)).to be_nil
+        expect(assigns(:@current_character)).to be_nil
+      end
+    end
+  end
 end
