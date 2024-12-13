@@ -1,4 +1,6 @@
+<!-- app/views/gameshop/index.html.erb -->
 <div class="game-shop" style="display: flex; flex-direction: column; height: 100%; overflow-y: scroll">
+
   <!-- Main Tabs -->
   <div class="main-tabs" style="flex: 0 0 auto;">
     <button class="main-tablinks active" data-section="ShopSection">Shop</button>
@@ -14,6 +16,7 @@
         <button class="tablinks active" data-category="Weapons">Weapons</button>
         <button class="tablinks" data-category="Armor">Armor</button>
         <button class="tablinks" data-category="Abilities">Abilities</button>
+        <button class="tablinks" data-category="Healing">Healing</button>
       </div>
 
       <!-- Weapons Tab Content -->
@@ -30,10 +33,44 @@
       <div id="Abilities" class="tabcontent">
         <!-- Abilities Items List -->
       </div>
+
+      <!-- Healing Tab Content -->
+      <div id="Healing" class="tabcontent">
+        <!-- Full Heal -->
+        <div class="item-details">
+          <h3>Full Heal</h3>
+          <p>Restore your HP to its maximum</p>
+          <p><strong>Price:</strong> 100</p>
+          <button style="margin-top: 5px" class="btn-secondary buy"
+                  data-item-name="Full Heal"
+                  data-item-category="Healing"
+                  data-item-description="Restores HP to full"
+                  data-item-level="1"
+                  data-item-price="100">
+            Buy
+          </button>
+        </div>
+
+        <!-- Increase Max HP -->
+        <div class="item-details">
+          <h3>Increase Max HP</h3>
+          <p>Increase your maximum HP by 10</p>
+          <p><strong>Price:</strong> 500</p>
+          <button style="margin-top: 5px" class="btn-secondary buy"
+                  data-item-name="Max HP Boost"
+                  data-item-category="Healing"
+                  data-item-description="Increases max HP by 10"
+                  data-item-level="1"
+                  data-item-price="500">
+            Buy
+          </button>
+        </div>
+      </div>
+
     </div>
 
     <!-- Button to load AI-generated items -->
-    <button id="load-items-button" class="btn-secondary">Load Items from AI</button>
+    <button id="load-items-button" class="btn-secondary">Refresh : 500 Shards</button>
   </div>
 
   <!-- Items Section -->
@@ -62,9 +99,10 @@
     var shopItemsLoaded = sessionStorage.getItem("shopItemsLoaded") === "true";
     var initialized = false;
 
-    document.addEventListener("DOMContentLoaded", initializePage);
-    document.addEventListener("turbolinks:load", initializePage); // For Turbolinks
-    document.addEventListener("turbo:load", initializePage); // For Turbo
+    // Initialize refreshCount from sessionStorage or set to 0
+    var refreshCount = parseInt(sessionStorage.getItem('shopRefreshCount')) || 0;
+
+    initializePage();
 
     function initializePage() {
         if (initialized) {
@@ -78,10 +116,14 @@
         initializeShopTabs();
         initializeShopEvents();
         initializeDeleteButtons();
+        shopRefresh();
 
         if (!shopItemsLoaded) {
             loadShopItems();
         }
+
+        // Update the refresh button text during initialization
+        updateRefreshButtonText();
     }
 
     function initializeTabs() {
@@ -128,32 +170,64 @@
         }
     }
 
-    async function loadShopItems() {
-        const storedItems = sessionStorage.getItem("shopItems");
-        let parsedItems = null;
 
-        if (storedItems) {
-            try {
-                parsedItems = JSON.parse(storedItems);
-                if (!Array.isArray(parsedItems)) {
-                    console.warn("Stored items are not a valid array. Ignoring sessionStorage.");
+    async function updateShards(shardAmount) {
+        try {
+            const response = await fetch('/gameshop/update_shards', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ shard: { shard_amount: shardAmount } })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                // Update shard amount in the UI
+                document.getElementById('shard_amount').innerText = data.shard_amount;
+                return data.shard_amount;
+            } else {
+                // Handle errors
+                alert(`Error: ${data.error}`);
+                return null;
+            }
+        } catch (error) {
+            console.error('Error updating shards:', error);
+            alert('An unexpected error occurred while updating shards.');
+            return null;
+        }
+    }
+
+    async function loadShopItems(forceFetch = false) {
+        if (!forceFetch) {
+            const storedItems = sessionStorage.getItem("shopItems");
+            let parsedItems = null;
+
+            if (storedItems) {
+                try {
+                    parsedItems = JSON.parse(storedItems);
+                    if (!Array.isArray(parsedItems)) {
+                        console.warn("Stored items are not a valid array. Ignoring sessionStorage.");
+                        parsedItems = null;
+                    }
+                } catch (error) {
+                    console.error("Error parsing sessionStorage data:", error);
                     parsedItems = null;
                 }
-            } catch (error) {
-                console.error("Error parsing sessionStorage data:", error);
-                parsedItems = null;
+            }
+
+            // If valid items exist in sessionStorage, populate the shop
+            if (parsedItems) {
+                console.log("Loading shop items from sessionStorage...");
+                populateShopTabs(parsedItems);
+                shopItemsLoaded = true;
+                return;
             }
         }
 
-        // If valid items exist in sessionStorage, populate the shop
-        if (parsedItems) {
-            console.log("Loading shop items from sessionStorage...");
-            populateShopTabs(parsedItems);
-            shopItemsLoaded = true;
-            return;
-        }
-
-        // Otherwise, fetch new items from the server
+        // If forceFetch is true or no valid items in sessionStorage, fetch new items from the server
         console.log("Fetching shop items from server...");
         try {
             const response = await fetch("/gameshop/generate_items.json");
@@ -175,34 +249,6 @@
         }
     }
 
-
-
-
-    function populateShopTabs(items) {
-        const categoryContainers = {
-            Weapons: document.getElementById("Weapons"),
-            Armor: document.getElementById("Armor"),
-            Abilities: document.getElementById("Abilities"),
-        };
-
-        // Clear existing items in all categories
-        Object.values(categoryContainers).forEach(container => {
-            if (container) container.innerHTML = "";
-        });
-
-        items.forEach(item => {
-            const normalizedCategory = mapToCategoryId(item.category); // Map category to HTML ID
-            const categoryContainer = categoryContainers[normalizedCategory];
-
-            if (categoryContainer) {
-                const itemDiv = createShopItemDiv(item);
-                categoryContainer.appendChild(itemDiv);
-            } else {
-                console.error(`No container found for category: ${item.category}`);
-            }
-        });
-    }
-
     // Map category to container ID
     function mapToCategoryId(category) {
         switch (category.toLowerCase()) {
@@ -212,51 +258,117 @@
                 return "Armor";
             case "abilities":
                 return "Abilities";
+            case "healing":
+                return "Healing";
             default:
                 console.error(`Unknown category in mapToCategoryId: ${category}`);
                 return null;
         }
     }
 
-  function createShopItemDiv(item) {
-      const itemDiv = document.createElement("div");
-      itemDiv.classList.add("item-details");
-      itemDiv.dataset.category = item.category;
-      itemDiv.dataset.description = item.description;
-      itemDiv.dataset.level = item.level;
 
-      itemDiv.innerHTML = `
-      <h3>${item.name}</h3>
-      <p>${item.description}</p>
-      <p><strong>Price:</strong> ${item.price}</p>
-      <button style="margin-top: 5px" class="btn-secondary buy"
-        data-item-name="${item.name}"
-        data-item-category="${item.category}"
-        data-item-description="${item.description}"
-        data-item-level="${item.level}"
-        data-item-price="${item.price}">
-        Buy
-      </button>
-    `;
-      return itemDiv;
-  }
+    function createShopItemDiv(item) {
+        const itemDiv = document.createElement("div");
+        itemDiv.classList.add("item-details");
+        itemDiv.dataset.category = item.category;
+        itemDiv.dataset.description = item.description;
+        itemDiv.dataset.level = item.level;
 
+        itemDiv.innerHTML = `
+            <h3>${item.name}</h3>
+            <p>${item.description}</p>
+            <p><strong>Price:</strong> ${item.price}</p>
+            <button style="margin-top: 5px" class="btn-secondary buy"
+                data-item-name="${item.name}"
+                data-item-category="${item.category}"
+                data-item-description="${item.description}"
+                data-item-level="${item.level}"
+                data-item-price="${item.price}">
+                Buy
+            </button>
+        `;
+        return itemDiv;
+    }
 
-  function createInventoryItemDiv(item) {
+    function createInventoryItemDiv(item) {
         const itemDiv = document.createElement("div");
         itemDiv.classList.add("item", "text-with-border");
         itemDiv.dataset.itemId = item.id;
 
         itemDiv.innerHTML = `
-    <h3 class="text-with-border">${item.name}</h3>
-    <p class="text-with-border"><strong>Level:</strong> ${item.level}</p>
-    <p class="text-with-border"><strong>Type:</strong> ${item.item_type}</p>
-    <p class="text-with-border"><strong>Description:</strong> ${item.description}</p>
-    <button class="btn delete-button">Delete</button>
-    <hr>
-  `;
+            <h3 class="text-with-border">${item.name}</h3>
+            <p class="text-with-border"><strong>Level:</strong> ${item.level}</p>
+            <p class="text-with-border"><strong>Type:</strong> ${item.item_type}</p>
+            <p class="text-with-border"><strong>Description:</strong> ${item.description}</p>
+            <button class="btn delete-button">Delete</button>
+            <hr>
+        `;
         return itemDiv;
     }
+
+    function shopRefresh() {
+        const refreshButton = document.getElementById("load-items-button");
+
+        if (refreshButton) {
+            refreshButton.addEventListener("click", async (event) => {
+                event.preventDefault(); // Prevent default action if necessary
+
+                // Calculate the current cost
+                const currentCost = getCurrentRefreshCost();
+
+                // Check if the user has enough shards by fetching the current shard amount from the DOM
+                const shardAmountElement = document.getElementById("shard_amount");
+                if (!shardAmountElement) {
+                    console.error("Element with ID 'shard_amount' not found.");
+                    alert("Shard amount element is missing.");
+                    return;
+                }
+                let currentShards = parseInt(shardAmountElement.innerText) || 0;
+
+                // Check if the user has enough shards
+                if (currentShards < currentCost) {
+                    alert("You do not have enough shards to refresh the shop.");
+                    return;
+                }
+
+                // Disable the button and show a loading state
+                refreshButton.disabled = true;
+                refreshButton.textContent = "Refreshing...";
+
+                try {
+                    // Deduct the shards by calling the updateShards function
+                    const updatedShards = await updateShards(-currentCost);
+
+                    if (updatedShards !== null) {
+                        // Fetch and load new shop items
+                        await loadShopItems(true); // Pass true to force fetch
+
+                        // Increment the refresh count
+                        refreshCount += 1;
+                        sessionStorage.setItem('shopRefreshCount', refreshCount);
+
+                        // Update the button text with the new cost
+                        updateRefreshButtonText();
+
+                        alert("Shop refreshed successfully!");
+                    } else {
+                        // If shard deduction failed, do not proceed
+                        return;
+                    }
+                } catch (error) {
+                    console.error("Error refreshing shop items:", error);
+                    alert("Failed to refresh the shop. Please try again.");
+                } finally {
+                    // Re-enable the button and reset its text
+                    refreshButton.disabled = false;
+                    refreshButton.textContent = `Refresh : ${getCurrentRefreshCost()} Shards`;
+                }
+            });
+        } else {
+            console.error("Refresh button with ID 'load-items-button' not found.");
+        }
+    }
+
 
     function initializeDeleteButtons() {
         const deleteButtons = document.querySelectorAll(".delete-button");
@@ -293,60 +405,112 @@
         });
     }
 
-  function initializeShopEvents() {
-      const shopSection = document.querySelector(".shop-container");
+    function updateRefreshButtonText() {
+        const refreshButton = document.getElementById("load-items-button");
+        if (refreshButton) {
+            const currentCost = getCurrentRefreshCost();
+            refreshButton.textContent = `Refresh : ${currentCost} Shards`;
+        }
+    }
 
-      shopSection.addEventListener("click", async event => {
-          if (event.target.classList.contains("buy")) {
-              const button = event.target;
+    // Define the missing getCurrentRefreshCost() function
+    function getCurrentRefreshCost() {
+        const baseCost = 500;
+        // You can adjust the cost scaling as needed
+        return baseCost + (refreshCount * 100);
+    }
 
-              const backendCategory = normalizeCategory(button.dataset.itemCategory);
+    function initializeShopEvents() {
+        const shopSection = document.querySelector(".shop-container");
 
-              const itemData = {
-                  name: button.dataset.itemName,
-                  category: backendCategory,
-                  description: button.dataset.itemDescription,
-                  level: button.dataset.itemLevel,
-                  price: button.dataset.itemPrice
-              };
+        shopSection.addEventListener("click", async event => {
+            if (event.target.classList.contains("buy")) {
+                const button = event.target;
 
-              try {
-                  const response = await fetch("/gameshop/buy", {
-                      method: "POST",
-                      headers: {
-                          "Content-Type": "application/json",
-                          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
-                      },
-                      body: JSON.stringify({ item: itemData })
-                  });
+                const backendCategory = normalizeCategory(button.dataset.itemCategory);
 
-                  const result = await response.json();
-                  if (response.ok) {
-                      // Existing successful flow
-                      const itemsSection = document.getElementById("ItemsSection");
-                      const newItemDiv = createInventoryItemDiv(result.item);
-                      itemsSection.appendChild(newItemDiv);
-                      initializeDeleteButtons();
+                const itemData = {
+                    name: button.dataset.itemName,
+                    category: backendCategory,
+                    description: button.dataset.itemDescription,
+                    level: button.dataset.itemLevel,
+                    price: parseInt(button.dataset.itemPrice) // Ensure price is a number
+                };
 
-                      const currentAmount = Number(document.getElementById("shard_amount").innerHTML);
-                      document.getElementById("shard_amount").innerHTML = (currentAmount - itemData.price).toString();
+                try {
+                    const response = await fetch("/gameshop/buy", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({ item: itemData })
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+
+                        if(!('code' in result))
+                        {
+                            // Add the new item to the inventory
+                            const itemsSection = document.getElementById("ItemsSection");
+                            const newItemDiv = createInventoryItemDiv(result.item);
+                            itemsSection.appendChild(newItemDiv);
+                            initializeDeleteButtons();
+                        }
+
+                        console.log(result.shard_amount)
+
+                        // Update the shard amount in the UI based on the server's response
+                        if (result.shard_amount !== undefined) {
+                            document.getElementById("shard_amount").innerText = result.shard_amount;
+                        } else {
+                            // Fallback: deduct shards manually if not provided
+                            const currentAmount = Number(document.getElementById("shard_amount").innerText);
+                            document.getElementById("shard_amount").innerText = (currentAmount - itemData.price).toString();
+                        }
+                        updateCharacterInfo(result.character)
+
+                        alert(result.message || "Purchase successful!");
+                    } else {
+                        // If purchase fails, alert user
+                        alert(result.error || "Failed to purchase item.");
+                    }
+                } catch (error) {
+                    console.error("Error purchasing item:", error);
+                    alert("An error occurred while purchasing the item.");
+                }
+            }
+        });
+    }
+
+    function populateShopTabs(items) {
+        const categoryContainers = {
+            Weapons: document.getElementById("Weapons"),
+            Armor: document.getElementById("Armor"),
+            Abilities: document.getElementById("Abilities"),
+        };
+
+        // Clear existing items in all categories
+        Object.values(categoryContainers).forEach(container => {
+            if (container) container.innerHTML = "";
+        });
+
+        items.forEach(item => {
+            const normalizedCategory = mapToCategoryId(item.category); // Map category to HTML ID
+            const categoryContainer = categoryContainers[normalizedCategory];
+
+            if (categoryContainer) {
+                const itemDiv = createShopItemDiv(item);
+                categoryContainer.appendChild(itemDiv);
+            } else {
+                console.error(`No container found for category: ${item.category}`);
+            }
+        });
+    }
 
 
-                      alert(result.message || "Item purchased successfully!");
-                  } else {
-                      // If purchase fails, alert user
-                      alert(result.error || "Failed to purchase item.");
-                  }
-              } catch (error) {
-                  console.error("Error purchasing item:", error);
-                  alert("An error occurred while purchasing the item.");
-              }
-          }
-      });
-  }
-
-
-  // Helper to normalize categories for backend
+    // Helper to normalize categories for backend
     function normalizeCategory(category) {
         switch (category.toLowerCase()) {
             case "weapon":
@@ -357,10 +521,13 @@
             case "abilities":
             case "artifact":
                 return "abilities";
+            case "healing":
+                return "healing";
             default:
                 console.warn(`Unknown category during normalization: ${category}`);
                 return category;
         }
     }
+
 
 </script>
