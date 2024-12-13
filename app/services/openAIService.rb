@@ -8,10 +8,6 @@ Dotenv.load if Rails.env.development? || Rails.env.test?
 
 class OpenAIService
   @@api_key = ENV['OPENAI_API_KEY']
-  if @@api_key.nil? || @@api_key.empty?
-    puts "Error: OPENAI_API_KEY is not set in the .env file."
-    exit
-  end
 
   def initialize
     @client = OpenAI::Client.new(access_token: @@api_key)
