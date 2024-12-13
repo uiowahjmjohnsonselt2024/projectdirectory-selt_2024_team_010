@@ -17,9 +17,10 @@ RSpec.describe 'TilesController' do
     # Do nothing
   end
 
-  context 'When tile creation is called' do
-    it 'succeeds' do
-      pending 'Not implemented'
+  context 'Tile Creation' do
+    it 'Succeeds on an empty tile' do
+      post :get_tile_path, params: { x: 0, y: 0}
+      expect(game.tiles.exists?(x: 0, y: 0)).to be_truthy
     end
   end
 end
