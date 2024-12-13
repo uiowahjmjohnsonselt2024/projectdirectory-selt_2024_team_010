@@ -5,10 +5,10 @@ class CharactersController < ApplicationController
 
   def get_characters
     @characters = @current_game.characters
-                               .select("characters.id, characters.x_position, characters.y_position, users.username")
-                               .joins(:user).all
+                               .select("characters.id, characters.x_position, characters.y_position, users.username, users.recent_character")
+                               .joins(:user)
+                               .where("characters.id = users.recent_character")
 
-    puts @characters.inspect
     render json: { characters: @characters }
   end
 
