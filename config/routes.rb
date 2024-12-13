@@ -49,6 +49,9 @@ Rails.application.routes.draw do
   get 'characters', to: 'characters#get_characters', as: 'characters'
   post 'move_character', to: 'characters#move_character', as: 'move_character'
 
+  get '/auth/:provider/callback', to: 'sessions#auth_success', as: 'auth_success'
+  get '/auth/failure', to: 'sessions#auth_failure', as: 'auth_failure'
+
   get 'characters/items', to: 'characters#items', as: 'character_items'
 
   post 'chat', to: 'chat#create', as: 'chat_send'

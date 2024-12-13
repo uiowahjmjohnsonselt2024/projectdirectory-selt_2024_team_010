@@ -29,6 +29,11 @@ gem 'bcrypt', '~> 3.1.7'
 # Use OpenAI for ChatGPT calls
 gem 'ruby-openai', '~> 7.3.1'
 
+# oauth stuff
+gem 'omniauth'
+gem 'omniauth-github'
+gem "omniauth-rails_csrf_protection"
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 
