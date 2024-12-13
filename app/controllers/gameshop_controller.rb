@@ -77,13 +77,15 @@ class GameshopController < ApplicationController
       puts("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
       puts("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
       puts("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-      puts("")
+      puts("inside healing")
 
       # Apply healing effects rather than creating an item
       case item_params[:name]
       when "Full Heal"
+        puts("inside full heal")
+
         character.update!(currentHealth: character.maxHealth)
-        character.user.update!(shard_amount: character.user.shard_amount - 100)
+        character.user.update!(shard_amount: character.user.shard_amount + 100)
         character.save!
         render json: {
           success: true,
@@ -99,10 +101,18 @@ class GameshopController < ApplicationController
         }
 
       when "Max HP Boost"
+
+        puts("inside max boost")
+        puts("old")
+        puts(character.maxHealth)
+
         character.update!(maxHealth: character.maxHealth + 10)
         character.update!(currentHealth: character.maxHealth)
-        character.user.update!(shard_amount: character.user.shard_amount - 500)
+        character.user.update!(shard_amount: character.user.shard_amount + 500)
         character.save!
+
+        puts("new ")
+        puts(character.maxHealth)
         render json: {
            success: true,
            message: "Your maximum HP has increased by 10, and you are fully healed!",

@@ -224,10 +224,16 @@
         // Update health values and health bar
         const healthBar = document.querySelector('.health-bar .health-fill');
         const currHealthText = document.querySelector('.health-bar-container p .character-value');
+        const maxHealthText = document.getElementById('maxHealth')
 
         if(currHealthText)
         {
             currHealthText.textContent = character.current_health;
+        }
+
+        if(maxHealthText)
+        {
+            maxHealthText.textContent = character.max_health
         }
 
         if (healthBar && currHealthText) {
