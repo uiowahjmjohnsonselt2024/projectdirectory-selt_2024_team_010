@@ -58,6 +58,13 @@ class GameshopController < ApplicationController
     # Deduct price from user's shards
     current_user.update!(shard_amount: current_user.shard_amount - price)
 
+    # Prepare character data for response
+    character_data = {
+      current_health: character.currentHealth,
+      max_health: character.maxHealth,
+      level: character.level
+    }
+
     # Handle purchases differently based on category
     case item_type_value
     when "weapon", "armor", "artifact"
@@ -69,8 +76,13 @@ class GameshopController < ApplicationController
         level: rand(1..20),
         character_id: character.id
       )
-      render json: { success: true, message: "Item purchased successfully!", item: item, shard_amount: current_user.shard_amount }, status: :ok
-
+      render json: {
+        success: true,
+        message: "Item purchased successfully!",
+        item: item,
+        shard_amount: current_user.shard_amount,
+        character: character_data
+      }, status: :ok
     when "healing"
 
       # Apply healing effects rather than creating an item
