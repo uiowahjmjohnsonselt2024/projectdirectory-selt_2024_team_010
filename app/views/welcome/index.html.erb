@@ -3,8 +3,46 @@
   <div>
     <%= link_to 'Login', login_path, class: 'btn' %>
     <%= link_to 'Register', register_path, class: 'btn' %>
-    <%= form_tag('/auth/github', method: 'post', data: {turbo: false}) do %>
-      <button class='btn' type='submit'>Login with GitHub</button>
+    <%= form_tag('/auth/github', method: 'post', data: { turbo: false }) do %>
+      <button class="github-login-btn" type="submit">
+        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub logo">
+        Login with GitHub
+      </button>
     <% end %>
   </div>
 </div>
+
+<style>
+    .github-login-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #333; /* GitHub's black color */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-top: 10px;
+    }
+
+    .github-login-btn img {
+        height: 20px;
+        width: 20px;
+        margin-right: 10px;
+    }
+
+    .github-login-btn:hover {
+        background-color: #444; /* Slightly lighter black for hover */
+        transform: scale(1.05); /* Slight hover effect */
+    }
+
+    .github-login-btn:active {
+        background-color: #222; /* Even darker on click */
+        transform: scale(0.98); /* Slight shrink effect on click */
+    }
+</style>

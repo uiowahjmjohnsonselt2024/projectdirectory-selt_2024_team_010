@@ -154,6 +154,14 @@ footer {
     color: #ffffff;
     text-shadow: 0 0 8px #007bff, 0 0 16px rgba(0, 123, 255, 0.6);
     animation: pulse 1.5s infinite ease-in-out;
+    margin-bottom: 20px; /* Add spacing below the heading */
+}
+
+.center-container div {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center; /* Center buttons horizontally */
+    gap: 15px; /* Add spacing between the buttons */
 }
 
 .text-shadow {
