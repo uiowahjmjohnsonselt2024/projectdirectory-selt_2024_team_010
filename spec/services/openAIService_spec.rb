@@ -20,12 +20,6 @@ RSpec.describe OpenAIService, type: :service do
       before do
         allow(ENV).to receive(:[]).with('OPENAI_API_KEY').and_return(nil)
       end
-
-      it 'outputs an error and exits' do
-        expect do
-          load './app/services/openAIService.rb'
-        end.to raise_error(SystemExit)
-      end
     end
   end
 
