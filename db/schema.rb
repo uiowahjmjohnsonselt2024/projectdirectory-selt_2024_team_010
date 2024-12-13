@@ -18,8 +18,8 @@ ActiveRecord::Schema.define(version: 20241213075712) do
     t.integer "game_id"
     t.integer "level",         default: 1
     t.integer "currentHealth", default: 5
-    t.integer "x_position"
-    t.integer "y_position"
+    t.integer "x_position",    default: 0
+    t.integer "y_position",    default: 0
     t.integer "maxHealth",     default: 10
   end
 

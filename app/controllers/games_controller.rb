@@ -94,11 +94,4 @@ class GamesController < ApplicationController
 
     render json: { characters: @characters }
   end
-
-  def items
-    character = @current_user.characters.find_by(game_id: @current_game.id)
-    @items = character.items
-
-    render json: { items: @items.as_json(only: [:id, :name, :item_type, :description, :level]) }
-  end
 end
