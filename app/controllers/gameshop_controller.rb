@@ -40,7 +40,7 @@ class GameshopController < ApplicationController
 
     # Check if user has enough shards
     if current_user.shard_amount < price
-      render json: { error: "You do not have enough shards to purchase this item." }, status: :unprocessable_entity
+      render json: { error: "You do not have enough shards." }, status: :unprocessable_entity
       return
     end
 
@@ -73,19 +73,10 @@ class GameshopController < ApplicationController
 
     when "healing"
 
-      puts("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-      puts("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-      puts("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-      puts("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-      puts("inside healing")
-
       # Apply healing effects rather than creating an item
       case item_params[:name]
       when "Full Heal"
-        puts("inside full heal")
-
         character.update!(currentHealth: character.maxHealth)
-        character.user.update!(shard_amount: character.user.shard_amount + 100)
         character.save!
         render json: {
           success: true,
@@ -108,7 +99,6 @@ class GameshopController < ApplicationController
 
         character.update!(maxHealth: character.maxHealth + 10)
         character.update!(currentHealth: character.maxHealth)
-        character.user.update!(shard_amount: character.user.shard_amount + 500)
         character.save!
 
         puts("new ")

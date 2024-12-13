@@ -461,6 +461,7 @@
                             initializeDeleteButtons();
                         }
 
+                        console.log(result.shard_amount)
 
                         // Update the shard amount in the UI based on the server's response
                         if (result.shard_amount !== undefined) {
@@ -472,7 +473,7 @@
                         }
                         updateCharacterInfo(result.character)
 
-                        alert(result.message || "Item purchased successfully!");
+                        alert(result.message || "Purchase successful!");
                     } else {
                         // If purchase fails, alert user
                         alert(result.error || "Failed to purchase item.");
