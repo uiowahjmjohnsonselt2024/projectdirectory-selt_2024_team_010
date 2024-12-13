@@ -25,20 +25,17 @@ class SessionsController < ApplicationController
 
   def auth_success
     auth = request.env['omniauth.auth']
-
     user = User.from_omniauth(auth)
     if user
       if user.instance_of? ActiveRecord::RecordInvalid
-        params[:message] = "Failed in creating the record;\n\n" + user.record.errors.full_messages.join("\n")
+        params[:message] = "Failed in creating the record. Please try again."
         redirect_to auth_failure_path
       else
-        Rails.logger.debug "here"
         create_session_token user
         flash[:notice] = "Logged in successfully"
         redirect_to dashboard_path
       end
     else
-      Rails.logger.info user.inspect
       flash[:warning] = "Oauth login failed; please create an account or login normally."
       redirect_to login_path
     end
