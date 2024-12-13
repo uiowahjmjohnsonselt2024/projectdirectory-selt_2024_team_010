@@ -12,32 +12,31 @@ class User < ActiveRecord::Base
   has_many :payments, dependent: :destroy
 
   # helper func that logs in via info response from omniauth
-  # note that github oauth scope requires some nonsense
+  # note that this requires we use the 'user' scope for oauth, see config/initializers/omniauth.rb for its usage
   def self.from_omniauth(auth)
-    user = find_by(email: auth['info']['email'])
+    user = find_by(email: auth[:info][:email])
+
+    Rails.logger.info auth.inspect
+
     unless user
       begin
         # choose a good name and password.
-        name =
-          if find_by(username: auth['info']['name'])
-            # add a discriminator at the end if theres an issue
-            "#{auth['info']['name']&.gsub(/\s+/, '')}\##{SecureRandom.base64(4)}"
-          else
-            auth['info']['name']
-          end
+        name = "#{auth['info']['login']&.gsub(/\s+/, '')}\##{SecureRandom.base64(4)}"
+        unless find_by(username: auth['info']['login'])
+          name = auth['info']['login'] # if we can, just use the normal username
+        end
         password = SecureRandom.base64(16)
 
         user = self.create!(
-          name: name,
-          email: "#{auth.uid}@#{auth.provider}.com", # @todo this is a fake ass email
+          username: name,
+          email: auth[:info][:email],
           password: password,
-          password_confirmation: password,
-          session_token: SecureRandom.hex(16)
         )
+        user.update(money_usd: 0, shard_amount: 0)
       rescue ActiveRecord::RecordInvalid => e
         return e
       end
-    user
     end
+    user
   end
 end

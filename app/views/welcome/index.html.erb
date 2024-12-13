@@ -3,6 +3,8 @@
   <div>
     <%= link_to 'Login', login_path, class: 'btn' %>
     <%= link_to 'Register', register_path, class: 'btn' %>
-    <%= link_to 'Login with GitHub', '/auth/github', class: 'btn' %>
+    <%= form_tag('/auth/github', method: 'post', data: {turbo: false}) do %>
+      <button class='btn' type='submit'>Login with GitHub</button>
+    <% end %>
   </div>
 </div>
