@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe GameController, type: :controller do
+RSpec.describe GamesController, type: :controller do
   let(:user) { User.create!(username: 'testuser', email: 'test@example.com', password: 'password123', password_confirmation: 'password123') }
   let(:session_token) { SecureRandom.urlsafe_base64 }
 
