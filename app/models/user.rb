@@ -36,4 +36,18 @@ class User < ActiveRecord::Base
     end
     user
   end
+
+  def generate_password_reset_token!
+    self.password_reset_token = SecureRandom.urlsafe_base64
+    self.password_reset_sent_at = Time.zone.now
+    save!
+  end
+
+  def password_reset_valid?
+    password_reset_sent_at > 2.hours.ago
+  end
+
+  def clear_password_reset_token!
+    self.update!(password_reset_token: nil, password_reset_sent_at: nil)
+  end
 end

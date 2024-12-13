@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 require 'openai'
-require 'dotenv'
+require 'dotenv' if Rails.env.development? || Rails.env.test?
 require 'openAIService'
-Dotenv.load
+Dotenv.load if Rails.env.development? || Rails.env.test?
 
 class TilesController < ApplicationController
   @@generated_items = Set.new  # Use a class-level Set to store unique item names
@@ -31,7 +31,8 @@ class TilesController < ApplicationController
           picture: ai_generated_content[:picture],
           scene_description: ai_generated_content[:scene_description],
           treasure_description: ai_generated_content[:treasure_description],
-          monster_description: ai_generated_content[:monster_description]
+          monster_description: ai_generated_content[:monster_description],
+          monster_level: ai_generated_content[:monster_level]
         )
       end
 
@@ -42,7 +43,8 @@ class TilesController < ApplicationController
         picture: tile.picture,
         scene_description: tile.scene_description,
         treasure_description: tile.treasure_description,
-        monster_description: tile.monster_description
+        monster_description: tile.monster_description,
+        monster_level: tile.monster_level
       }
     else
       render json: { error: 'Tile not found' }, status: 404
@@ -53,31 +55,71 @@ class TilesController < ApplicationController
     generator = @generator
 
     system_prompt = <<~PROMPT
-      You are a creative generator for a video game project. I will give you
-      specifications on what to generate (a text description of a monster and the landscape).
-      Return your responses in JSON format with only "monster" and "landscape" keys.
-      No loot generation is requested. Example JSON:
-      {
-        "monster": {
-          "description": "[Monster description placeholder]",
-          "level": 0
-        },
-        "landscape": {
-          "description": "[Landscape description placeholder]"
-        }
+    You are a creative generator for a video game project. I will give you
+    specifications on what to generate (a text description of a monster and the landscape).
+    Return your responses in JSON format with only "monster" and "landscape" keys.
+    No loot generation is requested. Example JSON:
+    {
+      "monster": {
+        "description": "[Monster description placeholder]",
+      },
+      "landscape": {
+        "description": "[Landscape description placeholder]"
       }
-    PROMPT
+    }
+  PROMPT
 
     instruction_prompt = <<~INSTRUCTION
-      Generate content for a tile in the #{tile.biome} biome.
-      Include:
-      - A landscape description
-      - A monster description
-      Do not include any loot. Do not mention loot.
-    INSTRUCTION
+    Generate content for a tile in the #{tile.biome} biome.
+    Include:
+    - A landscape description
+    - A monster description
+    Do not include any loot. Do not mention loot.
+  INSTRUCTION
 
     response = generator.generate_content("gpt-4o-mini", system_prompt, instruction_prompt)
     parsed_response = JSON.parse(response, symbolize_names: true) rescue {}
+
+
+    # Extract monster data
+    monster_desc = parsed_response.dig(:monster, :description) || "Default monster description"
+
+    # Calculate player strength
+    player_level = @current_character.level
+    player_items = @current_character.items.order(level: :desc).limit(3) # top 3 items
+    if player_items.any?
+      player_strength = player_level + player_items.sum(:level)
+    else
+      player_strength = player_level # no items
+    end
+
+
+    #Calculate Monster strength
+    monster_levels = {
+      easy: (player_strength / 2.0).ceil, # Half of the player's strength, minimum 1
+      medium: player_strength, # Equal to the player's strength
+      hard: (player_strength * 2), # Two times the player's strength
+      boss: (player_strength * 5) # Five times the player's strength
+    }
+
+    # Add random aspect (10% of the monster's level)
+    monster_levels.each do |difficulty, level|
+      random_factor = rand((level * 0.1).to_i + 1) # Random up to 10% of the level
+      monster_levels[difficulty] = [level + random_factor, 1].max # Ensure minimum of 1
+    end
+
+    difficulty_weights = {
+      easy: 20,
+      medium: 50,
+      hard: 20,
+      boss: 10
+    }
+    weighted_difficulties = difficulty_weights.flat_map { |difficulty, weight| [difficulty] * weight }
+    selected_difficulty = weighted_difficulties.sample
+
+    # Use the selected difficulty to calculate monster level
+    monster_level = monster_levels[selected_difficulty]
+
 
     # Custom loot logic
     roll = rand(100)
@@ -85,16 +127,18 @@ class TilesController < ApplicationController
       if roll < 5
         generate_item(generator)
       elsif roll < 30
-        generate_item(generator)
+        nil
       else
-        generate_item(generator)
+        shards = rand(10..100)
+        "Shards:#{shards}"
       end
 
     {
       picture: parsed_response.dig(:landscape, :description) || "Default picture",
       scene_description: parsed_response.dig(:landscape, :description) || "Default scene description",
       treasure_description: treasure_description,
-      monster_description: parsed_response.dig(:monster, :description) || "Default monster description"
+      monster_description: monster_desc,
+      monster_level: monster_level
     }
   end
 
@@ -136,7 +180,11 @@ class TilesController < ApplicationController
       tile.update!(treasure_description: nil)
       render json: { success: true, tile: tile }
     else
-      render json: { error: "No treasure to take." }, status: 404
+      render json: {
+        message: "Too late! This treasure is gone.",
+        result: "no_loot",
+        tile: tile,
+      }
     end
   end
 
@@ -146,11 +194,105 @@ class TilesController < ApplicationController
 
     tile = @current_game.tiles.find_by(x_position: x, y_position: y)
     if tile && tile.monster_description.present?
-      puts "Monster slain"
-      tile.update!(monster_description: nil)
-      render json: { success: true, tile: tile }
+      # Parse monster level and description
+
+      monster_text = tile.monster_description
+      monster_level = tile.monster_level
+
+      # Get the current character for the user in this game
+      character = current_user.characters.find_by(game_id: @current_game.id)
+      return render json: { error: "Character not found." }, status: 404 unless character
+
+      # Calculate player strength
+      player_level = character.level
+      player_items = character.items.order(level: :desc).limit(3) # top 3 items
+      if player_items.any?
+        player_strength = player_level + player_items.sum(:level)
+      else
+        player_strength = player_level # no items
+      end
+
+      total = player_strength + monster_level
+      if total == 0
+        # Edge case: if somehow both are zero, just declare a tie or player wins?
+        total = 1
+      end
+      player_odds = (player_strength.to_f / total) * 100.0
+      # monster_odds = (monster_level.to_f / total) * 100.0 # Not strictly needed, but for clarity
+
+      roll = rand(1..100)
+      puts "Combat roll: #{roll}, Player odds: #{player_odds}, Player Strength: #{player_strength}, Monster Level: #{monster_level}"
+
+      if roll <= player_odds
+        # Player wins
+        # Monster is slain
+        tile.update!(monster_description: nil)
+        tile.update!(monster_level: nil)
+        # Player levels up
+        character.update!(level: character.level + 1)
+
+        if character.currentHealth < character.maxHealth
+          character.update!(currentHealth: character.currentHealth + 1)
+        end
+
+        render json: {
+          success: true,
+          tile: tile,
+          result: "player_win",
+          character: {
+            current_health: character.currentHealth,
+            max_health: character.maxHealth,
+            level: character.level
+          }
+        }
+
+      else
+        # Monster wins
+        # Player loses 1 health
+        new_health = character.currentHealth - 1
+        character.update!(currentHealth: new_health)
+
+        # Check if player's health is 0
+        if character.currentHealth <= 0
+          # Reset character's health and level
+          character.items.destroy_all
+          character.update!(currentHealth: character.maxHealth, level: 1)
+          render json: {
+            success: true,
+            tile: tile,
+            result: "player_died",
+            message: "You died! All of your items have been lost, and your level is reset to 1.",
+            character:
+              {
+                current_health: character.currentHealth,
+                level: character.level,
+                max_health: character.maxHealth,
+              }
+          }
+        else
+          # Monster level increases by half the player's strength (rounded down)
+          increase = (player_strength / 2).floor
+          new_monster_level = monster_level + increase
+          tile.update!(monster_level: new_monster_level)
+
+          render json: {
+            success: true,
+            tile: tile,
+            result: "monster_win",
+            character: {
+              current_health: character.currentHealth,
+              max_health: character.maxHealth,
+              level: character.level
+            }
+          }
+        end
+      end
     else
-      render json: { error: "No monster to fight." }, status: 404
+      render json: {
+        message: "This monster has already been slain!",
+        result: "no_monster",
+        tile: tile,
+      }
     end
   end
 
