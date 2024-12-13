@@ -240,7 +240,8 @@ class TilesController < ApplicationController
             current_health: character.currentHealth,
             max_health: character.maxHealth,
             level: character.level
-          }
+          },
+          odds: player_odds,
         }
 
       else
@@ -264,7 +265,8 @@ class TilesController < ApplicationController
                 current_health: character.currentHealth,
                 level: character.level,
                 max_health: character.maxHealth,
-              }
+              },
+            odds: player_odds
           }
         else
           # Monster level increases by half the player's strength (rounded down)
@@ -280,7 +282,8 @@ class TilesController < ApplicationController
               current_health: character.currentHealth,
               max_health: character.maxHealth,
               level: character.level
-            }
+            },
+            odds: player_odds
           }
         end
       end

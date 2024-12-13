@@ -52,8 +52,6 @@
           <hr>
         </div>
       <% end %>
-    <% else %>
-      <p class="text-with-border">You have no items.</p>
     <% end %>
   </div>
 
@@ -63,9 +61,8 @@
 </div>
 
 <script>
-    console.log(<%= raw @items.to_json %>)
-    let shopItemsLoaded = sessionStorage.getItem("shopItemsLoaded") === "true";
-    let initialized = false;
+    var shopItemsLoaded = sessionStorage.getItem("shopItemsLoaded") === "true";
+    var initialized = false;
 
     // Initialize refreshCount from sessionStorage or set to 0
     let refreshCount = parseInt(sessionStorage.getItem('shopRefreshCount')) || 0;
