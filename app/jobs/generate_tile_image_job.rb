@@ -9,11 +9,11 @@ class GenerateTileImageJob < ActiveJob::Base
   def perform(tile_id)
     tile = Tile.find(tile_id) # @todo there may be a better way of doing this
 
-    Rails.logger.info "Prompts loaded: #{prompts.inspect}"
-    Rails.logger.info prompts[:image_prompt]
+    #Rails.logger.info "Prompts loaded: #{prompts.inspect}"
+    Rails.logger.info prompts["image_prompt"]
     Rails.logger.info "Tile scene_description: #{tile.scene_description.inspect}"
 
-    prompt = prompts[:image_prompt] % { scene_description: tile.scene_description }
+    prompt = prompts["image_prompt"] % { scene_description: tile.scene_description }
     image = GameContentGenerator.generate_image(prompt)
     tile.update!(
       picture: image,

@@ -58,3 +58,5 @@ end
 group :production do
   gem 'pg', '~> 0.2'
 end
+
+gem "sidekiq", "~> 5.2"

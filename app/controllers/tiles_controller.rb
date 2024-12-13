@@ -31,11 +31,11 @@ class TilesController < ApplicationController
         render text: Base64.decode64(tile.picture), content_type: 'image/png'
       else
         # otherwise, generate it in the background and render a "loading" image
+        send_file(Rails.root.join('public', 'loading.png'), type: "image/png", disposition: "inline")
         unless tile.picture_generating?
+          tile.update!(picture_generating: true)
           GenerateTileImageJob.perform_later(tile.id)
-          tile.picture_generating = true
         end
-        render file: Rails.root.join('public', 'loading.png').read
       end
     else
       # if it doesn't throw an error
@@ -88,11 +88,11 @@ class TilesController < ApplicationController
     roll = rand(100)
     treasure_description =
       if roll < 5
-        generate_item(generator)
+        generate_item()
       elsif roll < 30
-        generate_item(generator)
+        generate_item()
       else
-        generate_item(generator)
+        generate_item()
       end
 
     {
@@ -169,7 +169,7 @@ class TilesController < ApplicationController
     tile.picture.blank? && tile.scene_description.blank? && tile.treasure_description.blank? && tile.monster_description.blank?
   end
 
-  def generate_item(generator)
+  def generate_item()
     used_names = @@generated_items.to_a
     name_list_str = used_names.empty? ? "[]" : used_names.map { |n| "\"#{n}\"" }.join(", ")
 
