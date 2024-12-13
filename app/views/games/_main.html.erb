@@ -177,11 +177,13 @@
                       updateCharacterInfo(data.character);
                   }
 
+                  const odds = parseFloat(data.odds).toFixed(2)
+
                   // Notify the user about the result
                   if (data.result === "player_win") {
-                      alert("You defeated the monster!");
+                      alert(`You defeated the monster! Your odds of winning were: ${odds}%`);
                   } else if (data.result === "monster_win") {
-                      alert("You lost to the monster. Be careful!");
+                      alert(`You lost to the monster. Be careful! Your odds of winning were: ${odds}%`);
                   } else if (data.result === "player_died") {
 
                       const itemsSection = document.getElementById("ItemsSection");
