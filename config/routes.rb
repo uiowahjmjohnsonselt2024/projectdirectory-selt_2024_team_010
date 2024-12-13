@@ -52,8 +52,6 @@ Rails.application.routes.draw do
   get '/auth/:provider/callback', to: 'sessions#auth_success', as: 'auth_success'
   get '/auth/failure', to: 'sessions#auth_failure', as: 'auth_failure'
 
-  get 'characters/items', to: 'games#items', as: 'character_items'
-
   get 'characters/items', to: 'characters#items', as: 'character_items'
 
   post 'chat', to: 'chat#create', as: 'chat_send'
