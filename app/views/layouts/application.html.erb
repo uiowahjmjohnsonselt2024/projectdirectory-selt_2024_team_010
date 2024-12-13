@@ -24,7 +24,7 @@
       <% end %>
       <%= link_to 'Home', dashboard_path, class: 'nav-button' %>
       <%= link_to 'Servers', games_path, class: 'nav-button' %>
-      <%= link_to 'Shop', shop_path, class: 'nav-button' %>
+      <%= link_to 'Shop', shop_path, class: 'nav-button', data: { turbolinks: false } %>
       <% if @current_game%>
         <%= link_to 'Game', game_path(@current_game.id), class: 'nav-button' %>
       <%end %>
