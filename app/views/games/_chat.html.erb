@@ -73,7 +73,9 @@
         const chatLog = await (response.json())
 
         const chatBox = document.getElementById('chat-messages')
-        chatBox.innerHTML = '' // Remove the old chat messages
+
+        if (chatBox)
+            chatBox.innerHTML = '' // Remove the old chat messages
         //console.log(chatLog)
 
         for (const message of chatLog.chatLog) { // Create the new messages.
