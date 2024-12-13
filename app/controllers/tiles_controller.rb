@@ -181,7 +181,8 @@ class TilesController < ApplicationController
         result: "no_loot",
         tile: tile,
 
-      }
+      },
+             status: 420
     end
   end
 
