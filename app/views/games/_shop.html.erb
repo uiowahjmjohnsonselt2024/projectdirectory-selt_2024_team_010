@@ -102,9 +102,7 @@
     // Initialize refreshCount from sessionStorage or set to 0
     var refreshCount = parseInt(sessionStorage.getItem('shopRefreshCount')) || 0;
 
-    document.addEventListener("DOMContentLoaded", initializePage);
-    document.addEventListener("turbolinks:load", initializePage); // For Turbolinks
-    document.addEventListener("turbo:load", initializePage); // For Turbo
+    initializePage();
 
     function initializePage() {
         if (initialized) {
