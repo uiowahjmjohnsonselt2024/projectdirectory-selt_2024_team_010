@@ -28,6 +28,7 @@ class User < ActiveRecord::Base
           username: name,
           email: auth[:info][:email],
           password: password,
+          is_oauth: true
         )
         user.update(money_usd: 0, shard_amount: 0)
       rescue ActiveRecord::RecordInvalid => e
