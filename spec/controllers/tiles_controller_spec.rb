@@ -164,4 +164,136 @@ RSpec.describe TilesController, type: :controller do
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
+  describe '#generate_tile_content' do
+    let(:tile) { Tile.create!(game_id: game.id, x_position: 1, y_position: 1, biome: 'Forest') }
+    let(:mock_response) do
+      {
+        monster: { description: 'A fearsome dragon guards the treasure.' },
+        landscape: { description: 'A dense forest with towering trees and a hidden clearing.' }
+      }.to_json
+    end
+    let(:mock_generator) { instance_double(OpenAIService) }
+
+    before do
+      allow(mock_generator).to receive(:generate_content).and_return(mock_response)
+      controller.instance_variable_set(:@generator, mock_generator)
+      allow(controller).to receive(:rand).and_return(50) # Mock random values for consistency
+    end
+
+    it 'generates tile content based on biome and character strength' do
+      content = controller.send(:generate_tile_content, tile)
+
+      expect(content[:picture]).to eq('A dense forest with towering trees and a hidden clearing.')
+      expect(content[:scene_description]).to eq('A dense forest with towering trees and a hidden clearing.')
+      expect(content[:monster_description]).to eq('A fearsome dragon guards the treasure.')
+      expect(content[:monster_level]).to be_a(Integer)
+      expect(content[:treasure_description]).to match(/Shards: \d+/)
+    end
+
+    it 'uses default values if the AI response is invalid' do
+      allow(mock_generator).to receive(:generate_content).and_return(nil)
+      content = controller.send(:generate_tile_content, tile)
+
+      expect(content[:picture]).to eq('Default picture')
+      expect(content[:scene_description]).to eq('Default scene description')
+      expect(content[:monster_description]).to eq('Default monster description')
+      expect(content[:treasure_description]).to eq('Shards: 50')
+    end
+  end
+  describe '#generate_item' do
+    let(:mock_generator) { instance_double(OpenAIService) }
+    let(:generated_item) do
+      {
+        name: 'Ancient Crystal Skull',
+        description: 'A skull carved from crystal that emits a faint eerie glow.'
+      }.to_json
+    end
+
+    before do
+      controller.instance_variable_set(:@generator, mock_generator)
+      allow(mock_generator).to receive(:generate_content).and_return(generated_item)
+      @@generated_items = Set.new
+    end
+
+    it 'generates a unique item and adds it to the generated items set' do
+      result = controller.send(:generate_item, mock_generator)
+
+      expect(result).to eq('Ancient Crystal Skull: A skull carved from crystal that emits a faint eerie glow.')
+      expect(@@generated_items).to include('Ancient Crystal Skull')
+    end
+
+    it 'skips duplicate items and tries again' do
+      @@generated_items.add('Ancient Crystal Skull')
+
+      allow(mock_generator).to receive(:generate_content).and_return(generated_item)
+
+      result = controller.send(:generate_item, mock_generator)
+
+      # Since it's a duplicate, it should eventually fallback to the default response
+      expect(result).to eq('Unique Artifact of Mystery: A one-of-a-kind item you have never seen before.')
+    end
+
+    it 'handles JSON parsing errors gracefully' do
+      allow(mock_generator).to receive(:generate_content).and_return('invalid json')
+
+      result = controller.send(:generate_item, mock_generator)
+
+      expect(result).to eq('Unique Artifact of Mystery: A one-of-a-kind item you have never seen before.')
+    end
+  end
+  describe '#generate_item_details' do
+    let(:mock_generator) { instance_double(OpenAIService) }
+    let(:item_string) { 'Mystic Sword: A powerful blade imbued with magical energy.' }
+    let(:mock_response) do
+      {
+        name: 'Mystic Sword',
+        item_type: 'weapon',
+        description: 'A powerful blade imbued with magical energy.'
+      }.to_json
+    end
+
+    before do
+      controller.instance_variable_set(:@generator, mock_generator)
+      allow(controller).to receive(:rand).and_return(10) # Mock random level generation
+    end
+
+    it 'generates detailed item information from a valid input string' do
+      allow(mock_generator).to receive(:generate_content).and_return(mock_response)
+
+      result = controller.send(:generate_item_details, item_string)
+
+      expect(result[:name]).to eq('Mystic Sword')
+      expect(result[:item_type]).to eq('weapon')
+      expect(result[:description]).to eq('A powerful blade imbued with magical energy.')
+      expect(result[:level]).to eq(10)
+    end
+
+    it 'falls back to artifact item_type if item_type is invalid' do
+      invalid_mock_response = {
+        name: 'Mystic Sword',
+        item_type: 'invalid_type',
+        description: 'A powerful blade imbued with magical energy.'
+      }.to_json
+
+      allow(mock_generator).to receive(:generate_content).and_return(invalid_mock_response)
+
+      result = controller.send(:generate_item_details, item_string)
+
+      expect(result[:name]).to eq('Mystic Sword')
+      expect(result[:item_type]).to eq('artifact')
+      expect(result[:description]).to eq('A powerful blade imbued with magical energy.')
+      expect(result[:level]).to eq(10)
+    end
+
+    it 'handles JSON parsing errors gracefully' do
+      allow(mock_generator).to receive(:generate_content).and_return('invalid json')
+
+      result = controller.send(:generate_item_details, item_string)
+
+      expect(result[:name]).to eq('Mystic Sword')
+      expect(result[:item_type]).to eq('artifact')
+      expect(result[:description]).to eq('A powerful blade imbued with magical energy.')
+      expect(result[:level]).to eq(10)
+    end
+  end
 end
