@@ -29,7 +29,7 @@ class GameshopController < ApplicationController
     render json: { error: "Missing shard parameters." }, status: :bad_request
   end
   def buy
-    character = current_user.characters.first
+    character = current_user.characters.find_by_id(@current_user.recent_character)
     if character.nil?
       render json: { error: "No character found to assign item to." }, status: :bad_request
       return
