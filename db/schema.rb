@@ -11,16 +11,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20241210204041) do
+ActiveRecord::Schema.define(version: 20241212200507) do
 
   create_table "characters", force: :cascade do |t|
     t.integer "user_id"
     t.integer "game_id"
     t.integer "level",         default: 1
     t.integer "currentHealth", default: 5
-    t.integer "x_position"
-    t.integer "y_position"
+    t.integer "x_position",    default: 0
+    t.integer "y_position",    default: 0
     t.integer "maxHealth",     default: 10
+  end
+
+  create_table "chats", force: :cascade do |t|
+    t.integer  "game_id"
+    t.datetime "time_sent"
+    t.string   "user"
+    t.string   "message"
   end
 
   create_table "games", force: :cascade do |t|

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 require 'openai'
-require 'dotenv' if Rails.env.development? || Rails.env.test?
 require 'openAIService'
-Dotenv.load if Rails.env.development? || Rails.env.test?
 
 class TilesController < ApplicationController
   @@generated_items = Set.new  # Use a class-level Set to store unique item names
@@ -61,10 +59,10 @@ class TilesController < ApplicationController
     No loot generation is requested. Example JSON:
     {
       "monster": {
-        "description": "[Monster description placeholder]",
+        "description": "[Monster description placeholder. 3 sentences max!]",
       },
       "landscape": {
-        "description": "[Landscape description placeholder]"
+        "description": "[Landscape description placeholder. 3 sentences max!]"
       }
     }
   PROMPT
@@ -124,13 +122,13 @@ class TilesController < ApplicationController
     # Custom loot logic
     roll = rand(100)
     treasure_description =
-      if roll < 5
+      if roll < 10
         generate_item(generator)
-      elsif roll < 30
-        nil
-      else
+      elsif roll < 80
         shards = rand(10..100)
-        "Shards:#{shards}"
+        "Shards: #{shards}"
+      else
+        nil
       end
 
     {
@@ -159,11 +157,9 @@ class TilesController < ApplicationController
         puts "Treasure taken"
         item_info = generate_item_details(treasure)
 
-        # Ensure we have a character_id to attach this item to.
-        # Adjust this as needed to get the correct character. For example:
-        character = current_user.characters.first
+        character = @current_user.characters.find_by(game_id: @current_game.id)
         if character.nil?
-          render json: { error: "No character found to assign item to." }, status: 400
+          render json: { error: "No character found to assign item to." }, status: 420
           return
         end
 
@@ -184,6 +180,7 @@ class TilesController < ApplicationController
         message: "Too late! This treasure is gone.",
         result: "no_loot",
         tile: tile,
+
       }
     end
   end
@@ -296,11 +293,103 @@ class TilesController < ApplicationController
     end
   end
 
+  def regenerate_tile
+    x = params[:x].to_i
+    y = params[:y].to_i
+
+    # Find the tile in the current game
+    tile = @current_game.tiles.find_by(x_position: x, y_position: y)
+
+    unless tile
+      render json: { error: "Tile not found." }, status: :not_found
+      return
+    end
+
+    # Check if the user/character has enough shards
+    if @current_user.shard_amount < 250
+      render json: { error: "You do not have enough shards. Please collect or buy more." }, status: :unprocessable_entity
+      return
+    end
+
+    # Deduct 250 shards
+    @current_user.shard_amount -= 250
+
+    #chance to change biome just for fun
+    colors = ['gray', 'green', 'yellow', 'blue']
+    tile.biome = colors.sample
+
+    ai_generated_content = generate_tile_content(tile)
+    tile.update!(
+      picture: ai_generated_content[:picture],
+      scene_description: ai_generated_content[:scene_description],
+      treasure_description: ai_generated_content[:treasure_description],
+      monster_description: ai_generated_content[:monster_description],
+      monster_level: ai_generated_content[:monster_level]
+    )
+
+    # Save both character and tile
+    if @current_user.save && tile.save
+      # Return the updated tile info in the same format as get_tile
+      render json: {
+        x: tile.x_position,
+        y: tile.y_position,
+        biome: tile.biome,
+        picture: tile.picture,
+        scene_description: tile.scene_description,
+        treasure_description: tile.treasure_description,
+        monster_description: tile.monster_description,
+        monster_level: tile.monster_level,
+      }
+    else
+      render json: { error: "Failed to regenerate tile." }, status: :internal_server_error
+    end
+  end
+
+  def teleport_tile
+    x = params[:x].to_i
+    y = params[:y].to_i
+
+    # Ensure the tile exists in the current game
+    tile = @current_game.tiles.find_by(x_position: x, y_position: y)
+
+    unless tile
+      render json: { error: "Tile not found." }, status: :not_found
+      return
+    end
+
+    character = current_user.characters.find_by(game_id: @current_game.id)
+    unless character
+      render json: { error: "Character not found." }, status: :unprocessable_entity
+      return
+    end
+
+    # Check if user has enough shards
+    if @current_user.shard_amount < 5
+      render json: { error: "You do not have enough shards to teleport." }, status: :unprocessable_entity
+      return
+    end
+
+    # Deduct shards and move character
+    @current_user.shard_amount -= 5
+    character.update!(x_position: x, y_position: y)
+    @current_user.save!
+
+    render json: {
+      success: true,
+      x: x,
+      y: y,
+      current_shards: @current_user.shard_amount,
+      message: "Teleported to (#{x}, #{-y}) for 5 shards."
+    }
+  end
+
   private
 
+
+
+
   def initialize_generator
-    api_key = ENV['OPENAI_API_KEY']
-    @generator = GameContentGenerator.new(api_key)
+    @generator = OpenAIService.new
   end
 
   def generate_item(generator)
@@ -324,7 +413,7 @@ class TilesController < ApplicationController
       The name must not match any of the previously generated names given. It can be a
       weapon (sword, bow, staff, axe, hammer) or a shield (diamond, tower, round) or a
       piece of armor (cloak, greaves, gauntlets, chestplate) or just a random artifact. 
-      Be creative!
+      Be creative! Description must be 3 sentences max!
     INSTRUCTION
 
     3.times do

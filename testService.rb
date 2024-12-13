@@ -14,7 +14,7 @@ if api_key.nil? || api_key.empty?
 end
 ##############################################################
 
-# Test the GameContentGenerator class
+# Test the OpenAIService class
 
 # EXAMPLE TESTING METHOD
 ##############################################################
@@ -42,10 +42,10 @@ def test_game_content_generator(api_key)
   instruction_prompt = "Give me a description for a monster and a treasure. Give the monster a level between 5 and 10 and the treasure a level of 6."
 
   # Initialize the generator
-  generator = GameContentGenerator.new(api_key)
+  generator = OpenAIService.new(api_key)
 
   # Call the generate_content method
-  puts "Testing GameContentGenerator...\n\n"
+  puts "Testing OpenAIService...\n\n"
   response = generator.generate_content("gpt-4", system_prompt, instruction_prompt)
 
   if response
