@@ -4,21 +4,12 @@ class CharactersController < ApplicationController
   before_action :require_login, :get_current_game
 
   def get_characters
-    begin
-      @characters = @current_game.characters
-                                 .select("characters.id, characters.x_position, characters.y_position, users.username, users.recent_character")
-                                 .joins(:user)
-                                 .where("characters.id = users.recent_character")
+    @characters = @current_game.characters
+                               .select("characters.id, characters.x_position, characters.y_position, users.username, users.recent_character")
+                               .joins(:user)
+                               .where("characters.id = users.recent_character")
 
-      render json: { characters: @characters }
-      return
-    rescue Exception => error
-      puts "===================="
-      puts error
-      puts "==================="
-      render json: { characters: [] }
-    end
-
+    render json: { characters: @characters }
   end
 
   def move_character
