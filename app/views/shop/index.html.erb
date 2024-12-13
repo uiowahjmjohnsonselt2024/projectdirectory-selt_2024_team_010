@@ -101,24 +101,24 @@
 </div>
 
 <script>
-    const SHARD_COST_BASE_USD = 0.75; // base cost per shard in USD
-    const API_URL = 'https://v6.exchangerate-api.com/v6/464f4642b6d4d3ec3744b64d/latest/USD'; // updates daily for free plan
+    var SHARD_COST_BASE_USD = 0.75; // base cost per shard in USD
+    var API_URL = 'https://v6.exchangerate-api.com/v6/464f4642b6d4d3ec3744b64d/latest/USD'; // updates daily for free plan
 
-    const decrementButton = document.getElementById('decrement');
-    const incrementButton = document.getElementById('increment');
-    const shardQuantityInput = document.getElementById('shard-quantity');
-    const costDisplay = document.getElementById('total-cost');
-    const currencySelector = document.getElementById('currency');
-    const currencySymbol = document.getElementById('currency-symbol');
-    const submitButton = document.getElementById('submitButton');
-    const costInput = document.getElementById('cost');
+    var decrementButton = document.getElementById('decrement');
+    var incrementButton = document.getElementById('increment');
+    var shardQuantityInput = document.getElementById('shard-quantity');
+    var costDisplay = document.getElementById('total-cost');
+    var currencySelector = document.getElementById('currency');
+    var currencySymbol = document.getElementById('currency-symbol');
+    var submitButton = document.getElementById('submitButton');
+    var costInput = document.getElementById('cost');
 
     // New form fields references
-    const firstNameInput = document.getElementById('first-name');
-    const lastNameInput = document.getElementById('last-name');
-    const cardNumberInput = document.getElementById('card-number');
-    const cvvInput = document.getElementById('cvv');
-    const expirationDateInput = document.getElementById('expiration-date');
+    var firstNameInput = document.getElementById('first-name');
+    var lastNameInput = document.getElementById('last-name');
+    var cardNumberInput = document.getElementById('card-number');
+    var cvvInput = document.getElementById('cvv');
+    var expirationDateInput = document.getElementById('expiration-date');
 
     let exchangeRates = { USD: 1 }; // default rates (USD base)
 
@@ -223,7 +223,7 @@
     // Fetch balance for real-time updates
     fetchUserBalance();
 
-    const purchaseButton = document.getElementById("purchase");
+    var purchaseButton = document.getElementById("purchase");
 
     purchaseButton.addEventListener("click", async () => {
         const quantity = parseInt(shardQuantityInput.value) || 0;
