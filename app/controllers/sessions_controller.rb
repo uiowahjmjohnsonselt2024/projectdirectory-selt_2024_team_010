@@ -42,7 +42,7 @@ class SessionsController < ApplicationController
   end
 
   def auth_failure(reason)
-    flash[:warning] = "Authentication failed. :(\nReason: #{reason}"
+    flash[:alert] = "Authentication failed. :(\nReason: #{reason}"
     redirect_to welcome_path
   end
 end
