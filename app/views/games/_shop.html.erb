@@ -16,6 +16,7 @@
         <button class="tablinks active" data-category="Weapons">Weapons</button>
         <button class="tablinks" data-category="Armor">Armor</button>
         <button class="tablinks" data-category="Abilities">Abilities</button>
+        <button class="tablinks" data-category="Healing">Healing</button>
       </div>
 
       <!-- Weapons Tab Content -->
@@ -35,8 +36,37 @@
 
       <!-- Healing Tab Content -->
       <div id="Healing" class="tabcontent">
-        <!-- Healing Items List -->
+        <!-- Full Heal -->
+        <div class="item-details">
+          <h3>Full Heal</h3>
+          <p>Restore your HP to its maximum</p>
+          <p><strong>Price:</strong> 100</p>
+          <button style="margin-top: 5px" class="btn-secondary buy"
+                  data-item-name="Full Heal"
+                  data-item-category="Healing"
+                  data-item-description="Restores HP to full"
+                  data-item-level="1"
+                  data-item-price="100">
+            Buy
+          </button>
+        </div>
+
+        <!-- Increase Max HP -->
+        <div class="item-details">
+          <h3>Increase Max HP</h3>
+          <p>Increase your maximum HP by 10</p>
+          <p><strong>Price:</strong> 500</p>
+          <button style="margin-top: 5px" class="btn-secondary buy"
+                  data-item-name="Max HP Boost"
+                  data-item-category="Healing"
+                  data-item-description="Increases max HP by 10"
+                  data-item-level="1"
+                  data-item-price="500">
+            Buy
+          </button>
+        </div>
       </div>
+
     </div>
 
     <!-- Button to load AI-generated items -->
@@ -72,9 +102,7 @@
     // Initialize refreshCount from sessionStorage or set to 0
     var refreshCount = parseInt(sessionStorage.getItem('shopRefreshCount')) || 0;
 
-    document.addEventListener("DOMContentLoaded", initializePage);
-    document.addEventListener("turbolinks:load", initializePage); // For Turbolinks
-    document.addEventListener("turbo:load", initializePage); // For Turbo
+    initializePage();
 
     function initializePage() {
         if (initialized) {
@@ -230,11 +258,14 @@
                 return "Armor";
             case "abilities":
                 return "Abilities";
+            case "healing":
+                return "Healing";
             default:
                 console.error(`Unknown category in mapToCategoryId: ${category}`);
                 return null;
         }
     }
+
 
     function createShopItemDiv(item) {
         const itemDiv = document.createElement("div");
@@ -418,11 +449,17 @@
 
                     const result = await response.json();
                     if (response.ok) {
-                        // Add the new item to the inventory
-                        const itemsSection = document.getElementById("ItemsSection");
-                        const newItemDiv = createInventoryItemDiv(result.item);
-                        itemsSection.appendChild(newItemDiv);
-                        initializeDeleteButtons();
+
+                        if(!('code' in result))
+                        {
+                            // Add the new item to the inventory
+                            const itemsSection = document.getElementById("ItemsSection");
+                            const newItemDiv = createInventoryItemDiv(result.item);
+                            itemsSection.appendChild(newItemDiv);
+                            initializeDeleteButtons();
+                        }
+
+                        console.log(result.shard_amount)
 
                         // Update the shard amount in the UI based on the server's response
                         if (result.shard_amount !== undefined) {
@@ -432,8 +469,9 @@
                             const currentAmount = Number(document.getElementById("shard_amount").innerText);
                             document.getElementById("shard_amount").innerText = (currentAmount - itemData.price).toString();
                         }
+                        updateCharacterInfo(result.character)
 
-                        alert(result.message || "Item purchased successfully!");
+                        alert(result.message || "Purchase successful!");
                     } else {
                         // If purchase fails, alert user
                         alert(result.error || "Failed to purchase item.");
@@ -483,10 +521,13 @@
             case "abilities":
             case "artifact":
                 return "abilities";
+            case "healing":
+                return "healing";
             default:
                 console.warn(`Unknown category during normalization: ${category}`);
                 return category;
         }
     }
+
 
 </script>

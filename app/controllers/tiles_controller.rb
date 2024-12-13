@@ -254,6 +254,7 @@ class TilesController < ApplicationController
         if character.currentHealth <= 0
           # Reset character's health and level
           character.items.destroy_all
+          character.update!(maxHealth: 10)
           character.update!(currentHealth: character.maxHealth, level: 1)
           render json: {
             success: true,

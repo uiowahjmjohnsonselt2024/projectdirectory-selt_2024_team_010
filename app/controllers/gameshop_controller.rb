@@ -29,21 +29,18 @@ class GameshopController < ApplicationController
     render json: { error: "Missing shard parameters." }, status: :bad_request
   end
   def buy
-    # check for if they have at least one character
-    character = current_user.characters.first
+    character = current_user.characters.find_by_id(@current_user.recent_character)
     if character.nil?
       render json: { error: "No character found to assign item to." }, status: :bad_request
       return
     end
 
     item_params = params.require(:item).permit(:name, :description, :level, :category, :price)
-
-    # Convert price to a numeric value (float or integer)
     price = item_params[:price].to_f
 
     # Check if user has enough shards
     if current_user.shard_amount < price
-      render json: { error: "You do not have enough shards to purchase this item." }, status: :unprocessable_entity
+      render json: { error: "You do not have enough shards." }, status: :unprocessable_entity
       return
     end
 
@@ -52,6 +49,7 @@ class GameshopController < ApplicationController
                       when "weapons" then "weapon"
                       when "armor" then "armor"
                       when "abilities" then "artifact"
+                      when "healing" then "healing"
                       else
                         render json: { error: "#{item_params[:category]} is not a valid category" }, status: :unprocessable_entity
                         return
@@ -60,19 +58,81 @@ class GameshopController < ApplicationController
     # Deduct price from user's shards
     current_user.update!(shard_amount: current_user.shard_amount - price)
 
-    # Create the item
-    item = Item.create!(
-      name: item_params[:name],
-      item_type: item_type_value,
-      description: item_params[:description],
-      level: rand(1..20),
-      character_id: character.id
-    )
+    # Prepare character data for response
+    character_data = {
+      current_health: character.currentHealth,
+      max_health: character.maxHealth,
+      level: character.level
+    }
 
-    render json: { success: true, message: "Item purchased successfully!", item: item }, status: :ok
-  rescue ActiveRecord::RecordInvalid => e
-    render json: { error: e.message }, status: :unprocessable_entity
+    # Handle purchases differently based on category
+    case item_type_value
+    when "weapon", "armor", "artifact"
+      # Create the item in the database
+      item = Item.create!(
+        name: item_params[:name],
+        item_type: item_type_value,
+        description: item_params[:description],
+        level: rand(1..20),
+        character_id: character.id
+      )
+      render json: {
+        success: true,
+        message: "Item purchased successfully!",
+        item: item,
+        shard_amount: current_user.shard_amount,
+        character: character_data
+      }, status: :ok
+    when "healing"
+
+      # Apply healing effects rather than creating an item
+      case item_params[:name]
+      when "Full Heal"
+        character.update!(currentHealth: character.maxHealth)
+        character.save!
+        render json: {
+          success: true,
+          message: "You have been fully healed!",
+          shard_amount: current_user.shard_amount,
+          status: :ok,
+          code: "Heal",
+          character: {
+            current_health: character.currentHealth,
+            max_health: character.maxHealth,
+            level: character.level
+          }
+        }
+
+      when "Max HP Boost"
+
+        puts("inside max boost")
+        puts("old")
+        puts(character.maxHealth)
+
+        character.update!(maxHealth: character.maxHealth + 10)
+        character.update!(currentHealth: character.maxHealth)
+        character.save!
+
+        puts("new ")
+        puts(character.maxHealth)
+        render json: {
+           success: true,
+           message: "Your maximum HP has increased by 10, and you are fully healed!",
+           shard_amount: current_user.shard_amount,
+           status: :ok,
+           code: "Heal",
+           character: {
+             current_health: character.currentHealth,
+             max_health: character.maxHealth,
+             level: character.level
+           }
+        }
+      else
+        render json: { error: "Unknown healing option." }, status: :unprocessable_entity
+      end
+    end
   end
+
 
 
   def generate_items
