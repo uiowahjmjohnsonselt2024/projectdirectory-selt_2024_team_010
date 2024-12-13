@@ -19,6 +19,9 @@
       <span class="header-text">Shards of the Grid</span>
     </div>
     <div class="nav">
+      <% if @current_user.isAdmin? %>
+        <%= link_to 'Admin', admin_path, class: 'nav-button' %>
+      <% end %>
       <%= link_to 'Home', dashboard_path, class: 'nav-button' %>
       <%= link_to 'Servers', games_path, class: 'nav-button' %>
       <%= link_to 'Shop', shop_path, class: 'nav-button' %>

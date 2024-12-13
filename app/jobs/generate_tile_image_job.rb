@@ -14,7 +14,7 @@ class GenerateTileImageJob < ActiveJob::Base
     Rails.logger.info "Tile scene_description: #{tile.scene_description.inspect}"
 
     prompt = prompts["image_prompt"] % { scene_description: tile.scene_description }
-    image = GameContentGenerator.generate_image(prompt)
+    image = OpenAIService.generate_image(prompt)
     tile.update!(
       picture: image,
     )

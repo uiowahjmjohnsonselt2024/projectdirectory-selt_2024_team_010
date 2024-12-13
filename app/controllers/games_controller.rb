@@ -10,7 +10,7 @@ class GamesController < ApplicationController
   end
 
   def create
-    new_game = @current_user.games.create(name: params[:server_name], owner_id: @current_user.id)
+    new_game = @current_user.games.create(name: params[:server_name], owner_id: @current_user.id, max_user_count: 6)
     if new_game.save
       flash[:notice] = 'Game successfully created'
       @current_user.characters.create(game_id: new_game.id)
@@ -42,11 +42,20 @@ class GamesController < ApplicationController
   end
 
   def add
-    new_character = @current_user.characters.create(game_id: params[:id])
-    if new_character.errors.include?(:user_id)
-      flash[:notice] = 'Already added game'
+    game = Game.find(params[:id])
+    if game.characters.count >= game.max_user_count
+      flash[:alert] = 'Game is full'
+      redirect_to list_games_path
+    else
+      new_character = @current_user.characters.create(game_id: params[:id])
+      if new_character.errors.include?(:user_id)
+        flash[:alert] = 'Already added game'
+        redirect_to list_games_path
+      else
+        flash[:notice] = 'Successfully added game'
+        redirect_to games_path
+      end
     end
-    redirect_to games_path
   end
 
   def show
@@ -66,14 +75,7 @@ class GamesController < ApplicationController
     end
 
     # Fetch all characters in this game, if needed
-    @characters = @current_game.characters.all
-  end
-
-  def move_character
-    x = params[:x]
-    y = params[:y]
-    @current_character.update!(x_position: x, y_position: y)
-    head :no_content
+    #@characters = @current_game.characters.all
   end
 
 
@@ -85,6 +87,7 @@ class GamesController < ApplicationController
       format.html { redirect_to items_path, notice: 'Item was successfully deleted.' }
     end
   end
+
 
   def get_characters
     @characters = @current_game.characters.all

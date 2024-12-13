@@ -9,8 +9,16 @@ Rails.application.routes.draw do
   post 'users/reset_username', to: 'settings#update_username', as: 'update_username'
   post 'users/reset_password', to: 'settings#update_password', as: 'update_password'
 
+  get 'admin', to: 'admin#index', as: 'admin'
+  get 'admin/edit_user/:id', to: 'admin#edit_user', as: 'edit_user'
+  post 'admin/edit_user/:id', to: 'admin#edit_user_form', as: 'edit_user_form'
+  get 'admin/add_user', to: 'admin#add_user', as: 'add_user'
+  post 'admin/add_user', to: 'admin#add_user_form', as: 'add_user_form'
+  delete 'admin/delete_user', to: 'admin#delete_user_form', as: 'delete_user_form'
+
   get 'register', to: 'registrations#new', as: 'register'
   post 'register', to: 'registrations#create'
+  resources :password_resets, only: [:new, :create, :edit, :update]
 
   get 'welcome', to: 'welcome#index', as: 'welcome'
 
@@ -28,17 +36,30 @@ Rails.application.routes.draw do
 
   post 'tiles/fight_monster', to: 'tiles#fight_monster'
   post 'tiles/loot_tile', to: 'tiles#loot_tile'
+  post 'tiles/regenerate', to: 'tiles#regenerate_tile'
+  post 'tiles/teleport', to: 'tiles#teleport_tile'
 
+
+  get 'gameshop', to: 'gameshop#index'
+  get 'gameshop/generate_items', to: 'gameshop#generate_items'
   delete 'items/:id', to: 'games#destroy', as: 'destroy_item'
 
-  get 'characters', to: 'games#get_characters', as: 'characters'
+  get 'gameshop/items', to: 'gameshop#items', as: 'user_items'
+  get 'gameshop', to: 'gameshop#index'
+  post 'gameshop/buy', to: 'gameshop#buy'
 
+  get 'characters', to: 'characters#get_characters', as: 'characters'
+  post 'move_character', to: 'characters#move_character', as: 'move_character'
 
+  get 'characters/items', to: 'characters#items', as: 'character_items'
+
+  post 'chat', to: 'chat#create', as: 'chat_send'
+  get 'chat', to: 'chat#list', as: 'chat_list'
 
   resources :games do
     get 'list', on: :collection
     post 'add', on: :member
-    post 'move_character', on: :member
+    #post 'move_character', on: :member
     #resources :tiles
     # We can also add the resources :characters here if we decide we need a controller for it. It will allow us to
     # ensure that the game session the character or tile is attached to is always knowable.

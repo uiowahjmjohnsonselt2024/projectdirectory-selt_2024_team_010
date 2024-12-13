@@ -15,7 +15,8 @@ User.create!(
   password: 'password123',
   password_confirmation: 'password123',
   shard_amount: 100.5,
-  money_usd: 2500.75
+  money_usd: 2500.75,
+  isAdmin: true
 )
 
 User.create!(
@@ -26,17 +27,17 @@ User.create!(
   shard_amount: 300.0,
   money_usd: 1500.0
 )
-
-Game.destroy_all
-Character.destroy_all
-
-test_user = User.find_by(username: 'bob')
-
-new_game = Game.create!(
-  owner_id: test_user.id,
-  name: "Test Server"
-)
-
-test_user.characters.create!(
-  game_id: new_game.id,
-)
+#
+# Game.destroy_all
+# Character.destroy_all
+#
+# test_user = User.find_by(username: 'bob')
+#
+# new_game = Game.create!(
+#   owner_id: test_user.id,
+#   name: "Test Server"
+# )
+#
+# test_user.characters.create!(
+#   game_id: new_game.id,
+# )

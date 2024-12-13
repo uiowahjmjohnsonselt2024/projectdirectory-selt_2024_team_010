@@ -4,6 +4,12 @@ Given /^I am on the dashboard screen$/ do
   visit dashboard_path
 end
 
+Given /^User "([^"]*)" has added server "([^"]*)" with host "([^"]*)"$/ do |username, server, host|
+  user = User.find_by_username(username)
+  game = Game.find_by(name: server, owner_id: User.find_by_username(host).id)
+  user.characters.create!(game_id: game.id)
+end
+
 # Actions:
 
 When(/^I click the "([^"]*)" button$/) do |button|
