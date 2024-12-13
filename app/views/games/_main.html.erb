@@ -183,6 +183,16 @@
                   } else if (data.result === "monster_win") {
                       alert("You lost to the monster. Be careful!");
                   } else if (data.result === "player_died") {
+
+                      const itemsSection = document.getElementById("ItemsSection");
+
+                      while (itemsSection.firstChild) {
+                          itemsSection.removeChild(itemsSection.firstChild);
+                      }
+
+                      itemsSection.appendChild(Object.assign(document.createElement("h2"), { textContent: "Your Items" }));
+
+
                       alert(data.message); // Display death message
                   }
               } else {
