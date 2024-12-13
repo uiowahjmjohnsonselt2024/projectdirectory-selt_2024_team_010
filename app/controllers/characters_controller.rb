@@ -7,7 +7,6 @@ class CharactersController < ApplicationController
     @characters = @current_game.characters
                                .select("characters.id, characters.x_position, characters.y_position, users.username")
                                .joins(:user)
-                               .where("characters.id = users.recent_character")
 
     puts @characters.inspect
     render json: { characters: @characters }
