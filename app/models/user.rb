@@ -15,9 +15,6 @@ class User < ActiveRecord::Base
   # note that this requires we use the 'user' scope for oauth, see config/initializers/omniauth.rb for its usage
   def self.from_omniauth(auth)
     user = find_by(email: auth[:info][:email])
-
-    Rails.logger.info auth.inspect
-
     unless user
       begin
         # choose a good name and password.

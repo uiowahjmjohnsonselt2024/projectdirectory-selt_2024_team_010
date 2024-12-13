@@ -39,7 +39,7 @@ class SessionsController < ApplicationController
       end
     else
       Rails.logger.info user.inspect
-      flash[:warning] = "shits fucked mate"
+      flash[:warning] = "Oauth login failed; please create an account or login normally."
       redirect_to login_path
     end
   end
