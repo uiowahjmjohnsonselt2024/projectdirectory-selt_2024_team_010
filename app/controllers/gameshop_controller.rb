@@ -72,19 +72,49 @@ class GameshopController < ApplicationController
       render json: { success: true, message: "Item purchased successfully!", item: item, shard_amount: current_user.shard_amount }, status: :ok
 
     when "healing"
+
+      puts("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+      puts("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+      puts("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+      puts("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+      puts("")
+
       # Apply healing effects rather than creating an item
       case item_params[:name]
       when "Full Heal"
-        character.currentHealth = character.maxHealth
+        character.update!(currentHealth: character.maxHealth)
+        character.user.update!(shard_amount: character.user.shard_amount - 100)
         character.save!
-        render json: { success: true, message: "You have been fully healed!", shard_amount: current_user.shard_amount }, status: :ok
+        render json: {
+          success: true,
+          message: "You have been fully healed!",
+          shard_amount: current_user.shard_amount,
+          status: :ok,
+          code: "Heal",
+          character: {
+            current_health: character.currentHealth,
+            max_health: character.maxHealth,
+            level: character.level
+          }
+        }
 
       when "Max HP Boost"
-        character.maxHealth += 10
-        character.currentHealth = character.maxHealth
+        character.update!(maxHealth: character.maxHealth + 10)
+        character.update!(currentHealth: character.maxHealth)
+        character.user.update!(shard_amount: character.user.shard_amount - 500)
         character.save!
-        render json: { success: true, message: "Your maximum HP has increased by 10, and you are fully healed!", shard_amount: current_user.shard_amount }, status: :ok
-
+        render json: {
+           success: true,
+           message: "Your maximum HP has increased by 10, and you are fully healed!",
+           shard_amount: current_user.shard_amount,
+           status: :ok,
+           code: "Heal",
+           character: {
+             current_health: character.currentHealth,
+             max_health: character.maxHealth,
+             level: character.level
+           }
+        }
       else
         render json: { error: "Unknown healing option." }, status: :unprocessable_entity
       end

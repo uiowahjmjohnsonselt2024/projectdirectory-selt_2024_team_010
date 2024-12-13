@@ -451,11 +451,16 @@
 
                     const result = await response.json();
                     if (response.ok) {
-                        // Add the new item to the inventory
-                        const itemsSection = document.getElementById("ItemsSection");
-                        const newItemDiv = createInventoryItemDiv(result.item);
-                        itemsSection.appendChild(newItemDiv);
-                        initializeDeleteButtons();
+
+                        if(!('code' in result))
+                        {
+                            // Add the new item to the inventory
+                            const itemsSection = document.getElementById("ItemsSection");
+                            const newItemDiv = createInventoryItemDiv(result.item);
+                            itemsSection.appendChild(newItemDiv);
+                            initializeDeleteButtons();
+                        }
+
 
                         // Update the shard amount in the UI based on the server's response
                         if (result.shard_amount !== undefined) {
@@ -465,6 +470,7 @@
                             const currentAmount = Number(document.getElementById("shard_amount").innerText);
                             document.getElementById("shard_amount").innerText = (currentAmount - itemData.price).toString();
                         }
+                        updateCharacterInfo(result.character)
 
                         alert(result.message || "Item purchased successfully!");
                     } else {
