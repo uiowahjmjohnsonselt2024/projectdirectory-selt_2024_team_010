@@ -18,9 +18,9 @@ class User < ActiveRecord::Base
     unless user
       begin
         # choose a good name and password.
-        name = "#{auth['info']['login']&.gsub(/\s+/, '')}\##{SecureRandom.base64(4)}"
-        unless find_by(username: auth['info']['login'])
-          name = auth['info']['login'] # if we can, just use the normal username
+        name = "#{auth[:info][:nickname]&.gsub(/\s+/, '')}\##{SecureRandom.base64(4)}"
+        unless find_by(username: auth[:info][:nickname])
+          name = auth[:info][:nickname] # if we can, just use the normal username
         end
         password = SecureRandom.base64(16)
 
@@ -32,6 +32,10 @@ class User < ActiveRecord::Base
         user.update(money_usd: 0, shard_amount: 0)
       rescue ActiveRecord::RecordInvalid => e
         return e
+      end
+    else
+      unless user.is_oauth?
+        return NameError.new
       end
     end
     user

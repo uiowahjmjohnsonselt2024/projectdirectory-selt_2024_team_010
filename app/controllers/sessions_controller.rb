@@ -26,23 +26,23 @@ class SessionsController < ApplicationController
   def auth_success
     auth = request.env['omniauth.auth']
     user = User.from_omniauth(auth)
-    if user
+    if user.nil?
+      return auth_failure "Oauth login failed; please create an account or login normally."
+    else
       if user.instance_of? ActiveRecord::RecordInvalid
-        params[:message] = "Failed in creating the record. Please try again."
-        redirect_to auth_failure_path
+        return auth_failure "Failed in creating the record. Please try again."
+      elsif user.instance_of? NameError
+        return auth_failure "You are attempting to authenticate with an email already registered; register normally with another email, or log in normally with the email assigned to your GitHub account."
       else
         create_session_token user
         flash[:notice] = "Logged in successfully"
         redirect_to dashboard_path
       end
-    else
-      flash[:warning] = "Oauth login failed; please create an account or login normally."
-      redirect_to login_path
     end
   end
 
-  def auth_failure
-    flash[:warning] = "Authentication failed. :(\nReason: #{params[:message]}"
+  def auth_failure(reason)
+    flash[:warning] = "Authentication failed. :(\nReason: #{reason}"
     redirect_to welcome_path
   end
 end
