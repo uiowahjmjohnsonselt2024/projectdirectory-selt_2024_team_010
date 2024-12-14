@@ -1,7 +1,11 @@
 var initialized = false;
 
 document.addEventListener("DOMContentLoaded", () => {
+    const body = document.body;
+    const isShopPage = body.dataset.controller === "shop" && body.dataset.action === "index";
+
     if (initialized) return;
+    if (!isShopPage) return;
 
     initialized = true;
     console.log("Script initialized"); // Check if this runs
