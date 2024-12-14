@@ -427,7 +427,7 @@ class TilesController < ApplicationController
 
     response = OpenAIService.generate_content(
       "gpt-4o-mini",
-      prompts['item_details_prompt'] % { name: name, description: description },
+      prompts['item_system_prompt'] % { name: name, description: description },
       ""
     )
     clean_response = response.gsub(/^```json\s*/, '').gsub(/```$/, '')
