@@ -340,16 +340,12 @@
                     const updatedShards = await updateShards(-currentCost);
 
                     if (updatedShards !== null) {
-                        // Fetch and load new shop items
-                        await loadShopItems(true); // Pass true to force fetch
+                        await loadShopItems(true);
 
                         // Increment the refresh count
                         refreshCount += 1;
                         sessionStorage.setItem('shopRefreshCount', refreshCount);
-
-                        // Update the button text with the new cost
                         updateRefreshButtonText();
-
                         alert("Shop refreshed successfully!");
                     } else {
                         // If shard deduction failed, do not proceed
@@ -497,7 +493,7 @@
         });
 
         items.forEach(item => {
-            const normalizedCategory = mapToCategoryId(item.category); // Map category to HTML ID
+            const normalizedCategory = mapToCategoryId(item.category);
             const categoryContainer = categoryContainers[normalizedCategory];
 
             if (categoryContainer) {
@@ -528,6 +524,4 @@
                 return category;
         }
     }
-
-
 </script>
