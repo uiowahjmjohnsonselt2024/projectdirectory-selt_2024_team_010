@@ -71,6 +71,7 @@
               console.error(data.error);
               updateGameSection(`<p>${data.error}</p>`);
           } else {
+              refreshTileInfo(current_position[0], current_position[1]);
               updateTileInfoSection(data);
           }
       })
@@ -111,6 +112,7 @@
                   console.error(data.error);
                   updateGameSection(`<p>${data.error}</p>`);
               } else {
+                  refreshTileInfo(x, y);
                   updateTileInfoSection(data);
               }
           })
@@ -291,7 +293,7 @@
                 <p><strong>Position:</strong> (${data.x}, ${-data.y})</p>
                 <p><strong>Biome:</strong> ${biome_map[data.biome]}</p>
                 <br>
-                <p><strong>Picture:</strong> ${img_url ? "<img src='" + img_url + "' />" : "None"}</p>
+                <p>${img_url ? "<img src='" + img_url + "' />" : "None"}</p>
                 <br>
                 <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
                 <br>
@@ -541,6 +543,7 @@
 
         renderAllCharacters();
         displayCurrentBiome();
+        refreshTileInfo(x, y);
         refreshTileInfo(x, y);
 
 
