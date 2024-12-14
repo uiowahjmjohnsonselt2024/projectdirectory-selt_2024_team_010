@@ -5,16 +5,6 @@ require 'openAIService'
 class TilesController < ApplicationController
   @@generated_items = Set.new  # Use a class-level Set to store unique item names
   before_action :require_login, :get_current_game, :initialize_generator
-  BIOMES = [:white, :green, :yellow, :gray, :blue]
-
-  def create
-    x = params[:x]
-    y = params[:y]
-    unless @current_game&.tiles&.where("x_position = ? AND y_position = ?", x, y)
-      return
-    end
-    @current_game.tiles.create!(x_position: x, y_position: y, biome: BIOMES.sample)
-  end
 
   def get_tile
     x = params[:x].to_i
@@ -181,7 +171,8 @@ class TilesController < ApplicationController
         result: "no_loot",
         tile: tile,
 
-      }
+      },
+             status: 420
     end
   end
 
