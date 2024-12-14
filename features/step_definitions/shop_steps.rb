@@ -14,6 +14,5 @@ end
 
 # I don't really have a better way to test this unfortunately
 Then(/^The tile container should exist$/) do
-  print page.html
   expect(page).to have_xpath('.//div[@id="GameSection"]')
 end
