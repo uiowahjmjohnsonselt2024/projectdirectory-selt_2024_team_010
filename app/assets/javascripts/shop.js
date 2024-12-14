@@ -1,5 +1,5 @@
 
-    document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     console.log("Script initialized"); // Check if this runs
     var SHARD_COST_BASE_USD = 0.75; // base cost per shard in USD
     var API_URL = 'https://v6.exchangerate-api.com/v6/464f4642b6d4d3ec3744b64d/latest/USD'; // updates daily for free plan
@@ -326,7 +326,7 @@
 
     // payment history loading
     function fetchAndUpdatePaymentHistory() {
-    fetch("<%= shop_payment_history_path%>")
+    fetch(SHOP_PAYMENT_HISTORY_PATH)
     .then((response) => {
     if (!response.ok) throw new Error("Failed to load payment history");
     return response.json();
