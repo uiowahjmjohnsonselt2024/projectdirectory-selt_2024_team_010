@@ -324,7 +324,6 @@ DEPENDENCIES
   omniauth-rails_csrf_protection
   pg (~> 0.2)
   rails (= 4.2.10)
-  redis
   rspec-rails
   ruby-openai (~> 7.3.1)
   sass-rails (~> 5.0)

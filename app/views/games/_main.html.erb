@@ -277,23 +277,21 @@
         const isCurrentPosition = (data.x === current_position[0] && data.y === current_position[1]);
 
         // Fetching image asynchronously from javascript.
-        let img_url;
-        fetch(`/tiles/get_image?x=${data.x}&y=${data.y}`).then(response => {
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-            return response.blob(); // Convert the response to a Blob (binary data)
-        }).then(_blob => {
-            img_url = URL.createObjectURL(_blob)
-        }).catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        }).finally(() => {
+        // let img_url;
+        // fetch(`/tiles/get_image?x=${data.x}&y=${data.y}`).then(response => {
+        //     if (!response.ok) {
+        //         throw new Error(`Network response was not ok: ${response.statusText}`);
+        //     }
+        //     return response.blob(); // Convert the response to a Blob (binary data)
+        // }).then(_blob => {
+        //     img_url = URL.createObjectURL(_blob)
+        // }).catch(error => {
+        //     console.error('There was a problem with the fetch operation:', error);
+        // }).finally(() => {
             let tileInfo = `
                 <h2>Tile Information</h2>
                 <p><strong>Position:</strong> (${data.x}, ${-data.y})</p>
                 <p><strong>Biome:</strong> ${biome_map[data.biome]}</p>
-                <br>
-                <p>${img_url ? "<img src='" + img_url + "' />" : "None"}</p>
                 <br>
                 <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
                 <br>
@@ -354,7 +352,7 @@
             }
 
             updateGameSection(tileInfo);
-        });
+
     }
 
     async function regenerateTile(x, y) {
