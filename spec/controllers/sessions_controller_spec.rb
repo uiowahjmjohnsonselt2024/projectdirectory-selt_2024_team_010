@@ -77,4 +77,74 @@ RSpec.describe SessionsController, type: :controller do
       expect(response).to redirect_to(welcome_path)
     end
   end
+  describe 'GET #auth_success' do
+    let(:auth_hash) do
+      {
+        provider: 'github',
+        uid: '123456',
+        info: {
+          email: 'test@example.com',
+          nickname: 'githubuser'
+        }
+      }
+    end
+
+    before do
+      request.env['omniauth.auth'] = auth_hash
+    end
+
+    context 'when user is successfully authenticated' do
+      before do
+        allow(User).to receive(:from_omniauth).and_return(user)
+      end
+
+      it 'creates a session token for the user' do
+        expect(controller).to receive(:create_session_token).with(user)
+        get :auth_success, { provider: 'github' }
+      end
+
+      it 'sets a flash notice' do
+        get :auth_success, { provider: 'github' }
+        expect(flash[:notice]).to eq("Logged in successfully")
+      end
+
+      it 'redirects to the dashboard' do
+        get :auth_success, { provider: 'github' }
+        expect(response).to redirect_to(dashboard_path)
+      end
+    end
+
+    context 'when user creation fails with ActiveRecord::RecordInvalid' do
+      before do
+        allow(User).to receive(:from_omniauth).and_return(ActiveRecord::RecordInvalid.new(User.new))
+      end
+
+      it 'sets a flash alert and redirects to auth_failure' do
+        get :auth_success, { provider: 'github' }
+        expect(flash[:alert]).to eq("Authentication failed. :(\nReason: Failed in creating the record. Please try again.")
+      end
+    end
+
+    context 'when user creation fails with NameError' do
+      before do
+        allow(User).to receive(:from_omniauth).and_return(NameError.new)
+      end
+
+      it 'sets a flash alert and redirects to auth_failure' do
+        get :auth_success, { provider: 'github' }
+        expect(flash[:alert]).to include("Authentication failed.")
+      end
+    end
+
+    context 'when user is nil' do
+      before do
+        allow(User).to receive(:from_omniauth).and_return(nil)
+      end
+
+      it 'sets a flash alert and redirects to auth_failure' do
+        get :auth_success, { provider: 'github' }
+        expect(flash[:alert]).to eq("Authentication failed. :(\nReason: Oauth login failed; please create an account or login normally.")
+      end
+    end
+  end
 end
