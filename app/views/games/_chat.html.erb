@@ -7,13 +7,12 @@
       <div class="character-details">
         <p><strong>Username:</strong> <span class="character-value"><%= @current_user.username %></span></p>
         <p><strong>Level:</strong> <span class="character-value"><%= @current_character.level %></span></p>
-
         <p><strong>Shards: <span class="character-value" id="shard_amount"><%= @current_user.shard_amount %></span></strong>
         <!-- Fancy Health Bar -->
         <div class="health-bar-container">
           <p><strong>HP:</strong>
-            <span class="character-value"><%= @current_character.currentHealth %></span> /
-            <%= @current_character.maxHealth %>
+            <span class="character-value" id="currHealth"><%= @current_character.currentHealth %></span> /
+            <span class="character-value" id="maxHealth"><%= @current_character.maxHealth %> </span>
           </p>
           <div class="health-bar">
             <div class="health-fill" style="width: <%= ((@current_character.currentHealth.to_f / @current_character.maxHealth.to_f) * 100).round(2) %>%;"></div>
@@ -73,13 +72,16 @@
         const chatLog = await (response.json())
 
         const chatBox = document.getElementById('chat-messages')
-        chatBox.innerHTML = '' // Remove the old chat messages
+
+        if (chatBox)
+            chatBox.innerHTML = '' // Remove the old chat messages
         //console.log(chatLog)
 
         for (const message of chatLog.chatLog) { // Create the new messages.
             let newEntry = document.createElement('div')
             newEntry.innerHTML = '<strong>'+message.user+':</strong> '+message.message
-            chatBox.appendChild(newEntry)
+            if (chatBox)
+                chatBox.appendChild(newEntry)
         }
 
         chatPoll = setTimeout(() => {updateChat()}, 3000) // Call myself again 3 seconds after the last time I have been called.
