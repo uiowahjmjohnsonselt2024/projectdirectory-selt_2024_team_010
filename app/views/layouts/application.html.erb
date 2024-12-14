@@ -7,7 +7,7 @@
   <%= csrf_meta_tags %>
   <%= favicon_link_tag 'favicon.ico' %>
 </head>
-<body style="background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+<body data-controller="<%= controller_name %>" data-action="<%= action_name %>" style="background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
   url('<%= asset_path("background.png") %>') no-repeat center center fixed;
   background-size: cover; background-attachment: fixed;">
 
@@ -65,7 +65,7 @@
                 flash.classList.add('fade-out');
                 setTimeout(() => flash.remove(), 500); // Remove element after fade out
             });
-        }, 2500); // 5 seconds
+        }, 2500);
     });
 </script>
 

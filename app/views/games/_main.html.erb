@@ -42,7 +42,7 @@
 
     var cellColors = <%= raw @tiles.to_json %>;
     var gameId = <%= @current_game.id %>;
-    var currentCharacter = <%= raw @current_character.to_json %>;
+    var currentCharacter = <%= raw @current_character.to_json %>
     var current_position = [currentCharacter.x_position, currentCharacter.y_position];
 
     // Get the CSRF token from the meta tags
@@ -544,12 +544,11 @@
         displayCurrentBiome();
         refreshTileInfo(x, y);
 
-        // I am disabling the buttons on movement and re-enabling them after 0.5 seconds to allow for the movement to
-        // refresh.
+        // Disable the buttons on movement and re-enabling them after 0.5 seconds
         setTimeout(()=>{
             moveButtons.forEach((button) => {
-              button.disabled = false
-          })}, 500);
+                button.disabled = false
+            })}, 500);
         console.log(`Moved ${direction} to position: (${x}, ${y})`);
     }
 
@@ -630,7 +629,6 @@
             });
         }
     }
-
 </script>
 
 <style>
