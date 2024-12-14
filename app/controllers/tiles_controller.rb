@@ -329,7 +329,7 @@ class TilesController < ApplicationController
     colors = ['gray', 'green', 'yellow', 'blue']
     tile.biome = colors.sample
 
-    ai_generated_content = generate_tile_content(tile)
+    ai_generated_content = generate_tile_text(tile)
     tile.update!(
       picture: ai_generated_content[:picture],
       scene_description: ai_generated_content[:scene_description],
