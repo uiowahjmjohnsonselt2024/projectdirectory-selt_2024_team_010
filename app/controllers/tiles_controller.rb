@@ -2,7 +2,6 @@
 require 'openai'
 require 'openAIService'
 require 'base64'
-Dotenv.load
 
 class TilesController < ApplicationController
   @@generated_items = Set.new  # Use a class-level Set to store unique item names
