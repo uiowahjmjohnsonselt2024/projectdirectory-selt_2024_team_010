@@ -1,6 +1,5 @@
-# we're using a background job to generate images, since they could take a significant amount of time to arrive.
-class GenerateTileImageJob < ActiveJob::Base
-  queue_as :default
+class AiImageGenerationWorker
+  include Sidekiq::Worker
 
   def prompts
     @prompts ||= YAML.load_file(Rails.root.join('config', 'prompts.yml'))
