@@ -98,16 +98,15 @@ class TilesController < ApplicationController
 
     #Calculate Monster strength
     monster_levels = {
-      easy: (player_strength / 2.0).ceil, # Half of the player's strength, minimum 1
-      medium: player_strength, # Equal to the player's strength
-      hard: (player_strength * 2), # Two times the player's strength
-      boss: (player_strength * 5) # Five times the player's strength
+      easy: (player_strength / 2.0).ceil,
+      medium: player_strength,
+      hard: (player_strength * 2),
+      boss: (player_strength * 5)
     }
 
-    # Add random aspect (10% of the monster's level)
     monster_levels.each do |difficulty, level|
       random_factor = rand((level * 0.1).to_i + 1) # Random up to 10% of the level
-      monster_levels[difficulty] = [level + random_factor, 1].max # Ensure minimum of 1
+      monster_levels[difficulty] = [level + random_factor, 1].max
     end
 
     difficulty_weights = {
@@ -161,7 +160,6 @@ class TilesController < ApplicationController
         item_info = generate_item_details(treasure)
 
         # Ensure we have a character_id to attach this item to.
-        # Adjust this as needed to get the correct character. For example:
         character = @current_user.characters.find_by(game_id: @current_game.id)
         if character.nil?
           render json: { error: "No character found to assign item to." }, status: 420
@@ -171,7 +169,7 @@ class TilesController < ApplicationController
         # Create a new item record in the items table with item_type instead of type
         Item.create!(
           name: item_info[:name],
-          item_type: item_info[:item_type],  # renamed to item_type
+          item_type: item_info[:item_type],
           description: item_info[:description],
           level: item_info[:level],
           character_id: character.id
@@ -195,9 +193,6 @@ class TilesController < ApplicationController
 
     tile = @current_game.tiles.find_by(x_position: x, y_position: y)
     if tile && tile.monster_description.present?
-      # Parse monster level and description
-
-      monster_text = tile.monster_description
       monster_level = tile.monster_level
 
       # Get the current character for the user in this game
@@ -215,7 +210,6 @@ class TilesController < ApplicationController
 
       total = player_strength + monster_level
       if total == 0
-        # Edge case: if somehow both are zero, just declare a tie or player wins?
         total = 1
       end
       player_odds = (player_strength.to_f / total) * 100.0
@@ -229,7 +223,6 @@ class TilesController < ApplicationController
         # Monster is slain
         tile.update!(monster_description: nil)
         tile.update!(monster_level: nil)
-        # Player levels up
         character.update!(level: character.level + 1)
 
         if character.currentHealth < character.maxHealth
