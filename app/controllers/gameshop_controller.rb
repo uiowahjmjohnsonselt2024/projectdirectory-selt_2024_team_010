@@ -11,7 +11,7 @@ class GameshopController < ApplicationController
     shard_amount = shard_params[:shard_amount].to_f
 
     # Calculate the new shard amount
-    new_shard_amount = current_user.shard_amount - shard_amount
+    new_shard_amount = current_user.shard_amount + shard_amount
 
     # Prevent shard_amount from going negative
     if new_shard_amount < 0
@@ -20,7 +20,8 @@ class GameshopController < ApplicationController
     end
 
     # Update the user's shards
-    if current_user.update(shard_amount: new_shard_amount)
+    #
+    if current_user.update!(shard_amount: new_shard_amount)
       render json: { success: true, shard_amount: current_user.shard_amount }, status: :ok
     else
       render json: { error: "Failed to update shards." }, status: :internal_server_error
