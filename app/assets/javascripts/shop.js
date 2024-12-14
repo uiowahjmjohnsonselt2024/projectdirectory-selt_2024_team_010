@@ -1,5 +1,9 @@
+var initialized = false;
 
 document.addEventListener("DOMContentLoaded", () => {
+    if (initialized) return;
+
+    initialized = true;
     console.log("Script initialized"); // Check if this runs
     var SHARD_COST_BASE_USD = 0.75; // base cost per shard in USD
     var API_URL = 'https://v6.exchangerate-api.com/v6/464f4642b6d4d3ec3744b64d/latest/USD'; // updates daily for free plan
