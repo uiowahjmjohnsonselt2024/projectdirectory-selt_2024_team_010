@@ -84,7 +84,6 @@ class GamesController < ApplicationController
     @item.destroy
     respond_to do |format|
       format.json { head :no_content }
-      format.html { redirect_to items_path, notice: 'Item was successfully deleted.' }
     end
   end
 
