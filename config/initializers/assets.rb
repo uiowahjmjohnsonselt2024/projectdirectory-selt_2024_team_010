@@ -11,3 +11,4 @@ Rails.application.config.assets.version = '1.0'
 # Rails.application.config.assets.precompile += %w( search.js )
 Rails.application.config.assets.precompile += %w[_shop.js]
 Rails.application.config.assets.precompile += %w[_chat.js]
+Rails.application.config.assets.precompile += %w[shop.js]
