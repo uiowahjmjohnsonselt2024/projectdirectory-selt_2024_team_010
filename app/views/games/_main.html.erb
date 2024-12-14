@@ -292,7 +292,9 @@
                 <p><strong>Position:</strong> (${data.x}, ${-data.y})</p>
                 <p><strong>Biome:</strong> ${biome_map[data.biome]}</p>
                 <br>
-                <p><strong>Picture:</strong> ${img_url ? "<img src='" + img_url + "' />" : "None"}</p>
+                <div id="tile_image">
+                ${img_url ? "<img src='" + img_url + "' />" : "No Image"}
+                </div>
                 <br>
                 <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
                 <br>
@@ -743,5 +745,11 @@
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
+    }
+
+    #tile_image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 </style>

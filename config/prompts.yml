@@ -16,13 +16,15 @@ tile_system_prompt: >
   }
 
 tile_instruction_prompt: > # vars: biome
-  Generate content for a tile in the %{biome} biome.
-  Include:
-  - A landscape description
-  - A monster description
-  Do not include or mention any loot. Consider adding features into the scene that the player might
-  notice; as an example, if its relevant you could add a trail or a carving on something in the scene,
-  however it is not strictly necessary. You aren't limited by those examples; get creative!
+  Depict a magical and vivid tile set in the %{biome} biome, brimming with wonder and mystery. Create a stunning visual
+  scene that could include, for example:
+  - A fantastical landscape, such as floating crystalline pools, trees that hum with forgotten melodies, or clouds that
+    shimmer like spilled ink.
+  - An otherworldly creature integrated seamlessly into the environment, such as a luminous being woven from fireflies,
+    a towering sentinel with bark-like skin and glowing veins, or a playful shadowy figure on the edges of perception.
+  Subtly hint at unique features in the scene, like a winding trail of glowing footprints, enigmatic carvings on ancient
+  rocks, or a peculiar pattern in the foliage. Focus entirely on the visual storytelling (add no typography or text) —
+  let the image immerse viewers in the biome’s magical essence.
 
 item_system_prompt: > # vars: previous_item_names
   You are a creative item generator for a fantasy game.
