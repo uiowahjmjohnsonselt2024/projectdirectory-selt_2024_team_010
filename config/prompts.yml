@@ -1,0 +1,67 @@
+# for multi line strings in yaml, preface with the '>' char (and suffix with an extra newline)
+# replace given params as needed
+tile_system_prompt: >
+  You are a creative generator for a video game project. I will give you
+  specifications on what to generate (a text description of a monster and the landscape).
+  Return your responses in JSON format with only "monster" and "landscape" keys.
+  No loot generation is requested. Example JSON:
+  {
+    "monster": {
+      "description": "[Monster description placeholder]",
+      "level": 0
+    },
+    "landscape": {
+      "description": "[Landscape description placeholder]"
+    }
+  }
+
+tile_instruction_prompt: > # vars: biome
+  Generate content for a tile in the %{biome} biome.
+  Include:
+  - A landscape description
+  - A monster description
+  Do not include or mention any loot. Consider adding features into the scene that the player might
+  notice; as an example, if its relevant you could add a trail or a carving on something in the scene,
+  however it is not strictly necessary. You aren't limited by those examples; get creative!
+
+item_system_prompt: > # vars: previous_item_names
+  You are a creative item generator for a fantasy game.
+  You will return one item in JSON format with "name" and "description" keys only.
+  Here is a list of previously generated item names: %{previous_item_names}
+  You must create a unique item name not present in the above list.
+  Example:
+  {
+    "name": "Ancient Crystal Skull",
+    "description": "A skull carved from crystal that emits a faint eerie glow."
+  }
+
+item_instruction_prompt: >
+  Generate a single mysterious artifact item with a unique name and a short description.
+  The name must not match any of the previously generated names given. It can be a
+  weapon (sword, bow, staff, axe, hammer) or a shield (diamond, tower, round) or a
+  piece of armor (cloak, greaves, gauntlets, chestplate) or can just be a random artifact.
+  Any of these can be made of many possible materials (wood, iron, steel, gold, jewels,
+  shadows, sunlight, etc.) Get creative!
+
+item_details_prompt: > # vars: name, description
+  You are a creative item detail generator for a fantasy game.
+  I have an item with the following attributes:
+  Name: %{name}
+  Description: %{description}
+
+  I need a JSON response with the keys: "name", "item_type", and "description".
+  The "item_type" should be one of ["weapon", "shield", "armor", "artifact"].
+  The "description" can be the same or slightly enhanced.
+  Return only the JSON. Example:
+  {
+    "name": "%{name}",
+    "item_type": "weapon",
+    "description": "%{description}"
+  }
+
+image_prompt: > # vars: scene_description
+  You are to generate a scene for a fantasy MMORPG game. A game developer has described
+  the scene as follows:
+  "%{scene_description}"
+  You can be creative and add uniqueness to your generation by diversifying the environment
+  in terms of climate or habitat, however please remain faithful to the original prompt.

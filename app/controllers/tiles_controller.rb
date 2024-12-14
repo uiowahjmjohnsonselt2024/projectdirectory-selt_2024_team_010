@@ -1,10 +1,43 @@
 # frozen_string_literal: true
 require 'openai'
 require 'openAIService'
+require 'base64'
+Dotenv.load
 
 class TilesController < ApplicationController
   @@generated_items = Set.new  # Use a class-level Set to store unique item names
-  before_action :require_login, :get_current_game, :initialize_generator
+  before_action :require_login, :get_current_game
+  BIOMES = {
+    "white"  => "snow",
+    "green"  => "plains",
+    "yellow" => "desert",
+    "gray"   => "mountains",
+    "blue"   => "sea"
+  }
+
+  def get_image
+    x = params[:x]
+    y = params[:y]
+    tile = @current_game.tiles.find_by(x_position: x, y_position: y)
+
+    # first check if the tile exists.
+    if tile
+      # if it does, serve the cached generated content.
+      if tile.picture.present? # https://stackoverflow.com/a/29614032
+        render text: Base64.decode64(tile.picture), content_type: 'image/png'
+      else
+        # otherwise, generate it in the background and render a "loading" image
+        send_file(Rails.root.join('public', 'loading.png'), type: "image/png", disposition: "inline")
+        unless tile.picture_generating?
+          tile.update!(picture_generating: true)
+          GenerateTileImageJob.perform_later(tile.id)
+        end
+      end
+    else
+      # if it doesn't throw an error
+      render json: { error: 'Tile not found' }, status: 404
+    end
+  end
 
   def get_tile
     x = params[:x].to_i
@@ -13,10 +46,10 @@ class TilesController < ApplicationController
     tile = @current_game.tiles.find_by(x_position: x, y_position: y)
     if tile
       # If tile has no generated content, generate it
-      if tile.picture.blank? && tile.scene_description.blank? && tile.treasure_description.blank? && tile.monster_description.blank?
-        ai_generated_content = generate_tile_content(tile)
+      if isGenerated(tile)
+        # Update the tile with the generated content
+        ai_generated_content = generate_tile_text(tile)
         tile.update!(
-          picture: ai_generated_content[:picture],
           scene_description: ai_generated_content[:scene_description],
           treasure_description: ai_generated_content[:treasure_description],
           monster_description: ai_generated_content[:monster_description],
@@ -28,7 +61,6 @@ class TilesController < ApplicationController
         x: tile.x_position,
         y: tile.y_position,
         biome: tile.biome,
-        picture: tile.picture,
         scene_description: tile.scene_description,
         treasure_description: tile.treasure_description,
         monster_description: tile.monster_description,
@@ -39,33 +71,15 @@ class TilesController < ApplicationController
     end
   end
 
-  def generate_tile_content(tile)
-    generator = @generator
-
-    system_prompt = <<~PROMPT
-    You are a creative generator for a video game project. I will give you
-    specifications on what to generate (a text description of a monster and the landscape).
-    Return your responses in JSON format with only "monster" and "landscape" keys.
-    No loot generation is requested. Example JSON:
-    {
-      "monster": {
-        "description": "[Monster description placeholder. 3 sentences max!]",
-      },
-      "landscape": {
-        "description": "[Landscape description placeholder. 3 sentences max!]"
-      }
-    }
-  PROMPT
-
-    instruction_prompt = <<~INSTRUCTION
-    Generate content for a tile in the #{tile.biome} biome.
-    Include:
-    - A landscape description
-    - A monster description
-    Do not include any loot. Do not mention loot.
-  INSTRUCTION
-
-    response = generator.generate_content("gpt-4o-mini", system_prompt, instruction_prompt)
+  def generate_tile_text(tile)
+    # generate main tile properties
+    puts prompts.keys.inspect
+    inst_prompt = prompts['tile_instruction_prompt'] % { :biome => BIOMES[tile.biome] }
+    response = OpenAIService.generate_content(
+      "gpt-4o-mini",
+      prompts['tile_system_prompt'],
+      inst_prompt
+    )
     parsed_response = JSON.parse(response, symbolize_names: true) rescue {}
 
 
@@ -113,7 +127,7 @@ class TilesController < ApplicationController
     roll = rand(100)
     treasure_description =
       if roll < 10
-        generate_item(generator)
+        generate_item()
       elsif roll < 80
         shards = rand(10..100)
         "Shards: #{shards}"
@@ -122,7 +136,6 @@ class TilesController < ApplicationController
       end
 
     {
-      picture: parsed_response.dig(:landscape, :description) || "Default picture",
       scene_description: parsed_response.dig(:landscape, :description) || "Default scene description",
       treasure_description: treasure_description,
       monster_description: monster_desc,
@@ -147,6 +160,8 @@ class TilesController < ApplicationController
         puts "Treasure taken"
         item_info = generate_item_details(treasure)
 
+        # Ensure we have a character_id to attach this item to.
+        # Adjust this as needed to get the correct character. For example:
         character = @current_user.characters.find_by(game_id: @current_game.id)
         if character.nil?
           render json: { error: "No character found to assign item to." }, status: 420
@@ -170,9 +185,7 @@ class TilesController < ApplicationController
         message: "Too late! This treasure is gone.",
         result: "no_loot",
         tile: tile,
-
-      },
-             status: 420
+      }, status: 420
     end
   end
 
@@ -313,7 +326,7 @@ class TilesController < ApplicationController
     colors = ['gray', 'green', 'yellow', 'blue']
     tile.biome = colors.sample
 
-    ai_generated_content = generate_tile_content(tile)
+    ai_generated_content = generate_tile_text(tile)
     tile.update!(
       picture: ai_generated_content[:picture],
       scene_description: ai_generated_content[:scene_description],
@@ -380,39 +393,25 @@ class TilesController < ApplicationController
 
   private
 
-
-
-
-  def initialize_generator
-    @generator = OpenAIService.new
+  def prompts
+    @prompts ||= YAML.load_file(Rails.root.join('config', 'prompts.yml'))
   end
 
-  def generate_item(generator)
+  # small macro to test if ai content exists and is generated
+  def isGenerated(tile)
+    tile.picture.blank? && tile.scene_description.blank? && tile.treasure_description.blank? && tile.monster_description.blank?
+  end
+
+  def generate_item()
     used_names = @@generated_items.to_a
     name_list_str = used_names.empty? ? "[]" : used_names.map { |n| "\"#{n}\"" }.join(", ")
 
-    item_system_prompt = <<~PROMPT
-      You are a creative item generator for a fantasy game.
-      You will return one item in JSON format with "name" and "description" keys only.
-      Here is a list of previously generated item names: [#{name_list_str}]
-      You must create a unique item name not present in the above list.
-      Example:
-      {
-        "name": "Ancient Crystal Skull",
-        "description": "A skull carved from crystal that emits a faint eerie glow."
-      }
-    PROMPT
-
-    item_instruction_prompt = <<~INSTRUCTION
-      Generate a single mysterious artifact item with a unique name and a short description.
-      The name must not match any of the previously generated names given. It can be a
-      weapon (sword, bow, staff, axe, hammer) or a shield (diamond, tower, round) or a
-      piece of armor (cloak, greaves, gauntlets, chestplate) or just a random artifact. 
-      Be creative! Description must be 3 sentences max!
-    INSTRUCTION
-
     3.times do
-      item_response = generator.generate_content("gpt-4o-mini", item_system_prompt, item_instruction_prompt)
+      item_response = OpenAIService.generate_content(
+        "gpt-4o-mini",
+        prompts['item_system_prompt'] % { :previous_item_names => name_list_str },
+        prompts['item_instruction_prompt']
+      )
       clean_response = item_response.gsub(/^```json\s*/, '').gsub(/```$/, '')
 
       begin
@@ -434,24 +433,11 @@ class TilesController < ApplicationController
     # Split only into two parts at most
     name, description = item_string.split(":", 2).map(&:strip)
 
-    system_prompt = <<~PROMPT
-    You are a creative item detail generator for a fantasy game.
-    I have an item with the following attributes:
-    Name: #{name}
-    Description: #{description}
-
-    I need a JSON response with the keys: "name", "item_type", and "description".
-    The "item_type" should be one of ["weapon", "shield", "armor", "artifact"].
-    The "description" can be the same or slightly enhanced.
-    Return only the JSON. Example:
-    {
-      "name": "#{name}",
-      "item_type": "weapon",
-      "description": "#{description}"
-    }
-  PROMPT
-
-    response = @generator.generate_content("gpt-4o-mini", system_prompt, "")
+    response = OpenAIService.generate_content(
+      "gpt-4o-mini",
+      prompts['item_system_prompt'] % { name: name, description: description },
+      ""
+    )
     clean_response = response.gsub(/^```json\s*/, '').gsub(/```$/, '')
 
     begin
