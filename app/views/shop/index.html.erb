@@ -9,108 +9,111 @@
   <!-- Link the CSS file -->
   <link rel="stylesheet" href="../stylesheets/shop.css">
 </head>
+<body>
 
-
-<div class="shop-container" data-turbolinks="false">
-  <h1>Shop</h1>
-  <div class="shop-sections">
-    <!-- Upgrades Section -->
-    <div class="upgrades-section">
-      <h2>Payment History</h2>
-      <div id="payment-history">
-        <p>Loading your payment history...</p>
-      </div>
-    </div>
-
-    <!-- Shards Section -->
-    <div class="shards-section">
-      <h2>Shards</h2>
-      <div class="purchase-div-container">
-        <!-- Purchase Div -->
-        <div class="purchase-div">
-          <div class="shard-controls">
-            <button id="decrement" class="btn">-</button>
-            <input
-                type="number"
-                id="shard-quantity"
-                value="0"
-                min="0"
-                step="1"
-            class="shard-input"
-            />
-            <button id="increment" class="btn">+</button>
-          </div>
-
-          <!-- Cost Display -->
-          <div class="shard-cost">
-            <p>Total Cost: <span id="total-cost">0.00</span> USD</p>
-          </div>
-
-          <div class="purchase-button">
-            <button id="purchase" class="btn">Buy</button>
+    <div class="shop-container" data-turbolinks="false">
+      <h1>Shop</h1>
+      <div class="shop-sections">
+        <!-- Upgrades Section -->
+        <div class="upgrades-section">
+          <h2>Payment History</h2>
+          <div id="payment-history">
+            <p>Loading your payment history...</p>
           </div>
         </div>
 
-        <!-- User Balance Div -->
-        <div class="user-balance">
-          <h3>Your Balance</h3>
-          <div class="balance-item">
-            <label for="shard-amount">Shards:</label>
-            <span id="shard-amount"><%= @shard_amount %></span>
-          </div>
-          <div class="balance-item">
-            <label for="usd-amount">USD:</label>
-            <span id="usd-amount"><%= '%.2f' % @money_usd %></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Credit Card Div -->
-      <div class="form-container">
-        <h3>Credit Card Information</h3>
-        <form id="credit-card-form">
-          <div class="form-group">
-            <label for="first-name">First Name:</label>
-            <input type="text" id="first-name" name="first-name" required />
-          </div>
-          <div class="form-group">
-            <label for="last-name">Last Name:</label>
-            <input type="text" id="last-name" name="last-name" required />
-          </div>
-          <div class="form-group">
-            <label for="card-number">Credit Card Number:</label>
-            <input type="text" id="card-number" name="card-number" maxlength="16" required />
-          </div>
-          <div class="form-group">
-            <label for="cvv">CVV:</label>
-            <input type="text" id="cvv" name="cvv" maxlength="3" required />
-          </div>
-          <div class="form-group">
-            <label for="expiration-date">Expiration Date:</label>
-            <input type="text" id="expiration-date" name="expiration-date" placeholder="MM/YY" required />
-          </div>
-          <div class="currency-selector">
-            <label for="currency">Currency:</label>
-            <select id="currency"></select>
-          </div>
-          <div class="form-group cost-display">
-            <label for="cost">Cost:</label>
-            <input
-                type="number"
-                id="cost"
-                name="cost"
-                min="0"
-                step="1"
-                placeholder="0"
-                required
+        <!-- Shards Section -->
+        <div class="shards-section">
+          <h2>Shards</h2>
+          <div class="purchase-div-container">
+            <!-- Purchase Div -->
+            <div class="purchase-div">
+              <div class="shard-controls">
+                <button id="decrement" class="btn">-</button>
+                <input
+                    type="number"
+                    id="shard-quantity"
+                    value="0"
+                    min="0"
+                    step="1"
+                class="shard-input"
                 />
-            <span id="currency-symbol">USD</span>
+                <button id="increment" class="btn">+</button>
+              </div>
+
+              <!-- Cost Display -->
+              <div class="shard-cost">
+                <p>Total Cost: <span id="total-cost">0.00</span> USD</p>
+              </div>
+
+              <div class="purchase-button">
+                <button id="purchase" class="btn">Buy</button>
+              </div>
+            </div>
+
+            <!-- User Balance Div -->
+            <div class="user-balance">
+              <h3>Your Balance</h3>
+              <div class="balance-item">
+                <label for="shard-amount">Shards:</label>
+                <span id="shard-amount"><%= @shard_amount %></span>
+              </div>
+              <div class="balance-item">
+                <label for="usd-amount">USD:</label>
+                <span id="usd-amount"><%= '%.2f' % @money_usd %></span>
+              </div>
+            </div>
           </div>
-          <button type="submit" class="btn" id="submitButton">Submit</button>
-        </form>
+
+          <!-- Credit Card Div -->
+          <div class="form-container">
+            <h3>Credit Card Information</h3>
+            <form id="credit-card-form">
+              <div class="form-group">
+                <label for="first-name">First Name:</label>
+                <input type="text" id="first-name" name="first-name" required />
+              </div>
+              <div class="form-group">
+                <label for="last-name">Last Name:</label>
+                <input type="text" id="last-name" name="last-name" required />
+              </div>
+              <div class="form-group">
+                <label for="card-number">Credit Card Number:</label>
+                <input type="text" id="card-number" name="card-number" maxlength="16" required />
+              </div>
+              <div class="form-group">
+                <label for="cvv">CVV:</label>
+                <input type="text" id="cvv" name="cvv" maxlength="3" required />
+              </div>
+              <div class="form-group">
+                <label for="expiration-date">Expiration Date:</label>
+                <input type="text" id="expiration-date" name="expiration-date" placeholder="MM/YY" required />
+              </div>
+              <div class="currency-selector">
+                <label for="currency">Currency:</label>
+                <select id="currency"></select>
+              </div>
+              <div class="form-group cost-display">
+                <label for="cost">Cost:</label>
+                <input
+                    type="number"
+                    id="cost"
+                    name="cost"
+                    min="0"
+                    step="1"
+                    placeholder="0"
+                    required
+                    />
+                <span id="currency-symbol">USD</span>
+              </div>
+              <button type="submit" class="btn" id="submitButton">Submit</button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
+    <script src="../javascripts/shop.js"></script>
 
+</body>
+</html>
