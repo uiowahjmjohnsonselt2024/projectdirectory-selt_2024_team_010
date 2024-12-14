@@ -23,7 +23,8 @@ module Blog
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
 
-    # love learning that rails activejobs are blocking
-    config.active_job.queue_adapter = :sidekiq
+    # UNCOMMENT THIS if using sidekiq workers.
+    # note that you need a redis instance running.
+    #config.active_job.queue_adapter = :sidekiq
   end
 end

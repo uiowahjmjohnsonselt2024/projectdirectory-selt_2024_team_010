@@ -85,6 +85,7 @@ class TilesController < ApplicationController
     )
     parsed_response = JSON.parse(response, symbolize_names: true) rescue {}
 
+    Rails.logger.info response
 
     # Extract monster data
     monster_desc = parsed_response.dig(:monster, :description) || "Default monster description"
