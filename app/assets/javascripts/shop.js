@@ -1,3 +1,4 @@
+
 var initialized = false;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -210,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return false;
 }
 
-    // Validate expiration date: must be MM/YY
+
     // Check format
     const expirationRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
     if (!expirationRegex.test(expiration)) {

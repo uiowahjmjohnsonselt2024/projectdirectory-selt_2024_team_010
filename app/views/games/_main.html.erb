@@ -282,7 +282,6 @@
             }
             return response.blob(); // Convert the response to a Blob (binary data)
         }).then(_blob => {
-            // Return a URL for the image blob
             img_url = URL.createObjectURL(_blob)
         }).catch(error => {
             console.error('There was a problem with the fetch operation:', error);
@@ -473,7 +472,7 @@
         for (const character of characters) {
             const tile = document.getElementById(`tile-${character.x_position}-${character.y_position}`);
             if (tile) { // Check if the tile exists
-                if (tile.firstElementChild) { //There is already a player representation here
+                if (tile.firstElementChild) {
                     const characterCount = Number(tile.firstElementChild.getAttribute("data-count")) + 1
                     tile.firstElementChild.setAttribute("data-count",characterCount)
                     tile.firstElementChild.innerHTML = character.username + "<br>"
@@ -543,6 +542,7 @@
         renderAllCharacters();
         displayCurrentBiome();
         refreshTileInfo(x, y);
+
 
         // Disable the buttons on movement and re-enabling them after 0.5 seconds
         setTimeout(()=>{
@@ -633,19 +633,19 @@
 
 <style>
     table {
-        max-width: 500px; /* Set a maximum size for the table */
-        border-collapse: collapse; /* Keep the borders clean */
+        max-width: 500px;
+        border-collapse: collapse;
     }
 
     td {
-        width: 14.3%; /* 1/7th of the table width for even columns */
+        width: 14.3%;
         border: 2px solid black;
         position: relative;
     }
 
     td .content {
-        aspect-ratio: 1 / 1; /* Maintain square cells */
-        width: 100%; /* Fill the parent td */
+        aspect-ratio: 1 / 1;
+        width: 100%;
     }
 
     .cell-button {
@@ -654,9 +654,9 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: transparent; /* Make the button invisible */
-        border: none; /* Remove default button border */
-        cursor: pointer; /* Make it clickable */
+        background: transparent;
+        border: none;
+        cursor: pointer;
     }
 
     .cell-button:hover {
