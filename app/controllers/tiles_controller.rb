@@ -29,7 +29,7 @@ class TilesController < ApplicationController
         send_file(Rails.root.join('public', 'loading.png'), type: "image/png", disposition: "inline")
         unless tile.picture_generating?
           tile.update!(picture_generating: true)
-          AiImageGenerationWorker.perform_in(1.seconds, tile.id)
+          GenerateTileImageJob.perform_later(tile.id)
         end
       end
     else
