@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20241212200507) do
+ActiveRecord::Schema.define(version: 20241213190512) do
 
   create_table "characters", force: :cascade do |t|
     t.integer "user_id"
@@ -81,10 +81,11 @@ ActiveRecord::Schema.define(version: 20241212200507) do
     t.float    "money_usd",              default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "recent_character"
     t.boolean  "isAdmin",                default: false
-    t.string   "recent_character"
     t.string   "password_reset_token"
     t.datetime "password_reset_sent_at"
+    t.boolean  "is_oauth"
   end
 
 end

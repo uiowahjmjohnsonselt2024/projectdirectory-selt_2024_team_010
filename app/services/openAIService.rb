@@ -31,6 +31,9 @@ class OpenAIService
       }
     )
 
+    # Return nil if the response is nil or doesn't include the expected structure
+    return nil unless response && response.dig("choices", 0, "message", "content")
+
     # Parse and return the assistant's response
     response.dig("choices", 0, "message", "content")
   end

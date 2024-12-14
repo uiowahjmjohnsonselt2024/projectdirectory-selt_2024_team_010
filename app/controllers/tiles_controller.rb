@@ -85,7 +85,6 @@ class TilesController < ApplicationController
     )
     parsed_response = JSON.parse(response, symbolize_names: true) rescue {}
 
-    Rails.logger.info response
 
     # Extract monster data
     monster_desc = parsed_response.dig(:monster, :description) || "Default monster description"
@@ -189,7 +188,7 @@ class TilesController < ApplicationController
         message: "Too late! This treasure is gone.",
         result: "no_loot",
         tile: tile,
-      }
+      }, status: 420
     end
   end
 
@@ -248,7 +247,8 @@ class TilesController < ApplicationController
             current_health: character.currentHealth,
             max_health: character.maxHealth,
             level: character.level
-          }
+          },
+          odds: player_odds,
         }
 
       else
@@ -261,6 +261,7 @@ class TilesController < ApplicationController
         if character.currentHealth <= 0
           # Reset character's health and level
           character.items.destroy_all
+          character.update!(maxHealth: 10)
           character.update!(currentHealth: character.maxHealth, level: 1)
           render json: {
             success: true,
@@ -272,7 +273,8 @@ class TilesController < ApplicationController
                 current_health: character.currentHealth,
                 level: character.level,
                 max_health: character.maxHealth,
-              }
+              },
+            odds: player_odds
           }
         else
           # Monster level increases by half the player's strength (rounded down)
@@ -288,7 +290,8 @@ class TilesController < ApplicationController
               current_health: character.currentHealth,
               max_health: character.maxHealth,
               level: character.level
-            }
+            },
+            odds: player_odds
           }
         end
       end

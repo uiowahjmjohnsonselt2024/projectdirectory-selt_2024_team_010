@@ -40,16 +40,20 @@ Rails.application.routes.draw do
   post 'tiles/teleport', to: 'tiles#teleport_tile'
 
 
-  get 'gameshop', to: 'gameshop#index'
-  get 'gameshop/generate_items', to: 'gameshop#generate_items'
+
   delete 'items/:id', to: 'games#destroy', as: 'destroy_item'
 
-  get 'gameshop/items', to: 'gameshop#items', as: 'user_items'
-  get 'gameshop', to: 'gameshop#index'
-  post 'gameshop/buy', to: 'gameshop#buy'
+  get '/gameshop', to: 'gameshop#index', as: 'gameshop'
+  post '/gameshop/buy', to: 'gameshop#buy', as: 'gameshop_buy'
+  get '/gameshop/generate_items', to: 'gameshop#generate_items', as: 'generate_gameshop_items'
+  post '/gameshop/update_shards', to: 'gameshop#update_shards', as: 'update_gameshop_shards'
+
 
   get 'characters', to: 'characters#get_characters', as: 'characters'
   post 'move_character', to: 'characters#move_character', as: 'move_character'
+
+  get '/auth/:provider/callback', to: 'sessions#auth_success', as: 'auth_success'
+  get '/auth/failure', to: 'sessions#auth_failure', as: 'auth_failure'
 
   get 'characters/items', to: 'characters#items', as: 'character_items'
 

@@ -33,28 +33,28 @@
 </div>
 
 <script>
-    const biome_map = {
+    var biome_map = {
         yellow: 'Desert',
         gray: 'Mountain',
         green: 'Forest',
         blue: 'Ocean'
     };
 
-    const cellColors = <%= raw @tiles.to_json %>;
-    const gameId = <%= @current_game.id %>;
-    const currentCharacter = <%= raw @current_character.to_json %>;
-    let current_position = [currentCharacter.x_position, currentCharacter.y_position];
+    var cellColors = <%= raw @tiles.to_json %>;
+    var gameId = <%= @current_game.id %>;
+    var currentCharacter = <%= raw @current_character.to_json %>;
+    var current_position = [currentCharacter.x_position, currentCharacter.y_position];
 
     // Get the CSRF token from the meta tags
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    let previous_position = null;
-    let current_biome = biome_map[cellColors[formatKey(current_position)]];
+    var previous_position = null;
+    var current_biome = biome_map[cellColors[formatKey(current_position)]];
 
     //Looping poll variables
-    let characterPoll;
+    var characterPoll;
 
-    let loading = false;
+    var loading = false;
 
     displayCurrentBiome();
     renderAllCharacters();
@@ -174,15 +174,28 @@
                   refreshTileInfo(x, y);
 
                   if (data.character) {
+                      console.log(data.character)
                       updateCharacterInfo(data.character);
                   }
 
+                  const odds = parseFloat(data.odds).toFixed(2)
+
                   // Notify the user about the result
                   if (data.result === "player_win") {
-                      alert("You defeated the monster!");
+                      alert(`You defeated the monster! Your odds of winning were: ${odds}%`);
                   } else if (data.result === "monster_win") {
-                      alert("You lost to the monster. Be careful!");
+                      alert(`You lost to the monster. Be careful! Your odds of winning were: ${odds}%`);
                   } else if (data.result === "player_died") {
+
+                      const itemsSection = document.getElementById("ItemsSection");
+
+                      while (itemsSection.firstChild) {
+                          itemsSection.removeChild(itemsSection.firstChild);
+                      }
+
+                      itemsSection.appendChild(Object.assign(document.createElement("h2"), { textContent: "Your Items" }));
+
+
                       alert(data.message); // Display death message
                   }
               } else {
@@ -211,10 +224,16 @@
         // Update health values and health bar
         const healthBar = document.querySelector('.health-bar .health-fill');
         const currHealthText = document.querySelector('.health-bar-container p .character-value');
+        const maxHealthText = document.getElementById('maxHealth')
 
         if(currHealthText)
         {
             currHealthText.textContent = character.current_health;
+        }
+
+        if(maxHealthText)
+        {
+            maxHealthText.textContent = character.max_health
         }
 
         if (healthBar && currHealthText) {
