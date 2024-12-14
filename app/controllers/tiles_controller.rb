@@ -7,16 +7,13 @@ Dotenv.load
 class TilesController < ApplicationController
   @@generated_items = Set.new  # Use a class-level Set to store unique item names
   before_action :require_login, :get_current_game
-  BIOMES = [:white, :green, :yellow, :gray, :blue]
-
-  def create
-    x = params[:x]
-    y = params[:y]
-    unless @current_game&.tiles&.where("x_position = ? AND y_position = ?", x, y)
-      return
-    end
-    @current_game.tiles.create!(x_position: x, y_position: y, biome: BIOMES.sample)
-  end
+  BIOMES = {
+    "white"  => "snow",
+    "green"  => "plains",
+    "yellow" => "desert",
+    "gray"   => "mountains",
+    "blue"   => "sea"
+  }
 
   def get_image
     x = params[:x]
@@ -77,7 +74,7 @@ class TilesController < ApplicationController
   def generate_tile_text(tile)
     # generate main tile properties
     puts prompts.keys.inspect
-    inst_prompt = prompts['tile_instruction_prompt'] % { :biome => tile.biome }
+    inst_prompt = prompts['tile_instruction_prompt'] % { :biome => BIOMES[tile.biome] }
     response = OpenAIService.generate_content(
       "gpt-4o-mini",
       prompts['tile_system_prompt'],
