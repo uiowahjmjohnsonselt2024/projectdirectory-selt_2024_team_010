@@ -70,6 +70,7 @@ ActiveRecord::Schema.define(version: 20241213190512) do
     t.string  "monster_description"
     t.integer "visitor_id"
     t.integer "monster_level"
+    t.boolean "picture_generating"
   end
 
   create_table "users", force: :cascade do |t|
