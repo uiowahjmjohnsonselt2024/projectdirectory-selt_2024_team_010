@@ -1,0 +1,117 @@
+.shop-container {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.shop-sections {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.upgrades-section,
+.shards-section {
+    width: 45%;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+/* Purchase Div and User Balance Side by Side */
+.purchase-div-container {
+    display: flex;
+    justify-content: space-between; /* Creates space between items */
+    align-items: stretch; /* Ensures both child divs have the same height */
+    gap: 20px; /* Adds spacing between the divs */
+    width: 100%; /* Ensures the container spans full width */
+}
+
+.purchase-div,
+.user-balance {
+    flex: 1; /* Distribute equal width to both divs */
+    max-width: 50%; /* Ensure they don't exceed 50% of the container's width */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    display: flex; /* Added to make inner content align properly */
+    flex-direction: column; /* Ensures inner content stacks vertically */
+}
+
+.shard-controls {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.shard-button {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
+.shard-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.shard-input {
+    width: 80px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.currency-selector,
+.cost-display {
+    margin-bottom: 10px;
+}
+
+.currency-selector label,
+.cost-display label {
+    margin-right: 10px;
+}
+
+.cost-display {
+    font-size: 18px;
+}
+
+.user-balance h3 {
+    margin-bottom: 10px;
+}
+
+.balance-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.upgrades-section,
+.shards-section,
+.purchase-div,
+.user-balance {
+    background-color: rgba(240, 240, 240, 0.9); /* Light gray with 90% opacity */
+    border: 1px solid #ccc; /* Optional: Keeps the border consistent */
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.shop-container,
+.shop-container h2,
+.shop-container p,
+.shop-container .buy-button {
+    color: black;
+}
