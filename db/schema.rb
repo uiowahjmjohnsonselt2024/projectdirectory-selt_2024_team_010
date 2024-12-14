@@ -69,8 +69,8 @@ ActiveRecord::Schema.define(version: 20241213190512) do
     t.string  "treasure_description"
     t.string  "monster_description"
     t.integer "visitor_id"
-    t.boolean "picture_generating"
     t.integer "monster_level"
+    t.boolean "picture_generating"
   end
 
   create_table "users", force: :cascade do |t|
@@ -81,8 +81,8 @@ ActiveRecord::Schema.define(version: 20241213190512) do
     t.float    "money_usd",              default: 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "isAdmin",                default: false
     t.integer  "recent_character"
+    t.boolean  "isAdmin",                default: false
     t.string   "password_reset_token"
     t.datetime "password_reset_sent_at"
     t.boolean  "is_oauth"
