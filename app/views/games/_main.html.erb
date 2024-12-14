@@ -274,73 +274,86 @@
         // Check if user is on this tile
         const isCurrentPosition = (data.x === current_position[0] && data.y === current_position[1]);
 
-        let tileInfo = `
-            <h2>Tile Information</h2>
-            <p><strong>Position:</strong> (${data.x}, ${-data.y})</p>
-            <p><strong>Biome:</strong> ${biome_map[data.biome]}</p>
-            <br>
-            <p><strong>Picture:</strong> ${data.picture || 'None'}</p>
-            <br>
-            <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
-            <br>
-            <p><strong>Treasure Description:</strong> <span id="treasure">${data.treasure_description || 'N/A'}</span></p>
-            <br>
-            <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
-            <p><strong>Monster Level:</strong> ${data.monster_level || 'N/A'}</p>
-        `;
-
-        // Determine button states
-        let buttonDisabled = '';
-        let buttonStyle = '';
-
-        if (!isCurrentPosition) {
-            buttonDisabled = 'disabled';
-            buttonStyle = 'style="color:gray; background-color:#ccc;"';
-        }
-
-        tileInfo += `<div style="margin-top: 10px" />`
-
-        // Add the Loot button if treasure_description exists
-        if (data.treasure_description && data.treasure_description.trim() !== '') {
-            tileInfo += `
-              <button id="loot-button" class="btn-secondary" onclick="takeTreasure(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
-                  Loot
-              </button>
-            `;
-        }
-
-        // Add the Fight button if monster_description exists
-        if (data.monster_description && data.monster_description.trim() !== '') {
-            tileInfo += `
-              <button id="fight-button" class="btn-secondary" onclick="fightMonster(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
-                Fight
-              </button>
-            `;
-        }
-
-        tileInfo += `
-              <button id="regenerate-button" class="btn-secondary" onclick="regenerateTile(${data.x}, ${data.y})">
-                Regenerate
-              </button>
+        // Fetching image asynchronously from javascript.
+        let img_url;
+        fetch(`/tiles/get_image?x=${data.x}&y=${data.y}`).then(response => {
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.statusText}`);
+            }
+            return response.blob(); // Convert the response to a Blob (binary data)
+        }).then(_blob => {
+            // Return a URL for the image blob
+            img_url = URL.createObjectURL(_blob)
+        }).catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        }).finally(() => {
+            let tileInfo = `
+                <h2>Tile Information</h2>
+                <p><strong>Position:</strong> (${data.x}, ${-data.y})</p>
+                <p><strong>Biome:</strong> ${biome_map[data.biome]}</p>
+                <br>
+                <p><strong>Picture:</strong> ${img_url ? "<img src='" + img_url + "' />" : "None"}</p>
+                <br>
+                <p><strong>Scene Description:</strong> ${data.scene_description || 'N/A'}</p>
+                <br>
+                <p><strong>Treasure Description:</strong> <span id="treasure">${data.treasure_description || 'N/A'}</span></p>
+                <br>
+                <p><strong>Monster Description:</strong> ${data.monster_description || 'N/A'}</p>
+                <p><strong>Monster Level:</strong> ${data.monster_level || 'N/A'}</p>
             `;
 
-        // Check if it's not the current tile
-        const notCurrentTile = !(data.x === current_position[0] && data.y === current_position[1]);
+            // Determine button states
+            let buttonDisabled = '';
+            let buttonStyle = '';
 
-        // Calculate the Manhattan distance from the current position
-        const distance = Math.abs(data.x - current_position[0]) + Math.abs(data.y - current_position[1]);
+            if (!isCurrentPosition) {
+                buttonDisabled = 'disabled';
+                buttonStyle = 'style="color:gray; background-color:#ccc;"';
+            }
 
-        // Only show the Teleport button if it's not current tile AND not adjacent
-        if (notCurrentTile && distance > 1) {
+            tileInfo += `<div style="margin-top: 10px" />`
+
+            // Add the Loot button if treasure_description exists
+            if (data.treasure_description && data.treasure_description.trim() !== '') {
+                tileInfo += `
+                  <button id="loot-button" class="btn-secondary" onclick="takeTreasure(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
+                      Loot
+                  </button>
+                `;
+            }
+
+            // Add the Fight button if monster_description exists
+            if (data.monster_description && data.monster_description.trim() !== '') {
+                tileInfo += `
+                  <button id="fight-button" class="btn-secondary" onclick="fightMonster(${data.x}, ${data.y})" ${buttonDisabled} ${buttonStyle}>
+                    Fight
+                  </button>
+                `;
+            }
+
             tileInfo += `
-                <button id="teleport-button" class="btn-secondary" onclick="teleport(${data.x}, ${data.y})">
-                  Teleport
-                </button>
-              `;
-        }
+                  <button id="regenerate-button" class="btn-secondary" onclick="regenerateTile(${data.x}, ${data.y})">
+                    Regenerate
+                  </button>
+                `;
 
+            // Check if it's not the current tile
+            const notCurrentTile = !(data.x === current_position[0] && data.y === current_position[1]);
 
-        updateGameSection(tileInfo);
+            // Calculate the Manhattan distance from the current position
+            const distance = Math.abs(data.x - current_position[0]) + Math.abs(data.y - current_position[1]);
+
+            // Only show the Teleport button if it's not current tile AND not adjacent
+            if (notCurrentTile && distance > 1) {
+                tileInfo += `
+                    <button id="teleport-button" class="btn-secondary" onclick="teleport(${data.x}, ${data.y})">
+                      Teleport
+                    </button>
+                  `;
+            }
+
+            updateGameSection(tileInfo);
+        });
     }
 
     async function regenerateTile(x, y) {
