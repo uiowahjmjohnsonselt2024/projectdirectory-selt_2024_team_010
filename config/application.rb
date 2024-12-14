@@ -25,6 +25,6 @@ module Blog
 
     # UNCOMMENT THIS if using sidekiq workers.
     # note that you need a redis instance running.
-    #config.active_job.queue_adapter = :sidekiq
+    config.active_job.queue_adapter = :sidekiq
   end
 end
